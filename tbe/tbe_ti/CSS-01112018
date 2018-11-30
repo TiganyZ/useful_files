@@ -1,0 +1,119 @@
+# include file for orthogonal Ti, O, H (ATP 6/9/2018)
+# added OO and NN species for gaseous N_2 and O_2 (ATP 29/9/2018)
+# include as last line in CONST category. Also holds SPEC and START categories
+# set NSPEC=5 NL=3 in STRUC
+% const fs=0.048377 K=1/0.6333328d-5 amass=1.09716d-3 aupres=147.116
+# Hubbard U
+        uh=1 uti=0.9370 uo=1.0775 uoo=uo unn=uo
+# On site energies and input charges
+        nsh=1 esh=-1
+# number of d-electrons in canonical pure-Ti model
+        nst=0 est=0 npt=0 ept=0 ndt=2.03132672 edt=-0.2282
+# 2 d-electrons in Ti (J. Chem. Phys., 141, 044504 (2014))
+#        nst=0 est=0 npt=0 ept=0 ndt=2           edt=-0.2282
+        nso=2 eso=-2.1164 npo=4 epo=-1.1492 ndo=0 edo=0
+        nsoo=2 esoo=-2.1164 npoo=4 epoo=-1.1492 ndoo=0 edoo=0
+        nsnn=2 esnn=-1.66807 npnn=3 epnn=-0.8177 ndnn=0 ednn=0
+# Multipole strength parameters
+        deltaspp=-0.9430 deltappd=0 deltaddg=28 deltaddd=8
+# Hopping integrals
+# H - H (including pair potential)
+# Vacuum H_2 molecule adapted from Skinner and Pettifor
+        r0h2=1.56 ebh2=-4.52/13.61 mhh=2.380 nhh=1.135
+        bhh=ebh2*r0h2^mhh/(1-mhh/nhh)
+        ahh=-0.5*bhh*r0h2^(nhh-mhh)*mhh/nhh
+        r1hh=0.5 r2hh=1
+#        r1hh=5 r2hh=8
+#  Crude Lennard-Jones type repulsion
+#        AHH=0 nHH=0 BHH=100 mHH=12 r1HH=2.9 r2HH=3.4
+# O-O (GSP) J. Chem. Phys., 141, 044504 (2014)
+        sssoo=-0.015 nssoo=2  ncssoo=6  r0ssoo=5.6    rcssoo=9
+        spsoo=0.002  nspoo=2  ncspoo=6  r0spoo=5.6    rcspoo=9
+        ppsoo=0.050  nppsoo=3 ncppsoo=6 r0ppsoo=5.6   rcppsoo=9
+        pppoo=-0.02  npppoo=3 ncpppoo=6 r0pppoo=5.6   rcpppoo=9
+# O-H
+        sssoh=-0.5017726192 nsssoh=2.096344571 ncsssoh=4.056079003 r0sssoh=1.80941 rcsssoh=3.798548
+        spsoh=0.4361767834  nspsoh=1.501873927 ncspsoh=4.056079003 r0spsoh=1.80941 rcspsoh=3.798548
+# Ti-O
+        sdsto=-0.15  nsdsto=4     ncsdsto=8  r0sdsto=3.865 rcsdsto=7.37
+        pdsto=-0.18   npdsto=2.1   ncpdsto=8  r0pdsto=3.865 rcpdsto=7.37
+        pdpto=0.12  npdpto=3.356 ncpdpto=8  r0pdpto=3.865 rcpdpto=7.37
+#     Ti-Ti
+# From pure Ti (canonical model of 6/9/2018)
+        fddtt=0.2937603416 qddstt=0.5793143502
+        cr1=-6 cr2=4 cr3=-1 
+        ddstt=fddtt*cr1 ddptt=fddtt*cr2 dddtt=fddtt*cr3 qddptt=qddstt qdddtt=qddstt
+# From  J. Chem. Phys., 141, 044504 (2014)
+#        ddstt=-0.07 ddptt=0.055 dddti=0 ntt=5 nctt=8 r0tt=5.55 rcgsptt=6.93
+# Ti-H
+        sssth=0 sdsth=-0.41 qsssth=0.78 qsdsth=0.45
+# O_2 and N_2 molecules after Harrison: use species "OO" and "NN"
+# OO-OO
+        sssoooo=-2.8 spsoooo=3.68 ppsoooo=6.48 pppoooo=-1.62
+# NN-NN
+        sssnnnn=-2.8 spsnnnn=3.68 ppsnnnn=6.48 pppnnnn=-1.62
+# OO-NN
+        sssoonn=-2.8 spsoonn=3.68 ppsoonn=6.48 pppoonn=-1.62
+# Pair potentials
+# From  J. Chem. Phys., 141, 044504 (2014)
+# O-O
+        a1oo=122252.8 b1oo=-10  c1oo=0
+        a2oo=-62.5    b2oo=-6   c2oo=0
+        a3oo=0        b3oo=0    c3oo=0
+# Ti-Ti
+# From pure Ti (canonical model of 6/9/2018)
+        b0tt=112.9344648 m0tt=0 p0tt=1.498875925 b1tt=0 m1tt=0 p1tt=0
+# From  J. Chem. Phys., 141, 044504 (2014)
+#        m0tt=-8 p0tt=2 b0tt=0.015*5.6^(-m0tt)*exp(5.6*p0tt)
+# Ti-H
+        bht=300 mht=-1 pht=2.7
+# Ti-O
+        toppr0=3.685 
+        p1to=0 m1to=-12 b1to=7.34d-3*toppr0^(-m1to)
+        p2to=1.5933 m2to=-1 b2to=0.2212*toppr0^(-m2to)*exp(p2to*toppr0)
+# O-H
+        agspoh=0.7366913792 mgspoh=3.3501563 mcgspoh=6.30964035 r0gspoh=1.80941 rcgspoh=3.3550494
+# OO-OO
+        aoooo=31.8363 boooo=3.096 
+# NN-NN
+        annnn=64.5  bnnnn=3.982 
+# OO-NN
+        aoonn=33.32 boonn=3.141
+# cut-offs
+% ifdef scale
+        ascale = alat
+% else
+        ascale = 1
+% endif
+        cutmod=2 
+        r1tt=6.2/ascale rctt=8.5/ascale r1to=4/ascale rcto=6/ascale r1oo=8/ascale rcoo=11/ascale
+        r1oh=2.1/ascale rcoh=5.5/ascale r1th=4.07/ascale rcth=5.15/ascale
+        r1oooo=8/ascale rcoooo=11/ascale
+SPEC
+        ATOM=Ti Z=22 R=2.5 AMASS=48/{amass}
+        IDXDN=3 3 1 QPOL=0 0 0 0 deltaddd 0 deltaddg
+        COLOUR=0.2 0.2 0.2  RADIUS=0.4
+
+        ATOM=O  Z=8 R/W=1 AMASS=16/{amass}
+        IDXDN=1 1 3 R/W=1 QPOL=deltaspp deltappd 0 0 0 0 0
+        COLOUR=0.9 0.1 0.1  RADIUS=0.5
+
+        ATOM=H Z=1 R/W=1 AMASS=1/{amass}
+        IDXDN=1 3 3 QPOL= 0 0 0 0 0 0 0 0 0 0
+        COLOUR=0.9 0.2 0.2 RADIUS=0.2
+
+        ATOM=OO  Z=8 R/W=1 AMASS=16/{amass}
+        IDXDN=1 1 3 R/W=1 QPOL=0 0 0 0 0 0 0
+        COLOUR=0.9 0.1 0.1  RADIUS=0.5
+
+        ATOM=NN  Z=7 R/W=1 AMASS=14/{amass}
+        IDXDN=1 1 3 R/W=1 QPOL=0 0 0 0 0 0 0
+        COLOUR=0.1 0.1 0.9  RADIUS=0.45
+
+START   CNTROL=T   
+        ATOM=Ti  P=4 4 3  Q=nst est uti  npt ept uti  ndt edt uti
+        ATOM=O   P=2 2 3  Q=nso eso uo   npo epo uo   ndo edo uo
+        ATOM=H   P=1 2 3  Q=nsh esh uh   0   0   0    0   0   0
+        ATOM=OO  P=2 2 3  Q=nsoo esoo uoo   npoo epoo uoo   ndoo edoo uoo
+        ATOM=NN  P=2 2 3  Q=nsnn esnn unn   npnn epnn unn   ndnn ednn unn
+

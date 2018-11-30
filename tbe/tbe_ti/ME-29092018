@@ -1,0 +1,148 @@
+# ME category
+        H H MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1hh r2hh
+           | ahh 0 0 0 0 0 0 0 0 0
+        DECAY= nhh 0 0 0 0 0 0 0 0 0
+        CUT= r1hh r2hh 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+           ! bhh -mhh 0  0 0 0  0 0 0
+# From pure Ti  (canonical model of 6/9/2018)
+        Ti Ti MEMODE=2 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1tt rctt
+            | 0 0 0 0 0 0 0 ddstt ddptt dddtt
+        DECAY=0 0 0 0 0 0 0 qddstt qddptt qdddtt
+        CUT=0 0 0 0 0 0 0 0 0 0 0 0 0 0 r1tt rctt r1tt rctt r1tt rctt
+            ! b0tt m0tt p0tt   b1tt m1tt p1tt   0 0 0
+# From  J. Chem. Phys., 141, 044504 (2014)
+#        Ti Ti MEMODE=5 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1tt rctt
+#            | 0  1 1 1 1
+#              0  1 1 1 1
+#              0  1 1 1 1
+#              0  1 1 1 1
+#              0  1 1 1 1
+#              0  1 1 1 1
+#              0  1 1 1 1
+#              ddstt ntt nctt r0tt rcgsptt        
+#              ddptt ntt nctt r0tt rcgsptt        
+#              dddti ntt nctt r0tt rcgsptt        
+#             CUT=r1tt rctt r1tt rctt r1tt rctt r1tt rctt r1tt rctt
+#                 r1tt rctt r1tt rctt r1tt rctt r1tt rctt r1tt rctt
+#             ! b0tt m0tt p0tt 0 0 0 0 0 0
+# From  J. Chem. Phys., 141, 044504 (2014)
+        Ti O MEMODE=5 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1to rcto
+            | 0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+              sdsto nsdsto ncsdsto  r0sdsto  rcsdsto
+              pdsto npdsto ncpdsto  r0pdsto  rcpdsto
+              pdpto npdpto ncpdpto  r0pdpto  rcpdpto
+              0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+             CUT=r1to rcto r1to rcto r1to rcto r1to rcto r1to rcto
+                 r1to rcto r1to rcto r1to rcto r1to rcto r1to rcto
+             ! b1to m1to p1to b2to m2to p2to 0 0 0
+        O Ti MEMODE=5 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1to rcto
+            | 0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+              sdsto nsdsto ncsdsto  r0sdsto  rcsdsto
+              pdsto npdsto ncpdsto  r0pdsto  rcpdsto
+              pdpto npdpto ncpdpto  r0pdpto  rcpdpto
+              0  1 1 1 1
+              0  1 1 1 1
+              0  1 1 1 1
+             CUT=r1to rcto r1to rcto r1to rcto r1to rcto r1to rcto
+                 r1to rcto r1to rcto r1to rcto r1to rcto r1to rcto
+             ! b1to m1to p1to b2to m2to p2to 0 0 0
+       O O MEMODE=5 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1oo rcoo
+           | sssoo nssoo ncssoo r0ssoo  rcssoo
+             spsoo nspoo ncspoo r0spoo  rcspoo
+             ppsoo nppsoo ncppsoo r0ppsoo  rcppsoo
+             pppoo npppoo ncpppoo r0pppoo  rcpppoo
+                 0 0 0 1 1
+                 0 0 0 1 1
+                 0 0 0 1 1
+                 0 0 0 1 1
+                 0 0 0 1 1
+                 0 0 0 1 1
+             CUT=r1oo rcoo r1oo rcoo r1oo rcoo r1oo rcoo r1oo rcoo
+                 r1oo rcoo r1oo rcoo r1oo rcoo r1oo rcoo r1oo rcoo
+           ! a1oo b1oo c1oo a2oo b2oo c2oo a3oo b3oo c3oo
+       Ti H MEMODE=2 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1th rcth
+           | sssth 0 0  0 sdsth 0 0 0 0 0
+           DECAY=qsssth 0  0  0 qsdsth 0 0 0 0 0
+           CUT= r1th rcth r1th rcth 0 0 0 0 r1th rcth 0 0 0 0 0 0 0 0 0 0
+           ! bht mht pht  0 0 0   0 0 0
+       H Ti MEMODE=2 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1th rcth
+           | sssth 0 0  0 sdsth 0 0 0 0 0
+           DECAY=qsssth 0  0  0 qsdsth 0 0 0 0 0
+           CUT= r1th rcth r1th rcth 0 0 0 0 r1th rcth 0 0 0 0 0 0 0 0 0 0
+           ! bht mht pht  0 0 0   0 0 0
+       O H  MEMODE=5 PPMODE=30 CUTMOD=2 CUTPP=r1oh rcoh
+           | sssoh nsssoh ncsssoh r0sssoh rcsssoh
+             spsoh nspsoh ncspsoh r0spsoh rcspsoh
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             CUT=r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh
+                 r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh
+           ! agspoh 1 -1 mgspoh mcgspoh r0gspoh rcgspoh 0 0
+       H O  MEMODE=5 PPMODE=30 CUTMOD=2 CUTPP=r1oh rcoh
+           | sssoh nsssoh ncsssoh r0sssoh rcsssoh
+             spsoh nspsoh ncspsoh r0spsoh rcspsoh
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             0 0 0 1 1
+             CUT=r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh
+                 r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh r1oh rcoh
+           ! agspoh 1 -1 mgspoh mcgspoh r0gspoh rcgspoh 0 0
+        OO OO MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoooo spsoooo ppsoooo pppoooo 0 0 0 0 0 0
+             DECAY=2 2 2 2 0 0 0 0 0 0
+             CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+            ! aoooo -boooo 0 0 0 0 0 0 0
+        NN NN MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssnnnn spsnnnn ppsnnnn pppnnnn 0 0 0 0 0 0
+             DECAY=2 2 2 2 0 0 0 0 0 0
+             CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+           ! annnn -bnnnn 0 0 0 0 0 0 0
+        NN OO MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoonn spsoonn ppsoonn pppoonn 0 0 0 0 0 0
+            DECAY=2 2 2 2 0 0 0 0 0 0
+            CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+           ! aoonn -boonn 0 0 0 0 0 0 0
+        OO NN MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoonn spsoonn ppsoonn pppoonn 0 0 0 0 0 0
+            DECAY=2 2 2 2 0 0 0 0 0 0
+            CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+           ! aoonn -boonn 0 0 0 0 0 0 0
+        O OO MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoooo spsoooo ppsoooo pppoooo 0 0 0 0 0 0
+             DECAY=2 2 2 2 0 0 0 0 0 0
+             CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+            ! aoooo -boooo 0 0 0 0 0 0 0
+        OO O MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoooo spsoooo ppsoooo pppoooo 0 0 0 0 0 0
+             DECAY=2 2 2 2 0 0 0 0 0 0
+             CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+            ! aoooo -boooo 0 0 0 0 0 0 0
+        NN O MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoonn spsoonn ppsoonn pppoonn 0 0 0 0 0 0
+            DECAY=2 2 2 2 0 0 0 0 0 0
+            CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+           ! aoonn -boonn 0 0 0 0 0 0 0
+        O NN MEMODE=3 PPMODE=10 POLY=5 CUTMOD=2 CUTPP=r1oooo rcoooo
+           | sssoonn spsoonn ppsoonn pppoonn 0 0 0 0 0 0
+            DECAY=2 2 2 2 0 0 0 0 0 0
+            CUT=r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo r1oooo rcoooo 0 0 0 0 0 0 0 0 0 0 0 0
+           ! aoonn -boonn 0 0 0 0 0 0 0
