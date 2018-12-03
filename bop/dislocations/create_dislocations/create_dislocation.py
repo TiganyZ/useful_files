@@ -1,5 +1,5 @@
-import create_simple_straight_dislocation as create_disl
-from create_cells import create_disl_supercell as cds
+from simple_dislocation import Dislocation
+from create_cells import Disl_supercell
 import scipy as sci
 import os
 import numpy as np
@@ -30,6 +30,8 @@ c44 = 0.508e2
 c66 = sci.dtype(sci.float128)
 c66 = 0.450e2
 
+C = (c11, c33, c44, c12, c13, c66)
+
 
 # Types of dislocation
 pure = True
@@ -37,20 +39,20 @@ screw = True
 plot = True
 
 # a lattice parameter
-a = 0.29012e1
+alat = 0.29012e1
 
 # Burger's Vector
-b = sci.array([0., 0., a])
+b = sci.array([0., 0., alat])
 
 # Dislocation Coordinate System
 disl_coord = np.eye(3)
 
 # Instantiating class
-d = create_disl.Dislocation(C, b, a,
-                            pure, screw, plot,
-                            hexagonal, disl_coord)
+dis = Dislocation(C, b=b, a=alat,
+                  pure=pure, screw=screw, plot=plot, T=disl_coord)
 # Generating dislocation
-dis = d.gen_disl_u()
+#dis = d.gen_disl_u()
+#dis = d.u_screw()
 
 
 # Specification of where the dislocation should be
@@ -58,14 +60,14 @@ dis = d.gen_disl_u()
 #############    Example of square hcp unit cell  #############
 
 # Length array
-l = np.array([5.026674058492405,
-              2.9021516207990987,
-              4.679881023538525])
+lengths = np.array([5.026674058492405,
+                    2.9021516207990987,
+                    4.679881023538525])
 
 # Lattice Vectors
-a = np.array([[1.0, 0.0, 0.0],
-              [0.0, 1.0, 0.0],
-              [0.0, 0.0, 1.0]])
+plat = np.array([[1.0, 0.0, 0.0],
+                 [0.0, 1.0, 0.0],
+                 [0.0, 0.0, 1.0]])
 
 # Unit cell
 unit_cell = np.array([[0.5, 1.0, 0.0],
@@ -73,33 +75,22 @@ unit_cell = np.array([[0.5, 1.0, 0.0],
                       [0.166666666667, 1.0, 0.5],
                       [0.666666666667, 0.5, 0.5]])
 
-luc = len(uc)
+luc = len(unit_cell)
 
 # Number of periodic images
-nx = 13  # 4
+nx = 2  # 4
 ny = 2  # 2
-nz = 14  # 5
+nz = 2  # 5
+
+nxyz = (2, 2, 2)
 
 # Number of unit cells before inert atoms appear
 ninertx = np.array([1, 11])
 ninerty = np.array([0, 2])
 ninertz = np.array([1, 12])
-
-ninert = nx * ny * nz * luc - ninertx[-1] * ninerty[-1] * ninertz[-1] * luc
-
-n_atoms_tot = luc * nx * ny * nz
-
-
-flen = np.zeros(l.shape)
-flen[0] = nx * l[0]
-flen[1] = ny * l[1]
-flen[2] = nz * l[2]
-
-rcore = 0.5 * flen
-rcore[1] = 0.
+ninert = (ninertx, ninerty, ninertz)
+rcore = None
 rcphi = 90. * np.pi / 180.
-
-disl_supercell = cds(unit_cell, lengths, alat, plat, nxyz, ninert, disl)
 
 
 # Working directory (If not specified will use current working directory)
@@ -108,3 +99,17 @@ gen_disl_path = cwd + '/generated_dislocations'
 
 species = "Ti"
 cell_file = "prismatic_screw_"
+
+radii = 20, 25
+ninert = radii
+alat = 5.575
+print("Writing disl supercell")
+ds = Disl_supercell(unit_cell, lengths, alat, plat, nxyz,  # geometry='square',
+                    ninert=ninert, disl=dis, n_disl=1, cwd=cwd)
+ds.write_cell_with_dislocation()
+ds.write_cell_with_dislocation(output='bop')
+
+# def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=None, disl=None, n_disl=1,
+#              rcore=None, rcphi=0., rotation=np.eye(3), species="Ti",
+#              cwd='./', output_path='./generated_dislocations', output='bop',
+#              filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):

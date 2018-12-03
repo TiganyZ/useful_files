@@ -2,33 +2,36 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import subprocess, shlex, math, time, sys
+import subprocess
+import shlex
+import math
+import time
+import sys
 from scipy.optimize import minimize
 from mpl_toolkits.mplot3d import Axes3D
 import copy
-import random 
+import random
 from matplotlib import rc
 import os
-rc('font', **{'family':'serif','serif':['Palatino'],  'size'   : 18})
+rc('font', **{'family': 'serif', 'serif': ['Palatino'],  'size': 18})
 rc('text', usetex=True)
-
 
 
 def remove_bad_syntax(values, syntax):
     return values.replace(syntax, " ")
 
+
 def cmd_result(cmd):
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    result,err = proc.communicate() 
+    result, err = proc.communicate()
     result = result.decode("utf-8")
     return result
 
+
 def cmd_write_to_file(cmd, filename):
     output_file = open(filename, mode='w')
-    retval = subprocess.call(cmd, shell=True, stdout = output_file)
+    retval = subprocess.call(cmd, shell=True, stdout=output_file)
     output_file.close()
-
-
 
 
 ########################   Convert file to XYZ   ###############################
@@ -36,40 +39,39 @@ def cmd_write_to_file(cmd, filename):
 def convert_file_to_xyz(plat, atom_pos, species, filename):
 
     if type(atom_pos) == tuple:
-            atom_pos, inert_atom_pos = atom_pos
-            n_inert = len(inert_atom_pos)
-            n_at = len(atom_pos)
-            n_tot = n_at + n_inert
+        atom_pos, inert_atom_pos = atom_pos
+        n_inert = len(inert_atom_pos)
+        n_at = len(atom_pos)
+        n_tot = n_at + n_inert
     else:
         n_tot = len(atom_pos)
         n_at = n_tot
 
-            
-    n_cell_filename   = filename + "_hom_convert.xyz"
+    n_cell_filename = filename + "_hom_convert.xyz"
 
     global iterations
 
     if iterations == 0:
-        out_xyz_file  = open(n_cell_filename, mode='w+')
+        out_xyz_file = open(n_cell_filename, mode='w+')
     else:
-        out_xyz_file  = open(n_cell_filename, mode='a')        
+        out_xyz_file = open(n_cell_filename, mode='a')
 
-    out_xyz_file.write(  str(n_tot) + "\n"  )
-    out_xyz_file.write(  'Lattice=" ' + ' '.join([str(x) for x in plat.flatten() ])  + '" Properties=species:S:1:pos:R:3 \n'  )
-
+    out_xyz_file.write(str(n_tot) + "\n")
+    out_xyz_file.write('Lattice=" ' + ' '.join(
+        [str(x) for x in plat.flatten()]) + '" Properties=species:S:1:pos:R:3 \n')
 
     for i in range(n_at):
-        out_xyz_file.write( " " + species
-                            + " " + '{:<12.8f}'.format( atom_pos[i,0] )   
-                            + " " + '{:<12.8f}'.format( atom_pos[i,1] )
-                            + " " + '{:<12.8f}'.format( atom_pos[i,2] )
-                            + " \n"                              )
+        out_xyz_file.write(" " + species
+                           + " " + '{:<12.8f}'.format(atom_pos[i, 0])
+                           + " " + '{:<12.8f}'.format(atom_pos[i, 1])
+                           + " " + '{:<12.8f}'.format(atom_pos[i, 2])
+                           + " \n")
     for i in range(n_inert):
-        out_xyz_file.write( " " + species + "n"
-                            + " " + '{:<12.8f}'.format( inert_atom_pos[i,0] )   
-                            + " " + '{:<12.8f}'.format( inert_atom_pos[i,1] )
-                            + " " + '{:<12.8f}'.format( inert_atom_pos[i,2] )
-                                      + " \n"                              )
+        out_xyz_file.write(" " + species + "n"
+                           + " " + '{:<12.8f}'.format(inert_atom_pos[i, 0])
+                           + " " + '{:<12.8f}'.format(inert_atom_pos[i, 1])
+                           + " " + '{:<12.8f}'.format(inert_atom_pos[i, 2])
+                           + " \n")
 
     # for i in range(n_d, n_d + n_inert):
     #     out_xyz_file.write(  " " + species + " " + str( atom_pos[i,0]   )
@@ -80,8 +82,8 @@ def convert_file_to_xyz(plat, atom_pos, species, filename):
 
 
 def find_energy(LMarg, args, filename, ename="ebind", from_file=False, tail=1):
-    
-    cmd =  LMarg + ' ' + args
+
+    cmd = LMarg + ' ' + args
 
     # print(cmd)
     
@@ -481,7 +483,6 @@ def gen_cell(l, plat, uc, n_rep_xyz, inert_bounds, sf_type, in_units_of_len=True
                             atoms[na,2] = r3
                             na += 1
 
-        plat = plat * flen    
     return atoms, inert_atoms,  plat 
 
 
