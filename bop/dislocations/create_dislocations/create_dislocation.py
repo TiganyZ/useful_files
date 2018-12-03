@@ -1,4 +1,5 @@
 import create_simple_straight_dislocation as create_disl
+from create_cells import create_disl_supercell as cds
 import scipy as sci
 import os
 import numpy as np
@@ -54,6 +55,7 @@ dis = d.gen_disl_u()
 
 # Specification of where the dislocation should be
 
+#############    Example of square hcp unit cell  #############
 
 # Length array
 l = np.array([5.026674058492405,
@@ -66,10 +68,10 @@ a = np.array([[1.0, 0.0, 0.0],
               [0.0, 0.0, 1.0]])
 
 # Unit cell
-uc = np.array([[0.5, 1.0, 0.0],
-               [0.0, 0.5, 0.0],
-               [0.166666666667, 1.0, 0.5],
-               [0.666666666667, 0.5, 0.5]])
+unit_cell = np.array([[0.5, 1.0, 0.0],
+                      [0.0, 0.5, 0.0],
+                      [0.166666666667, 1.0, 0.5],
+                      [0.666666666667, 0.5, 0.5]])
 
 luc = len(uc)
 
@@ -96,6 +98,8 @@ flen[2] = nz * l[2]
 rcore = 0.5 * flen
 rcore[1] = 0.
 rcphi = 90. * np.pi / 180.
+
+disl_supercell = cds(unit_cell, lengths, alat, plat, nxyz, ninert, disl)
 
 
 # Working directory (If not specified will use current working directory)
