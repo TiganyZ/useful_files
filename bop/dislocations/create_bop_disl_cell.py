@@ -9,7 +9,7 @@ rcParams["font.family"] = "serif"
 rcParams["font.size"] = 8
 rcParams["font.serif"] = ["DejaVu Serif"]
 rc("text", usetex = True)
-
+import os
 import scipy as sci
 sci.set_printoptions(linewidth=200, precision = 4)
 
@@ -229,8 +229,8 @@ b = sci.array([0., 0., a])
 
 
 
-#dis = gen_disl_u(C, b, pure, screw, plot)
-
+dis = gen_disl_u(C, b, pure, screw, plot)
+pp.show()
 
 
 
@@ -281,9 +281,21 @@ rcphi = 90. * np.pi / 180.
 
 atoms = np.zeros( ( n_atoms , 3) )
 
-atoms[:luc,:] = uc                
+atoms[:luc,:] = uc
 
-cell_file       = "pris_scr_disl_13x_2y_14z_t.in"
+cwd = os.getcwd()
+gen_disl_path = './generated_dislocations'
+if os.path.isdir(gen_disl_path) is False:
+    os.mkdir( gen_disl_path )
+    
+try:
+    os.chdir(gen_disl_path)
+    print("Changed directory from {} to {}".format(cwd, gen_disl_path) )    
+except TypeError:
+    print("Could not change directory from {} to {}".format(cwd, gen_disl_path) )
+    
+
+cell_file       = "pris_scr_disl_3x_2y_14z_t.in"
 cell_inert_file = "pris_scr_disl_13x_2y_14z_inert.in"
 xyz_file        = "pris_scr_disl_13x_2y_14z_t.xyz"
 species   = "Ti"
@@ -398,3 +410,5 @@ out_file.write("   -100.0    100.0    -100.0  100.0\n"  )
     
 out_file.close()
 out_xyz_file.close()
+
+os.chdir(cwd)
