@@ -1,0 +1,414 @@
+import types
+from matplotlib import rc
+from matplotlib import rcParams
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.ticker as ticker
+import matplotlib.pyplot as pp
+import numpy as np
+import scipy as sci
+import os
+rcParams["figure.figsize"] = 4, 3
+rcParams["font.family"] = "serif"
+rcParams["font.size"] = 8
+rcParams["font.serif"] = ["DejaVu Serif"]
+rc("text", usetex=True)
+sci.set_printoptions(linewidth=200, precision=4)
+
+
+Class WriteFiles:
+
+    def __init__(self, filename ):
+        self.filename = filename
+
+    def __doc__():
+        """
+        This writes files to tbe/bop/xyz files such that they can be used. 
+        It converts Cartesian positons ONLY. 
+        """
+
+        
+
+    ########################   Convert file to XYZ   ###############################
+
+    def convert_file_to_xyz(self, plat, atom_pos, species, filename, append=False):
+
+        if type(atom_pos) == tuple:
+                atom_pos, inert_atom_pos = atom_pos
+                n_inert = len(inert_atom_pos)
+                n_at = len(atom_pos)
+                n_tot = n_at + n_inert
+        else:
+            n_tot = len(atom_pos)
+            n_at = n_tot
+
+
+        n_cell_filename   = filename + "_hom_convert.xyz"
+
+        global iterations
+
+        if append:
+            out_xyz_file  = open(n_cell_filename, mode='a')
+        else:
+            out_xyz_file  = open(n_cell_filename, mode='w+')        
+
+        out_xyz_file.write(  str(n_tot) + "\n"  )
+        out_xyz_file.write(  'Lattice=" ' + ' '.join([str(x) for x in plat.flatten() ])  + '" Properties=species:S:1:pos:R:3 \n'  )
+
+
+        for i in range(n_at):
+            out_xyz_file.write( " " + species
+                                + " " + '{:<12.8f}'.format( atom_pos[i,0] )   
+                                + " " + '{:<12.8f}'.format( atom_pos[i,1] )
+                                + " " + '{:<12.8f}'.format( atom_pos[i,2] )
+                                + " \n"                              )
+        for i in range(n_inert):
+            out_xyz_file.write( " " + species + "n"
+                                + " " + '{:<12.8f}'.format( inert_atom_pos[i,0] )   
+                                + " " + '{:<12.8f}'.format( inert_atom_pos[i,1] )
+                                + " " + '{:<12.8f}'.format( inert_atom_pos[i,2] )
+                                          + " \n"                              )
+
+        out_xyz_file.close()
+
+
+
+    def write_bop_file(self, plat, atom_pos, l,  nxyz, n_disl=4 ):
+
+        if type(atom_pos) == tuple:
+            atom_pos, inert_atom_pos = atom_pos
+            n_inert = len(inert_atom_pos)
+            n_at = len(atom_pos)
+            n_tot = n_at + n_inert
+        else:
+            n_tot = len(atom_pos)
+            n_at = n_tot
+
+        conv_to_ang = 1. / 1.8897259886
+
+        #plat *= conv_to_ang
+
+        nx, ny, nz = nxyz
+
+        flen = l * np.array([nx, ny, nz])
+
+        fname           = "cell"
+        cell_file       = fname + ".in"
+        xyz_file        = fname + "_conv.xyz"
+
+        species        = "Ti"
+        out_file       = open(cell_file, mode='w+')
+        out_xyz_file   = open(xyz_file, mode='w+')
+
+        plat_inv = np.linalg.inv(plat)
+
+        plat_b = plat / flen
+
+
+        out_file.write( " " + fname + "   hcp\n"  )
+        out_file.write( " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[0] ]) + "\n"  )
+        out_file.write( " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[1] ]) + "\n"   )
+        out_file.write( " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[2] ]) + "\n"   )
+
+
+        out_file.write( " len " + '{:<12.10f}'.format(flen[0])  
+                          + " " + '{:<12.10f}'.format(flen[1]) 
+                          + " " + '{:<12.10f}'.format(flen[2]) + "\n")
+
+        out_file.write( " latpar 1.0\n"  )
+        out_file.write( " nd " + str(n_at) + "\n"  )
+
+
+
+        for i in range(n_at):
+            pl_inv_a = plat_inv.dot( atom_pos[i] )
+            out_file.write( " " + species
+                             + " " + '{:<12.10f}'.format( pl_inv_a[0] )  
+                             + " " + '{:<12.10f}'.format( pl_inv_a[1] )
+                             + " " + '{:<12.10f}'.format( pl_inv_a[2] )
+                             + ' 0.0 0.0 \n'                              )
+        if n_inert > 0:
+            out_file.write(" ninert " + str(n_inert) + "\n" )
+            for i in range(n_inert):
+                pl_inv_a = plat_inv.dot( inert_atom_pos[i] )
+                out_file.write( " " + species
+                             + " " + '{:<12.10f}'.format( pl_inv_a[0] )   
+                             + " " + '{:<12.10f}'.format( pl_inv_a[1] )
+                             + " " + '{:<12.10f}'.format( pl_inv_a[2] )
+                             + ' 0.0 0.0 \n'                              )
+
+
+
+        out_file.write("\n nullheight       0.000000000000\n\n"  )
+
+        out_file.write(" kspace_conf\n"  )
+        out_file.write("   0 t         ! symmode symetry_enabled\n"  )
+        out_file.write("   12 10 12    ! vnkpts\n"  )
+        out_file.write("    t t t       ! offcentre\n\n"  )
+
+        out_file.write("dislocation_conf\n"  )
+        for _ in range(n_disl):
+            out_file.write("   0    ! gfbcon\n"  )
+            out_file.write("   0.0  ! radiusi\n"  )
+            out_file.write("   -100.0    100.0    -100.0  100.0\n"  )
+
+        out_file.close()
+
+
+        atom_pos_bop = np.zeros( atom_pos.shape )
+        inert_atom_pos_bop = np.zeros( inert_atom_pos.shape )
+
+        for i, a in enumerate( atom_pos ):
+
+            atom_pos_bop[i,0] = ( plat.dot( plat_inv.dot( atom_pos[i] ) ) )[0]
+            atom_pos_bop[i,1] = ( plat.dot( plat_inv.dot( atom_pos[i] ) ) )[1]
+            atom_pos_bop[i,2] = ( plat.dot( plat_inv.dot( atom_pos[i] ) ) )[2]
+
+        for i, a in enumerate( inert_atom_pos ):
+            inert_atom_pos_bop[i,0] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[0]
+            inert_atom_pos_bop[i,1] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[1]
+            inert_atom_pos_bop[i,2] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[2] 
+
+
+        convert_file_to_xyz( plat, (atom_pos_bop, inert_atom_pos_bop) , species, 'cell_' + self.filename )
+
+
+    def write_site_file( s_file, tot_atom_pos, species, alat, plat):
+        
+        convert_to_ryd = 1.8897259886
+
+        atom_pos, inert_atom_pos = tot_atom_pos 
+        n_inert = len(inert_atom_pos)
+        n_at = len(atom_pos)
+
+        atom_pos = ( atom_pos / alat ).round(12)
+        inert_atom_pos = ( inert_atom_pos / alat ).round(12)
+
+        site_file = open( s_file, mode='w' )
+        site_info = ( '% site-data vn=3.0 fast io=63 nbas='  + str(n_at + n_inert) + ' alat=' + str(alat)
+                      + ' plat=' + ' '.join([str(x) for x in plat.flatten()/alat ])  + '\n' )
+        site_file.write(site_info)
+        site_file.write('#                        pos vel                                    eula                   vshft PL rlx\n')
+
+        for i in range(n_at):
+            site_file.write( " " + species
+                             + " " + '{:<12.10f}'.format( atom_pos[i,0] )   
+                             + " " + '{:<12.10f}'.format( atom_pos[i,1] )
+                             + " " + '{:<12.10f}'.format( atom_pos[i,2] )
+                             + " 0.0000000 0.0000000 0.0000000    0.0000000    0.0000000    0.0000000 0.000000  0 001"
+                             + " \n"                              )
+        for i in range(n_inert):
+            site_file.write( " " + species
+                             + " " + '{:<12.10f}'.format( inert_atom_pos[i,0] ) 
+                             + " " + '{:<12.10f}'.format( inert_atom_pos[i,1] )
+                             + " " + '{:<12.10f}'.format( inert_atom_pos[i,2] )
+                             + " 0.0000000 0.0000000 0.0000000    0.0000000    0.0000000    0.0000000 0.000000  0 000"
+                             + " \n"                              )
+        site_file.close()
+
+        tot_atom_pos = ( tot_atom_pos[0] / convert_to_ryd   , tot_atom_pos[1] / convert_to_ryd  )
+
+        convert_file_to_xyz(plat / convert_to_ryd, tot_atom_pos, species, 'site_' + self.filename)
+
+
+        
+    def convert_file_to_xyz(self, plat, atom_pos, species, filename, iterations=0):
+
+        # print(plat, atom_pos, species)
+
+        if type(atom_pos) == tuple:
+            atom_pos, inert_atom_pos = atom_pos
+            if inert_atom_pos is not None:
+                n_inert = len(inert_atom_pos)
+            else:
+                n_inert = 0
+            n_at = len(atom_pos)
+            n_tot = n_at + n_inert
+        else:
+            n_tot = len(atom_pos)
+            n_at = n_tot
+
+        n_cell_filename = filename + "_convert.xyz"
+
+        if iterations == 0:
+            out_xyz_file = open(n_cell_filename, mode='w+')
+        else:
+            out_xyz_file = open(n_cell_filename, mode='a')
+
+        out_xyz_file.write(str(n_tot) + "\n")
+        out_xyz_file.write('Lattice=" ' + ' '.join(
+            [str(x) for x in plat.flatten()]) + '" Properties=species:S:1:pos:R:3 \n')
+
+        for i in range(n_at):
+            out_xyz_file.write(" " + species
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 0])
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 1])
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 2])
+                               + " \n")
+        for i in range(n_inert):
+            out_xyz_file.write(" " + species + "n"
+                               + " " + '{:<12.8f}'.format(inert_atom_pos[i, 0])
+                               + " " + '{:<12.8f}'.format(inert_atom_pos[i, 1])
+                               + " " + '{:<12.8f}'.format(inert_atom_pos[i, 2])
+                               + " \n")
+
+        out_xyz_file.close()
+
+    def write_bop_file(self,  tot_atom_pos, file_ext=""):
+        convert_to_ryd = 1.8897259886
+        species = self.species
+        alat = self.alat
+        plat = self.plat
+        l = self.lengths
+        flen = self.final_lengths
+        file_ext = "cell" + file_ext
+        atom_pos, inert_atom_pos = tot_atom_pos
+
+        cell_file = file_ext + ".in"
+        xyz_file = file_ext + ".xyz"
+
+        out_file = open(cell_file, mode='w+')
+        out_xyz_file = open(xyz_file, mode='w+')
+
+        n_at = len(atom_pos)
+        if inert_atom_pos is not None:
+            n_inert = len(inert_atom_pos)
+        else:
+            n_inert = 0
+        n_atoms_tot = n_at + n_inert
+
+        plat_inv = np.linalg.inv(plat)
+
+        plat_b = plat / flen
+
+        out_file.write(" " + self.labels[0] + '  ' + self.labels[1] + "\n")
+        out_file.write(
+            " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[0]]) + "\n")
+        out_file.write(
+            " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[1]]) + "\n")
+        out_file.write(
+            " " + ' '.join(['{:<12.10f}'.format(x) for x in plat_b[2]]) + "\n")
+
+        out_file.write(" len " + '{:<12.10f}'.format(flen[0])
+                       + " " + '{:<12.10f}'.format(flen[1])
+                       + " " + '{:<12.10f}'.format(flen[2]) + "\n")
+
+        out_file.write(" latpar 1.0\n")
+        out_file.write(" nd " + str(n_at) + "\n")
+
+        for i in range(n_at):
+            pl_inv_a = plat_inv.dot(atom_pos[i])
+            out_file.write(" " + species
+                           + " " + '{:<12.10f}'.format(pl_inv_a[0])
+                             + " " + '{:<12.10f}'.format(pl_inv_a[1])
+                             + " " + '{:<12.10f}'.format(pl_inv_a[2])
+                             + ' 0.0 0.0 \n')
+        if n_inert > 0:
+            out_file.write(" ninert " + str(n_inert) + "\n")
+            for i in range(n_inert):
+                pl_inv_a = plat_inv.dot(inert_atom_pos[i])
+                out_file.write(" " + species
+                               + " " + '{:<12.10f}'.format(pl_inv_a[0])
+                               + " " + '{:<12.10f}'.format(pl_inv_a[1])
+                               + " " + '{:<12.10f}'.format(pl_inv_a[2])
+                               + ' 0.0 0.0 \n')
+
+        out_file.write("\n nullheight       0.000000000000\n\n")
+
+        out_file.write(" kspace_conf\n")
+        out_file.write("   0 t         ! symmode symetry_enabled\n")
+        out_file.write("   12 10 12    ! vnkpts\n")
+        out_file.write("    t t t       ! offcentre\n\n")
+
+        out_file.write("dislocation_conf\n")
+        for i in range(self.n_disl):
+            out_file.write("   0    ! gfbcon\n")
+            out_file.write("   0.0  ! radiusi\n")
+            out_file.write("   -100.0    100.0    -100.0  100.0\n")
+
+        out_file.close()
+
+        atom_pos_bop = np.zeros(atom_pos.shape)
+
+        for i, a in enumerate(atom_pos):
+
+            atom_pos_bop[i, 0] = (plat.dot(plat_inv.dot(atom_pos[i])))[0]
+            atom_pos_bop[i, 1] = (plat.dot(plat_inv.dot(atom_pos[i])))[1]
+            atom_pos_bop[i, 2] = (plat.dot(plat_inv.dot(atom_pos[i])))[2]
+
+        if n_inert > 0:
+            inert_atom_pos_bop = np.zeros(inert_atom_pos.shape)
+            for i, a in enumerate(inert_atom_pos):
+                inert_atom_pos_bop[i, 0] = (
+                    plat.dot(plat_inv.dot(inert_atom_pos[i])))[0]
+                inert_atom_pos_bop[i, 1] = (
+                    plat.dot(plat_inv.dot(inert_atom_pos[i])))[1]
+                inert_atom_pos_bop[i, 2] = (
+                    plat.dot(plat_inv.dot(inert_atom_pos[i])))[2]
+            else:
+                inert_atom_pos_bop = None
+
+        self.convert_file_to_xyz(
+            plat, (atom_pos_bop, inert_atom_pos_bop), species, file_ext)
+
+    def write_site_file(self, tot_atom_pos, file_ext="site"):
+        convert_to_ryd = 1.8897259886
+        species = self.species
+        alat = self.alat
+
+        if self.geometry == 'circle':
+            self.plat[0] = np.array([self.inert_rad2, 0., 0.])
+            self.plat[1] = np.array([0., self.inert_rad2, 0.])
+            plat = self.plat
+        else:
+            plat = self.plat
+
+        atom_pos, inert_atom_pos = tot_atom_pos
+        if inert_atom_pos is not None:
+            n_inert = len(inert_atom_pos)
+            inert_atom_pos = (inert_atom_pos / alat).round(12)
+        else:
+            n_inert = 0
+        n_at = len(atom_pos)
+
+        atom_pos = (atom_pos / alat).round(12)
+
+        site_file = open(file_ext, mode='w')
+        site_info = ('% site-data vn=3.0 fast io=63 nbas=' + str(n_at + n_inert) + ' alat=' + str(alat)
+                     + ' plat=' + ' '.join([str(x) for x in plat.flatten()/alat]) + '\n')
+        site_file.write(site_info)
+        site_file.write(
+            '#                        pos vel                                    eula                   vshft PL rlx\n')
+
+        for i in range(n_at):
+            site_file.write(" " + species
+                            + " " + '{:<12.10f}'.format(atom_pos[i, 0])
+                            + " " + '{:<12.10f}'.format(atom_pos[i, 1])
+                            + " " + '{:<12.10f}'.format(atom_pos[i, 2])
+                            + " 0.0000000 0.0000000 0.0000000    0.0000000    0.0000000    0.0000000 0.000000  0 001"
+                            + " \n")
+        for i in range(n_inert):
+            site_file.write(" " + species
+                            + " " + '{:<12.10f}'.format(inert_atom_pos[i, 0])
+                            + " " + '{:<12.10f}'.format(inert_atom_pos[i, 1])
+                            + " " + '{:<12.10f}'.format(inert_atom_pos[i, 2])
+                            + " 0.0000000 0.0000000 0.0000000    0.0000000    0.0000000    0.0000000 0.000000  0 000"
+                            + " \n")
+        site_file.close()
+
+        tot_atom_pos_xyz = (tot_atom_pos[0] / convert_to_ryd, None)
+        if tot_atom_pos[1] is not None:
+            tot_atom_pos_xyz = (
+                tot_atom_pos[0] / convert_to_ryd, tot_atom_pos[1] / convert_to_ryd)
+
+        self.convert_file_to_xyz(
+            plat, tot_atom_pos_xyz, species, 'site_' + file_ext)
+
+
+
+
+
+
+
+
+
+

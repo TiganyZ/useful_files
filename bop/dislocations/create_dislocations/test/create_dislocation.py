@@ -150,3 +150,47 @@ os.chdir(cwd)
 
 
 
+# # Working directory (If not specified will use current working directory)
+# cwd = os.getcwd()
+# gen_disl_path = cwd + '/generated_dislocations'
+
+# species = "Ti"
+# cell_file = "prismatic_screw_"
+
+# radii = 20, 25
+# ninert = radii
+
+# alat = 5.575
+# print("Writing disl supercell")
+# ds = Disl_supercell(unit_cell, lengths, alat, plat, nxyz,  # geometry='square',
+#                     ninert=ninert, disl=disl_disp, n_disl=1)
+
+# ds.write_cell_with_dislocation()
+
+
+# ds.alat = 2.9012
+# ds.b 
+# ds.lengths = np.array([5.026674058492405,
+#                     2.9021516207990987,
+#                     4.679881023538525])
+
+# ds.write_cell_with_dislocation(output='bop')
+
+# def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=None, disl=None, n_disl=1,
+#              rcore=None, rcphi=0., rotation=np.eye(3), species="Ti",
+#              cwd='./', output_path='./generated_dislocations', output='bop',
+#              filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):
+
+# Specification of where the dislocation should be
+
+# luc = len(unit_cell)
+
+
+# # Number of unit cells before inert atoms appear
+# ninertx = np.array([1, 11])
+# ninerty = np.array([0, 2])
+# ninertz = np.array([1, 12])
+# ninert = (ninertx, ninerty, ninertz)
+# rcore = None
+# rcphi = 90. * np.pi / 180.
+
