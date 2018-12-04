@@ -76,13 +76,13 @@ plot = True
 
 # Number of periodic images
 # These can be truncated depending on the geometry chosen. 
-nxyz = (15, 15, 15)
+nxyz = (9, 15, 15)
 
 # Number of unit cells before inert atoms appear
 ## For Square geometry
-ninertx = np.array( [ 0, 15 ] )
+ninertx = np.array( [ 0, 9 ] )
 ninerty = np.array( [ 0, 15 ] )
-ninertz = np.array( [ 1, 15 ] )
+ninertz = np.array( [ 0, 15 ] )
 n_inert = (ninertx, ninerty, ninertz)
 
 # Where the dislocation is situated
@@ -134,23 +134,28 @@ alat_tbe = 5.575
 clat_tbe = 4.683
 q = clat_tbe / alat_tbe
 
-lengths_tbe = np.array([ alat_tbe,
+lengths_tbe = np.array([ alat_tbe * 3**(0.5),
                          alat_tbe,
-                         alat_tbe ])
+                         clat_tbe ])
 
-plat = np.array([ [ 0.,           -1, 0. ],
-                  [ 3**(0.5)/2., 0.5, 0. ],
-                  [ 0.,            0, q  ] ] )
+# lengths_tbe = np.array([ alat_tbe,
+#                          alat_tbe,
+#                          alat_tbe ])
 
-plat_inv = np.linalg.inv(plat)
+# plat = np.array([ [ 0.,           -1, 0. ],
+#                   [ 3**(0.5)/2., 0.5, 0. ],
+#                   [ 0.,            0, q  ] ] )
 
-unit_cell_prim_hcp = np.array([ [ 0.,  0., 0. ],
-                       [ 1./(2.*3**(0.5)), -1/2.,  q/2] ] )
+# plat_inv = np.linalg.inv(plat)
 
-for i, p in enumerate(  unit_cell_prim_hcp ):
-    unit_cell_prim_hcp[i] = plat_inv.dot( p )
+# unit_cell_prim_hcp = np.array([ [ 0.,  0., 0. ],
+#                        [ 1./(2.*3**(0.5)), -1/2.,  q/2] ] )
 
-print("unit cell prim",unit_cell_prim_hcp)
+# for i, p in enumerate(  unit_cell_prim_hcp ):
+#     unit_cell_prim_hcp[i] = plat_inv.dot( p )
+    
+# unit_cell = unit_cell_prim_hcp
+# print("unit cell prim",unit_cell_prim_hcp)
                        
 
 # Burger's Vector
@@ -159,15 +164,26 @@ b = sci.array([0., 0., alat_tbe])
 # Dislocation Coordinate System
 #disl_coord = np.eye(3)
 
-dis_tbe = Dislocation(C, b=b, a=alat_tbe,
+dis_tbe1 = Dislocation(C, b=b, a=alat_tbe, 
                   pure=pure, screw=screw, plot=plot, T=disl_coord)
+
+dis_tbe2 = Dislocation(C, b=-b, a=alat_tbe,
+                  pure=pure, screw=screw, plot=plot, T=disl_coord)
+
+dis_tbe = [dis_tbe1, dis_tbe2]
+ndis=2
+
+rcore1 = np.array( [ (1./3.) * (plat[0] + plat[2])   ]  )*lengths_tbe * np.asarray(nxyz)
+rcore2 = np.array( [ (2./3.) * (plat[0] + plat[2])   ]  )*lengths_tbe * np.asarray(nxyz)
+
+rcore = [rcore1, rcore2]
 
 #ninert = (50, 55)
 ninert = n_inert
 print("Writing disl supercell")
-ds = Disl_supercell(unit_cell_prim_hcp, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
-                    rcphi=90. * np.pi/180,
-                    ninert=ninert, disl=dis_tbe, n_disl=1, disl_axis=disl_axis)
+ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
+                    rcphi=[90. * np.pi/180, 90. * np.pi/180], rcore=rcore,
+                    ninert=ninert, disl=dis_tbe, n_disl=ndis, disl_axis=disl_axis)
 
 cwd = os.getcwd()
 ds.write_cell_with_dislocation(axis=disl_axis, add_name="prim")

@@ -136,11 +136,14 @@ class Disl_supercell:
                 dis = self.disl
                 pure = dis.pure
                 screw = dis.screw
+                rcphi = self.rcphi
                 rcore = rcores[0]
             else:
                 dis = self.disl[j]
-                rcore = rcores[j]
+                rcore = rcores[j][0]
+                rcphi = self.rcphi[j]
                 pure = dis.pure
+                print(rcore, rcores)
                 screw = dis.screw
             for position in atoms:
                 if rotation is not None:
@@ -149,10 +152,10 @@ class Disl_supercell:
                     r12 = np.sqrt(
                           (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    s = dis.u_screw( ( r12 * np.cos( self.rcphi +
+                    s = dis.u_screw( ( r12 * np.cos( rcphi +
                                                    np.arctan2( position[axis-2] - rcore[axis-2],
                                                                position[axis-1] - rcore[axis-1] ) )),
-                                     ( r12 * np.sin( self.rcphi +
+                                     ( r12 * np.sin( rcphi +
                                                    np.arctan2( position[axis-2] - rcore[axis-2],
                                                                position[axis-1] - rcore[axis-1] ) )))
                     position[axis] += s
