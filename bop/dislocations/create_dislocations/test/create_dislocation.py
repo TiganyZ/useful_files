@@ -49,7 +49,7 @@ unit_cell = np.array([[0.5, 1.0, 0.0],
 
 
 
-# Elastic constants in units of 10^{9} Pa (Can actually be any units)
+# Elastic constants in units of 10^{9} Pa (Can actually be in any units)
 c11 = sci.dtype(sci.float128)
 c11 = 1.761e2
 c12 = sci.dtype(sci.float128)
@@ -127,6 +127,32 @@ os.chdir(cwd)
 
 #####################  TBE #########################
 
+
+
+
+alat_tbe = 5.575
+clat_tbe = 4.683
+q = clat_tbe / alat_tbe
+
+lengths_tbe = np.array([ alat_tbe,
+                         alat_tbe,
+                         alat_tbe ])
+
+plat = np.array([ [ 0.,           -1, 0. ],
+                  [ 3**(0.5)/2., 0.5, 0. ],
+                  [ 0.,            0, q  ] ] )
+
+plat_inv = np.linalg.inv(plat)
+
+unit_cell_prim_hcp = np.array([ [ 0.,  0., 0. ],
+                       [ 1./(2.*3**(0.5)), -1/2.,  q/2] ] )
+
+for i, p in enumerate(  unit_cell_prim_hcp ):
+    unit_cell_prim_hcp[i] = plat_inv.dot( p )
+
+print("unit cell prim",unit_cell_prim_hcp)
+                       
+
 # Burger's Vector
 b = sci.array([0., 0., alat_tbe])
 
@@ -137,60 +163,16 @@ dis_tbe = Dislocation(C, b=b, a=alat_tbe,
                   pure=pure, screw=screw, plot=plot, T=disl_coord)
 
 #ninert = (50, 55)
-
+ninert = n_inert
 print("Writing disl supercell")
-ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz, #  geometry='square',
+ds = Disl_supercell(unit_cell_prim_hcp, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
                     rcphi=90. * np.pi/180,
                     ninert=ninert, disl=dis_tbe, n_disl=1, disl_axis=disl_axis)
 
 cwd = os.getcwd()
-ds.write_cell_with_dislocation(axis=disl_axis)
+ds.write_cell_with_dislocation(axis=disl_axis, add_name="prim")
 os.chdir(cwd)
 
 
 
-
-# # Working directory (If not specified will use current working directory)
-# cwd = os.getcwd()
-# gen_disl_path = cwd + '/generated_dislocations'
-
-# species = "Ti"
-# cell_file = "prismatic_screw_"
-
-# radii = 20, 25
-# ninert = radii
-
-# alat = 5.575
-# print("Writing disl supercell")
-# ds = Disl_supercell(unit_cell, lengths, alat, plat, nxyz,  # geometry='square',
-#                     ninert=ninert, disl=disl_disp, n_disl=1)
-
-# ds.write_cell_with_dislocation()
-
-
-# ds.alat = 2.9012
-# ds.b 
-# ds.lengths = np.array([5.026674058492405,
-#                     2.9021516207990987,
-#                     4.679881023538525])
-
-# ds.write_cell_with_dislocation(output='bop')
-
-# def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=None, disl=None, n_disl=1,
-#              rcore=None, rcphi=0., rotation=np.eye(3), species="Ti",
-#              cwd='./', output_path='./generated_dislocations', output='bop',
-#              filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):
-
-# Specification of where the dislocation should be
-
-# luc = len(unit_cell)
-
-
-# # Number of unit cells before inert atoms appear
-# ninertx = np.array([1, 11])
-# ninerty = np.array([0, 2])
-# ninertz = np.array([1, 12])
-# ninert = (ninertx, ninerty, ninertz)
-# rcore = None
-# rcphi = 90. * np.pi / 180.
 

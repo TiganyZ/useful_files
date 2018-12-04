@@ -47,10 +47,13 @@ class WriteFiles:
     def convert_file_to_xyz(self, plat, atom_pos, species, filename, append=False):
 
         if type(atom_pos) == tuple:
-                atom_pos, inert_atom_pos = atom_pos
+            atom_pos, inert_atom_pos = atom_pos
+            if inert_atom_pos is None:
+                n_inert = 0
+            else:
                 n_inert = len(inert_atom_pos)
-                n_at = len(atom_pos)
-                n_tot = n_at + n_inert
+            n_at = len(atom_pos)
+            n_tot = n_at + n_inert
         else:
             n_tot = len(atom_pos)
             n_at = n_tot
@@ -88,7 +91,10 @@ class WriteFiles:
 
         if type(atom_pos) == tuple:
             atom_pos, inert_atom_pos = atom_pos
-            n_inert = len(inert_atom_pos)
+            if inert_atom_pos is None:
+                n_inert = 0
+            else:
+                n_inert = len(inert_atom_pos)
             n_at = len(atom_pos)
             n_tot = n_at + n_inert
         else:
@@ -155,9 +161,8 @@ class WriteFiles:
 
         out_file.close()
 
-
+        
         atom_pos_bop = np.zeros( atom_pos.shape )
-        inert_atom_pos_bop = np.zeros( inert_atom_pos.shape )
 
         for i, a in enumerate( atom_pos ):
 
@@ -165,10 +170,14 @@ class WriteFiles:
             atom_pos_bop[i,1] = ( plat.dot( plat_inv.dot( atom_pos[i] ) ) )[1]
             atom_pos_bop[i,2] = ( plat.dot( plat_inv.dot( atom_pos[i] ) ) )[2]
 
-        for i, a in enumerate( inert_atom_pos ):
-            inert_atom_pos_bop[i,0] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[0]
-            inert_atom_pos_bop[i,1] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[1]
-            inert_atom_pos_bop[i,2] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[2] 
+        if inert_atom_pos is not None:
+            inert_atom_pos_bop = np.zeros( inert_atom_pos.shape )
+            for i, a in enumerate( inert_atom_pos ):
+                inert_atom_pos_bop[i,0] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[0]
+                inert_atom_pos_bop[i,1] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[1]
+                inert_atom_pos_bop[i,2] = (  plat.dot( plat_inv.dot( inert_atom_pos[i] ) ) )[2]
+        else:
+            inert_atom_pos_bop = None
 
 
         self.convert_file_to_xyz( plat, (atom_pos_bop, inert_atom_pos_bop) , species, self.filename )
@@ -178,11 +187,14 @@ class WriteFiles:
 
         if type(tot_atom_pos) == tuple:
             atom_pos, inert_atom_pos = tot_atom_pos
-            n_inert = len(inert_atom_pos)
+            if inert_atom_pos is None:
+                n_inert = 0
+            else:
+                n_inert = len(inert_atom_pos)
+                inert_atom_pos = ( inert_atom_pos / alat ).round(12)
             n_at = len(atom_pos)
             n_tot = n_at + n_inert
             atom_pos = ( atom_pos / alat ).round(12)
-            inert_atom_pos = ( inert_atom_pos / alat ).round(12)
         else:
             n_tot = len(atom_pos)
             n_at = n_tot
@@ -214,7 +226,10 @@ class WriteFiles:
                              + " \n"                              )
         site_file.close()
 
-        tot_atom_pos = ( tot_atom_pos[0] / convert_to_ryd   , tot_atom_pos[1] / convert_to_ryd  )
+        if tot_atom_pos[1] is not None:
+            tot_atom_pos = ( tot_atom_pos[0] / convert_to_ryd   , tot_atom_pos[1] / convert_to_ryd  )
+        else:
+            tot_atom_pos = ( tot_atom_pos[0] / convert_to_ryd   , tot_atom_pos[1] )
 
         self.convert_file_to_xyz( plat / convert_to_ryd, tot_atom_pos, species, self.filename)
 

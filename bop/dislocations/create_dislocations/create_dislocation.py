@@ -49,7 +49,7 @@ unit_cell = np.array([[0.5, 1.0, 0.0],
 
 
 
-# Elastic constants in units of 10^{9} Pa (Can actually be any units)
+# Elastic constants in units of 10^{9} Pa (Can actually be in any units)
 c11 = sci.dtype(sci.float128)
 c11 = 1.761e2
 c12 = sci.dtype(sci.float128)
@@ -82,7 +82,7 @@ nxyz = (15, 15, 15)
 ## For Square geometry
 ninertx = np.array( [ 0, 15 ] )
 ninerty = np.array( [ 0, 15 ] )
-ninertz = np.array( [ 1, 15 ] )
+ninertz = np.array( [ 0, 15 ] )
 n_inert = (ninertx, ninerty, ninertz)
 
 # Where the dislocation is situated
@@ -127,6 +127,32 @@ os.chdir(cwd)
 
 #####################  TBE #########################
 
+
+
+
+alat_tbe = 5.575
+clat_tbe = 4.683
+q = clat_tbe / alat_tbe
+
+lengths_tbe = np.array([ alat_tbe,
+                         alat_tbe,
+                         alat_tbe ])
+
+plat = np.array([ [ 0.,           -1, 0. ],
+                  [ 3**(0.5)/2., 0.5, 0. ],
+                  [ 0.,            0, q  ] ] )
+
+plat_inv = np.linalg.inv(plat)
+
+unit_cell_prim_hcp = np.array([ [ 0.,  0., 0. ],
+                       [ 1./(2.*3**(0.5)), -1/2.,  q/2] ] )
+
+for i, p in enumerate(  unit_cell_prim_hcp ):
+    unit_cell_prim_hcp[i] = plat_inv.dot( p )
+
+print("unit cell prim",unit_cell_prim_hcp)
+                       
+
 # Burger's Vector
 b = sci.array([0., 0., alat_tbe])
 
@@ -137,14 +163,14 @@ dis_tbe = Dislocation(C, b=b, a=alat_tbe,
                   pure=pure, screw=screw, plot=plot, T=disl_coord)
 
 #ninert = (50, 55)
-
+ninert = n_inert
 print("Writing disl supercell")
-ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz, #  geometry='square',
+ds = Disl_supercell(unit_cell_prim_hcp, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
                     rcphi=90. * np.pi/180,
                     ninert=ninert, disl=dis_tbe, n_disl=1, disl_axis=disl_axis)
 
 cwd = os.getcwd()
-ds.write_cell_with_dislocation(axis=disl_axis)
+ds.write_cell_with_dislocation(axis=disl_axis, add_name="prim")
 os.chdir(cwd)
 
 

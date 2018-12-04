@@ -18,7 +18,7 @@ from write_input_files import WriteFiles as wf
 class Disl_supercell:
     def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=(20., 30.), disl=None, n_disl=1,
                  rcore=None, rcphi=0., rotation=np.eye(3), species="Ti", pure=True, screw=True, disl_axis=2,
-                 output='bop',
+                 output='bop', type_plat='square',
                  filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):
 
         self.disl = disl
@@ -36,7 +36,8 @@ class Disl_supercell:
         self.rotation = rotation
         self.geometry = geometry
         self.unit_cell = unit_cell
-        self.disl_axis = disl_axis        
+        self.disl_axis = disl_axis
+        self.type_plat = type_plat
         self.final_lengths = lengths * nxyz
 
         ##############################################################################
@@ -101,13 +102,17 @@ class Disl_supercell:
 
         elif self.geometry == 'square':
             ninertx, ninerty, ninertz = self.ninert
+            nx, ny, nz = self.nxyz
 
             def inert_cond(self, i, j, k):
-                c0 = i < ninertx[0]*self.lengths[0] or j < ninerty[0] * \
-                    self.lengths[1] or k < ninertz[0]*self.lengths[2]
-                c1 = i > ninertx[1]*self.lengths[0] or j > ninerty[1] * \
-                    self.lengths[1] or k > ninertz[1]*self.lengths[2]
-                return c0 or c1
+                c0 = i < ninertx[0] or j < ninerty[0] or k < ninertz[0] 
+                c1 = i > ninertx[1] or j > ninerty[1] or k > ninertz[1] 
+                c2 = i > nx         or j > ny         or k > nz 
+
+                if c2:
+                    return 'out of bounds'
+                else:               
+                    return c0 or c1
         else:
             def inert_cond(self, i, j, k):
                 return False
@@ -165,18 +170,24 @@ class Disl_supercell:
         inert_counter = 0
         nx, ny, nz = self.nxyz
         luc = len(self.unit_cell)
+        print("lengths\n",self.lengths)
+        print("plat\n",self.plat, '\n', self.plat * self.lengths * np.asarray(self.nxyz))
+        print("unit cell\n",uc )
         for i in range(nx):
             for j in range(ny):
                 for k in range(nz):
                     for p in range(luc):
-                        r1 = (uc[p, 0] + i) * l[0]
-                        r2 = (uc[p, 1] + j) * l[1]
-                        r3 = (uc[p, 2] + k) * l[2]
+                        pl =  i * self.plat[0] + j * self.plat[1] + k * self.plat[2] 
+                        r = ( self.plat.dot( uc[p, :] ) + pl ) * self.lengths
 
-                        r1, r2, r3 = tuple(
-                            self.rotation.dot(np.array([r1, r2, r3])))
-                        #print(r1, r2, r3)
-                        inert_condition = self.inert_cond(r1, r2, r3)
+                        r1, r2, r3 = tuple( self.rotation.dot( r ))
+                        
+                        if self.geometry == 'square':
+                            inert_condition = self.inert_cond( i,j,k )
+                        else:
+                            inert_condition = self.inert_cond(r1, r2, r3)
+
+                        
                         if inert_condition != 'out of bounds':
                             if inert_condition:
                                 inert_counter += 1
