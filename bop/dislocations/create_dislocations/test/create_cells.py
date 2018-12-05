@@ -6,7 +6,7 @@ import matplotlib.ticker as ticker
 import matplotlib.pyplot as pp
 import numpy as np
 import scipy as sci
-import os
+import os, copy
 rcParams["figure.figsize"] = 4, 3
 rcParams["font.family"] = "serif"
 rcParams["font.size"] = 8
@@ -18,7 +18,7 @@ from write_input_files import WriteFiles as wf
 class Disl_supercell:
     def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=(20., 30.), disl=None, n_disl=1,
                  rcore=None, rcphi=0., rotation=np.eye(3), species="Ti", pure=True, screw=True, disl_axis=2,
-                 output='bop', type_plat='square',
+                 output='bop', type_plat='square', full_anis=False, in_units_of_len=False, 
                  filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):
 
         self.disl = disl
@@ -36,10 +36,11 @@ class Disl_supercell:
         self.rotation = rotation
         self.geometry = geometry
         self.unit_cell = unit_cell
+        self.full_anis = full_anis
         self.disl_axis = disl_axis
         self.type_plat = type_plat
         self.final_lengths = lengths * nxyz
-
+        self.in_units_of_len = in_units_of_len
         ##############################################################################
         #######################   Specifying dislocation coords   ####################
 
@@ -119,6 +120,50 @@ class Disl_supercell:
 
         self.inert_cond = types.MethodType(inert_cond, self)
 
+    def add_dislocation_anis(self, atoms, axis=2, rotation=None):
+
+        rcores = self.rcore
+        rcphi = self.rcphi
+        screw = self.screw
+        pure = self.pure
+
+        print(rcores)
+
+        # axis is the displacement in z direction for screw dislocation by default.
+        # For edge dislocation, axis is the one that is *not* displaced.
+
+        for j in range(self.n_disl):
+            if self.n_disl == 1:
+                dis = self.disl
+                rcphi = self.rcphi
+                rcore = rcores[0]
+            else:
+                dis = self.disl[j]
+                rcore = rcores[j][0]
+                rcphi = self.rcphi[j]
+                print(rcore, rcores)
+            for position in atoms:
+                if rotation is not None:
+                    position = rotation.dot( position  )
+                if screw:
+                    r12 = np.sqrt(
+                          (position[axis-2] - rcore[axis-2]) ** 2
+                        + (position[axis-1] - rcore[axis-1]) ** 2)
+                    s = dis( ( r12 * np.cos( rcphi +
+                                                   np.arctan2( position[axis-2] - rcore[axis-2],
+                                                               position[axis-1] - rcore[axis-1] ) )),
+                                     ( r12 * np.sin( rcphi +
+                                                   np.arctan2( position[axis-2] - rcore[axis-2],
+                                                               position[axis-1] - rcore[axis-1] ) )))
+                    position[axis] += s
+                elif pure:
+                    # Pure Edge dislocation
+                    position[axis - 2] += dis(positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1], k=0)
+                    position[axis - 1] += dis(positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1], k=1)
+
+        return atoms
+
+        
     def add_dislocation(self, atoms, axis=2, rotation=None):
 
         rcores = self.rcore
@@ -126,6 +171,7 @@ class Disl_supercell:
         screw = self.screw
         pure = self.pure
 
+        atom_copy = copy.copy(atoms)
         print(rcores)
 
         # axis is the displacement in z direction for screw dislocation by default.
@@ -164,6 +210,7 @@ class Disl_supercell:
                     position[axis - 2] += dis.u_edge(positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
                     position[axis - 1] += dis.u_edge(positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
 
+        print(atom_copy-atoms)
         return atoms
 
     def get_atoms(self):
@@ -180,11 +227,32 @@ class Disl_supercell:
             for j in range(ny):
                 for k in range(nz):
                     for p in range(luc):
-                        pl =  i * self.plat[0] + j * self.plat[1] + k * self.plat[2] 
-                        r = ( self.plat.dot( uc[p, :] ) + pl ) * self.lengths
 
-                        r1, r2, r3 = tuple( self.rotation.dot( r ))
+                        if not self.in_units_of_len:
+                            dr =  i * self.plat[0] * l[0] + j * self.plat[1] * l[1] + k * self.plat[2] * l[2]
+                            r = dr + uc[p,:] * self.alat
+                            r1, r2, r3 = tuple(r)
+                        else:
+                            r = self.plat.dot( uc[p,:] * self.lengths ) * self.lengths + np.array([i,j,k])
+                            r1, r2, r3 = tuple(r)
+
+                            r1 =  ( uc[p,0] + i ) * l[0] 
+                            r2 =  ( uc[p,1] + j ) * l[1]
+                            r3 =  ( uc[p,2] + k ) * l[2]
+                            r = np.array([r1,r2,r3])
+
+
                         
+                        # print("plat", self.plat)
+                        # dr =  i * self.plat[0] * l[0] + j * self.plat[1] * l[1] + k * self.plat[2] * l[2]
+                        # r =  uc[p, :] * self.lengths + dr
+                        print(uc[p,:])
+                        print("r",r)
+                        
+
+                        self.rotation = np.eye(3)
+                        r1, r2, r3 = tuple( self.rotation.dot( r ))
+                        print("ragain",r)
                         if self.geometry == 'square':
                             inert_condition = self.inert_cond( i,j,k )
                         else:
@@ -217,11 +285,20 @@ class Disl_supercell:
     def write_cell_with_dislocation(self, output='tbe', add_name = "", axis=2):
 
         atoms, inert_atoms = self.get_atoms()
-        atoms_with_disl = self.add_dislocation(atoms, axis=axis)
+        
+        if self.full_anis:
+            atoms_with_disl = self.add_dislocation_anis(atoms, axis=axis)
+        else:
+            atoms_with_disl = self.add_dislocation(atoms, axis=axis)
+            
         if inert_atoms is not None:
-            inert_with_disl = self.add_dislocation(inert_atoms, axis=axis)
+            if self.full_anis:
+                inert_with_disl = self.add_dislocation_anis(inert_atoms, axis=axis)
+            else:
+                inert_with_disl = self.add_dislocation(inert_atoms, axis=axis)
         else:
             inert_with_disl = None
+            
         all_atoms = (atoms_with_disl, inert_with_disl)
 
         file_ext = "_{}x_{}y_{}z_{}_{}_disl".format(
