@@ -56,7 +56,7 @@ class WriteFiles:
             n_tot = len(atom_pos)
             n_at = n_tot
 
-        print("in convert atom 27", atom_pos[27])
+
 
         n_cell_filename = filename + "_convert.xyz"
 

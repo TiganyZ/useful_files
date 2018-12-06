@@ -1,3 +1,6 @@
+from scipy.linalg import eig, det
+import scipy as sci
+import numpy as np
 import matplotlib.pyplot as pp
 import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -8,103 +11,90 @@ rcParams["figure.figsize"] = 4, 3
 rcParams["font.family"] = "serif"
 rcParams["font.size"] = 8
 rcParams["font.serif"] = ["DejaVu Serif"]
-rc("text", usetex = True)
+rc("text", usetex=True)
 
-import numpy as np
 #import sympy as sp
-import scipy as sci
-from scipy.linalg import eig, det
 
-#sp.init_printing()
-sci.set_printoptions(linewidth=200, precision = 4)
-
+# sp.init_printing()
+sci.set_printoptions(linewidth=200, precision=4)
 
 
 ################################################################################
 #################    Definition of Cubic HCP Elastic constants     #############
 
 
-
 def contract_index(i, j):
-    
-    if i == j:  
-        if i == 1- 1:
-            i1 = 1- 1
-        elif i == 2- 1:
-            i1 = 2- 1
-        elif i == 3- 1:
-            i1 = 3- 1
-    elif i == 1- 1:
-        if j == 2- 1:
-            i1 = 6- 1
-        elif j == 3- 1:
-            i1 = 8- 1
-    elif i == 2- 1:
-        if j == 3- 1:
-            i1 = 4- 1
-        elif j == 1- 1:
-            i1 = 9- 1
-    elif i == 3- 1:
-        if j == 1- 1:
-            i1 = 5- 1
-        elif j == 2- 1:
-            i1 = 7- 1
+
+    if i == j:
+        if i == 1 - 1:
+            i1 = 1 - 1
+        elif i == 2 - 1:
+            i1 = 2 - 1
+        elif i == 3 - 1:
+            i1 = 3 - 1
+    elif i == 1 - 1:
+        if j == 2 - 1:
+            i1 = 6 - 1
+        elif j == 3 - 1:
+            i1 = 8 - 1
+    elif i == 2 - 1:
+        if j == 3 - 1:
+            i1 = 4 - 1
+        elif j == 1 - 1:
+            i1 = 9 - 1
+    elif i == 3 - 1:
+        if j == 1 - 1:
+            i1 = 5 - 1
+        elif j == 2 - 1:
+            i1 = 7 - 1
     return i1
 
+
 def get_Q_rot(a):
-    b = np.zeros((9,9))
+    b = np.zeros((9, 9))
     for i in range(3):
         for j in range(3):
             for k in range(3):
                 for l in range(3):
-                    i1 = contract_index(i,j)
-                    i2 = contract_index(k,l)
+                    i1 = contract_index(i, j)
+                    i2 = contract_index(k, l)
                     b[i1][i2] = a[k][i] * a[l][j]
     return b
 
+
 def c_transform(C, a):
-    Q   = get_Q_rot(a)
-    C_t = Q.T.dot( C.dot( Q ) )
+    Q = get_Q_rot(a)
+    C_t = Q.T.dot(C.dot(Q))
     return C_t
 
 
-def C_hex(a=False):
+def C_hex(C, a=False):
     c11 = sci.dtype(sci.float128)
     c12 = sci.dtype(sci.float128)
     c13 = sci.dtype(sci.float128)
     c33 = sci.dtype(sci.float128)
     c44 = sci.dtype(sci.float128)
 
- 
-    ##  Elastic constants in units of 10^{9} Pa
-    c11 = 1.761e2
-    c12 = 0.868e2
-    c13 = 0.682e2
-    c33 = 1.905e2
-    c44 = 0.508e2
-    c66 = 0.450e2
-
-    
-    #c66 = 0.5 * ( c11 - c12 )
+    # Elastic constants in units of 10^{9} Pa
+    c11, c33, c44, c12, c13, c66 = C
 
     C_arr = sci.array(
         [
-            [ c11,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0. ],
-            [ c12,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0. ],
-            [ c13,  c13,  c33,  0.,  0.,  0.,  0.,  0.,  0. ],
-            [  0.,   0.,   0.,  c44, 0.,  0., c44,  0.,  0. ],
-            [  0.,   0.,   0.,  0., c44,  0.,  0., c44,  0. ],
-            [  0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66 ],
-            [  0.,   0.,   0., c44,  0.,  0., c44,  0.,  0. ],
-            [  0.,   0.,   0.,  0., c44,  0.,  0., c44,  0. ],
-            [  0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66 ]
+            [c11,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
+            [c12,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
+            [c13,  c13,  c33,  0.,  0.,  0.,  0.,  0.,  0.],
+            [0.,   0.,   0.,  c44, 0.,  0., c44,  0.,  0.],
+            [0.,   0.,   0.,  0., c44,  0.,  0., c44,  0.],
+            [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66],
+            [0.,   0.,   0., c44,  0.,  0., c44,  0.,  0.],
+            [0.,   0.,   0.,  0., c44,  0.,  0., c44,  0.],
+            [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66]
         ]
-        )
+    )
     if a is not False:
         C_arr = c_transform(C_arr, a)
 
-        
-    ## Map the indicies of the second order tensor to contracted representation
+    # Map the indicies of the second order tensor to contracted representation
     n_dic = {(0, 0): 0, (1, 1): 1, (2, 2): 2, (1, 2): 3, (2, 0): 4, (0, 1): 5, (2, 1): 6, (0, 2): 7, (1, 0): 8}
 
     
@@ -607,9 +597,16 @@ def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
 ##############################################################################################
 #################    MAIN: Generate dislocation in Anisotropic equations     #################
 
-def uij(x1,x2, k, A, L, b, m, n, p):
+def uij(x1, x2, k, A, L, b, m, n, p):
+    print("k,", k)
+    print("A,", A)
+    print("L,", L)
+    print("b,", b)
+    print("m,", m)
+    print("n,", n)
+    print("p", p)
     ui = 0.0
-    x = np.array([x1,x2])
+    x = np.array([x1,x2, 0])
     for alphai, p_alpha in enumerate(p):
         uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * f(x, m, n, p_alpha)
         ui += uit
@@ -618,12 +615,9 @@ def uij(x1,x2, k, A, L, b, m, n, p):
     #print("ui total", ui)
     return sci.real(ui)
 
-def anis_dislocation(a, b, C_arr, m, n, pure, screw, plot):
+def anis_dislocation(a, b, C, m, n, pure, screw, plot, trans=False):
 
-    ## Map the indicies of the second order tensor to contracted representation
-    n_dic = {(0, 0): 0, (1, 1): 1, (2, 2): 2, (1, 2): 3, (2, 0): 4, (0, 1): 5, (2, 1): 6, (0, 2): 7, (1, 0): 8}
-    
-    C = lambda i, j, k, l: C_arr[  n_dic[i,j] ][  n_dic[k,l] ]
+    C, C_arr = C_hex(C, a=trans)
 
     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
     
@@ -633,14 +627,14 @@ def anis_dislocation(a, b, C_arr, m, n, pure, screw, plot):
     normalise_check(A, L)
 
     if pure and screw:
-        return functools.partial(uij, k=2, a=a, L=L, b=b, m=m, n=n, p=p )
+        return functools.partial(uij, k=2, A=A, L=L, b=b, m=m, n=n, p=p )
     
     elif pure and not screw:
         # have extra variable k such that one can get the x and y displacement
-        return functools.partial(uij, a=a, L=L, b=b, m=m, n=n, p=p )
+        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p )
     else:
         # have extra variable k such that one can get the x and y displacement
-        return functools.partial(uij, a=a, L=L, b=b, m=m, n=n, p=p )
+        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p )
 
 
 def gen_disl_u(a, b, C, m, n, pure, screw, plot):

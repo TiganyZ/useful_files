@@ -17,10 +17,10 @@ sci.set_printoptions(linewidth=200, precision=4)
 
 class WriteFiles:
 
-    def __init__(self, filename="ti",  cwd='./', output_path='./generated_dislocations', write_to_dir=True ):
+    def __init__(self, filename="ti",  cwd='./', output_path='./generated_dislocations', write_to_dir=True):
         self.filename = filename
 
-        #######################   Write output to directory  #########################        
+        #######################   Write output to directory  #########################
         if write_to_dir:
 
             self.cwd = cwd
@@ -31,16 +31,14 @@ class WriteFiles:
                 os.chdir(output_path)
                 print("Changed directory from {} to {}".format(cwd, output_path))
             except TypeError:
-                print("Could not change directory from {} to {}".format(cwd, output_path))
-            
+                print("Could not change directory from {} to {}".format(
+                    cwd, output_path))
 
     def __doc__():
         """
         This writes files to tbe/bop/xyz files such that they can be used. 
         It converts Cartesian positons ONLY. 
         """
-
-        
 
     ########################   Convert file to XYZ   ###############################
 
@@ -58,24 +56,23 @@ class WriteFiles:
             n_tot = len(atom_pos)
             n_at = n_tot
 
-
-        n_cell_filename   = filename + "_convert.xyz"
+        n_cell_filename = filename + "_convert.xyz"
 
         if append:
-            out_xyz_file  = open(n_cell_filename, mode='a')
+            out_xyz_file = open(n_cell_filename, mode='a')
         else:
-            out_xyz_file  = open(n_cell_filename, mode='w+')        
+            out_xyz_file = open(n_cell_filename, mode='w+')
 
-        out_xyz_file.write(  str(n_tot) + "\n"  )
-        out_xyz_file.write(  'Lattice=" ' + ' '.join([str(x) for x in plat.flatten() ])  + '" Properties=species:S:1:pos:R:3 \n'  )
-
+        out_xyz_file.write(str(n_tot) + "\n")
+        out_xyz_file.write('Lattice=" ' + ' '.join(
+            [str(x) for x in plat.flatten()]) + '" Properties=species:S:1:pos:R:3 \n')
 
         for i in range(n_at):
-            out_xyz_file.write( " " + species
-                                + " " + '{:<12.8f}'.format( atom_pos[i,0] )   
-                                + " " + '{:<12.8f}'.format( atom_pos[i,1] )
-                                + " " + '{:<12.8f}'.format( atom_pos[i,2] )
-                                + " \n"                              )
+            out_xyz_file.write(" " + species
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 0])
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 1])
+                               + " " + '{:<12.8f}'.format(atom_pos[i, 2])
+                               + " \n")
         for i in range(n_inert):
             out_xyz_file.write( " " + species + "n"
                                 + " " + '{:<12.8f}'.format( inert_atom_pos[i,0] )   
@@ -194,7 +191,9 @@ class WriteFiles:
                 inert_atom_pos = ( inert_atom_pos / alat ).round(12)
             n_at = len(atom_pos)
             n_tot = n_at + n_inert
+
             atom_pos = ( atom_pos / alat ).round(12)
+
         else:
             n_tot = len(atom_pos)
             n_at = n_tot
@@ -207,6 +206,7 @@ class WriteFiles:
         site_file = open( s_file, mode='w' )
         site_info = ( '% site-data vn=3.0 fast io=63 nbas='  + str(n_at + n_inert) + ' alat=' + str(alat)
                       + ' plat=' + ' '.join([str(x) for x in plat.flatten()/alat ])  + '\n' )
+
         site_file.write(site_info)
         site_file.write('#                        pos vel                                    eula                   vshft PL rlx\n')
 

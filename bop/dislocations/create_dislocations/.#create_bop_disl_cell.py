@@ -1,1 +1,0 @@
-tigany@tigany-HP-Pavilion-Notebook.21707:1542735536
