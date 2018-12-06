@@ -44,13 +44,12 @@ class Dislocation:
                     [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66]
                 ]
             )
-        print("Untransformed C matrix \n")
-        print(C, "\n")
+
         self.C = self.c_transform(C, T)
         print("Transformed C matrix \n")
         print(self.C, "\n")
 
-    def contract_index(self,i, j):
+    def contract_index(self, i, j):
 
         if i == j:
             if i == 1 - 1:
@@ -76,7 +75,7 @@ class Dislocation:
                 i1 = 7 - 1
         return i1
 
-    def get_Q_rot(self,a):
+    def get_Q_rot(self, a):
         b = np.zeros((9, 9))
         for i in range(3):
             for j in range(3):
@@ -87,12 +86,12 @@ class Dislocation:
                         b[i1][i2] = a[k][i] * a[l][j]
         return b
 
-    def c_transform(self,C, a):
+    def c_transform(self, C, a):
         Q = self.get_Q_rot(a)
         C_t = Q.T.dot(C.dot(Q))
         return C_t
 
-    def u_edge(self,x, y):
+    def u_edge(self, x, y):
         C = self.C
         b = self.b
         C11bar = (C[1][1] * C[2][2])**(0.5)
@@ -119,7 +118,7 @@ class Dislocation:
 
         return ux, uy
 
-    def u_screw(self,x, y):
+    def u_screw(self, x, y):
         bz = self.b[-1]
         # Displacement is only in the z directon
         C = self.C
@@ -132,14 +131,16 @@ class Dislocation:
     def get_Disl_edge(self):
         length = 200
         a = self.a
-        u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
-        dis = [ sci.zeros((length, length), dtype=np.float64),
-                sci.zeros((length, length), dtype=np.float64) ]
+        u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                            sci.linspace(-5 * a, 5 * a, length))
+        dis = [sci.zeros((length, length), dtype=np.float64),
+               sci.zeros((length, length), dtype=np.float64)]
 
         for i in range(length):
             for j in range(length):
                 x = u[i][j]
                 y = v[i][j]
+
                 ux, uy = self.u_edge(x, y)
                 dis[0][i][j] = ux
                 dis[1][i][j] = uy
@@ -149,25 +150,27 @@ class Dislocation:
     def get_Disl_screw(self):
         length = 200
         a = self.a
-        u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
+        u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                            sci.linspace(-5 * a, 5 * a, length))
         dis = sci.zeros((length, length), dtype=np.float64)
 
         for i in range(length):
             for j in range(length):
                 x = u[i][j]
                 y = v[i][j]
-                dis[i][j] = self.u_screw(x, y)    
+                dis[i][j] = self.u_screw(x, y)
 
         return dis
 
-
     def plot_dis_edge(self, dis):
-        fig = pp.figure(1, figsize=(12, 6), dpi = 100)
+        fig = pp.figure(1, figsize=(12, 6), dpi=100)
         for k in range(2):
             scale = np.floor(np.log10(np.max(np.absolute(dis[k]))))
             ax = fig.add_subplot(1, 2, k + 1)
-            ax.set_title(r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$: Edge ")
-            im = ax.imshow(dis[k] / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+            ax.set_title(
+                r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$: Edge ")
+            im = ax.imshow(dis[k] / (10 ** scale),
+                           extent=(-5, 5, -5, 5), cmap='coolwarm')
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="5%", pad=0.05)
             bc = fig.colorbar(im, cax=cax, format="%1.3f")
@@ -175,12 +178,14 @@ class Dislocation:
         pp.show()
 
     def plot_dis_screw(self, dis):
-        fig = pp.figure(1, figsize=(12, 6), dpi = 100)
+        fig = pp.figure(1, figsize=(12, 6), dpi=100)
         scale = np.floor(np.log10(np.max(np.absolute(dis))))
-        print("scale",scale)
+        print("scale", scale)
         ax = fig.add_subplot(111)
-        ax.set_title(r"Displacement field $\,\times\,10^{" + str(int(-scale)) + "}$")
-        im = ax.imshow(dis / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+        ax.set_title(
+            r"Displacement field $\,\times\,10^{" + str(int(-scale)) + "}$")
+        im = ax.imshow(dis / (10 ** scale),
+                       extent=(-5, 5, -5, 5), cmap='coolwarm')
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         bc = fig.colorbar(im, cax=cax, format="%1.3f")
@@ -189,39 +194,18 @@ class Dislocation:
 
     def gen_disl_u(self):
         if self.pure and self.screw:
-            print("This is a pure Screw: b = %s" %(b[2]))
-            dis  = get_Disl_screw()
+            print("This is a pure Screw: b = %s" % (self.b[2]))
+            dis = self.get_Disl_screw()
             if self.plot:
-                 self.plot_dis_screw(dis)
+                self.plot_dis_screw(dis)
         elif self.pure and not self.screw:
             dis = self.get_Disl_edge()
             if self.plot:
                 self.plot_dis_edge(dis)
         else:
-            dis_z  = self.get_Disl_screw()
+            dis_z = self.get_Disl_screw()
             dis_xy = self.get_Disl_edge()
             if self.plot:
                 self.plot_dis_screw(dis)
                 self.plot_dis_edge(dis)
-        return  dis
-
-    def displacement(self):
-        if self.pure and self.screw:
-            print("This is a pure Screw: b = %s" %(self.b[2]))
-            dis  = self.u_screw
-            if self.plot:
-                pl = self.get_Disl_screw()
-                self.plot_dis_screw(pl)
-        elif self.pure and not self.screw:
-            dis = self.u_edge
-            if self.plot:
-                pl = self.get_Disl_edge()
-                self.plot_dis_edge(pl)
-        else:
-            dis = ( self.u_edge, self.u_screw )
-            if self.plot:
-                dis_z  = self.get_Disl_screw()
-                dis_xy = self.get_Disl_edge()
-                self.plot_dis_screw(dis)
-                self.plot_dis_edge(dis)
-        return  dis
+        return dis

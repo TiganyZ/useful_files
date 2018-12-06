@@ -46,7 +46,7 @@ class Disl_supercell:
         ##############################################################################
         #######################   Specifying dislocation coords   ####################
 
-        if rcore == None:
+        if rcore is None:
             self.rcore = np.zeros((n_disl, 3))
             if n_disl == 1:
                 # Single dislocation in cell
@@ -121,50 +121,78 @@ class Disl_supercell:
 
         self.inert_cond = types.MethodType(inert_cond, self)
 
+
+    def calculate_dis_pbc(self):
+        # Calculate the error with regards to the non-periodicity of the dislocation dipole displacement
+        # Need to do the conditionally convergent sum and then calculate the error in displacement. 
+
     def add_dislocation_anis(self, atoms, axis=2, rotation=None):
 
         rcores = self.rcore
         rcphi = self.rcphi
         screw = self.screw
         pure = self.pure
-
-        print(rcores)
-
+        xil = np.zeros((len(atoms),2))
+        print("rcores", rcores)
+        new_atom_pos = np.zeros(atoms.shape)
         # axis is the displacement in z direction for screw dislocation by default.
         # For edge dislocation, axis is the one that is *not* displaced.
+
+        if rotation is not None:
+            for i in range(3):
+                self.plat[i] = rotation.dot(  self.plat[i]  )
+            print("Rotated the lattice vectors")
+            print(self.plat)
 
         for j in range(self.n_disl):
             if self.n_disl == 1:
                 dis = self.disl
                 rcphi = self.rcphi
                 rcore = rcores[0]
+                print("rcore and axis",rcore, rcore[axis-2], rcore[axis-1])                
             else:
                 dis = self.disl[j]
                 rcore = rcores[j][0]
                 rcphi = self.rcphi[j]
                 print(rcore, rcores)
-            for position in atoms:
+            if j > 0:
+                rotation = None
+            for indx, position in enumerate(atoms):
                 if rotation is not None:
                     position = rotation.dot(position)
                 if screw:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    s = dis((r12 * np.cos(rcphi +
-                                          np.arctan2(position[axis-2] - rcore[axis-2],
-                                                     position[axis-1] - rcore[axis-1]))),
-                            (r12 * np.sin(rcphi +
-                                          np.arctan2(position[axis-2] - rcore[axis-2],
-                                                     position[axis-1] - rcore[axis-1]))))
+                    
+                    xi = r12 * np.cos(rcphi + np.arctan2(position[axis-2] - rcore[axis-2],
+                                                         position[axis-1] - rcore[axis-1]))
+
+                    yi = r12 * np.sin(rcphi +np.arctan2(position[axis-2] - rcore[axis-2],
+                                                         position[axis-1] - rcore[axis-1]))
+                    
+                    s = dis(xi, yi)
+                    xil[indx,:] = np.array([xi,yi]) 
                     position[axis] += s
+                    # print("rcore", rcore)
+                    # print("plat", self.plat)                    
+                    # print("position", position)
+                    # print("r12",position - rcore, r12)
+                    # print("s",s )
+                    # print("xi, yi",xi, yi)
+                    new_atom_pos[indx,:] = position
+                    atoms[indx,:] = position
                 elif pure:
                     # Pure Edge dislocation
                     position[axis - 2] += dis(positon[axis-2] - rcore[axis-2],
                                               positon[axis-1] - rcore[axis-1], k=0)
                     position[axis - 1] += dis(positon[axis-2] - rcore[axis-2],
                                               positon[axis-1] - rcore[axis-1], k=1)
-
-        return atoms
+                    new_atom_pos[indx,:] = position
+        minxil = np.argmin( np.sum(xil**2, axis=1) )
+        print(minxil)
+        print("min xil ", xil[minxil], atoms[minxil] )
+        return new_atom_pos
 
     def add_dislocation(self, atoms, axis=2, rotation=None):
 
@@ -174,6 +202,7 @@ class Disl_supercell:
         pure = self.pure
 
         atom_copy = copy.copy(atoms)
+        new_atom_pos = np.zeros(atoms.shape)
         print(rcores)
 
         # axis is the displacement in z direction for screw dislocation by default.
@@ -193,13 +222,14 @@ class Disl_supercell:
                 pure = dis.pure
                 print(rcore, rcores)
                 screw = dis.screw
-            for position in atoms:
+            for indx, position in enumerate(atoms):
                 if rotation is not None:
                     position = rotation.dot(position)
                 if screw:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
+                    
                     s = dis.u_screw((r12 * np.cos(rcphi +
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))),
@@ -207,15 +237,17 @@ class Disl_supercell:
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))))
                     position[axis] += s
+                    new_atom_pos[indx,:] = position
                 elif pure:
                     # Pure Edge dislocation
                     position[axis - 2] += dis.u_edge(
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
                     position[axis - 1] += dis.u_edge(
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
+                    new_atom_pos[indx,:] = position
+        print(atom_copy-new_atom_pos)
+        return new_atom_pos
 
-        print(atom_copy-atoms)
-        return atoms
 
     def get_atoms(self):
         l = self.lengths
@@ -280,21 +312,21 @@ class Disl_supercell:
         print("plat", self.plat)
         return atoms, inert_atoms
 
-    def write_cell_with_dislocation(self, output='tbe', add_name="", axis=2):
+    def write_cell_with_dislocation(self, output='tbe', add_name="", axis=2, rotation=None):
 
         atoms, inert_atoms = self.get_atoms()
 
         if self.full_anis:
-            atoms_with_disl = self.add_dislocation_anis(atoms, axis=axis)
+            atoms_with_disl = self.add_dislocation_anis(atoms, axis=axis, rotation=rotation)
         else:
-            atoms_with_disl = self.add_dislocation(atoms, axis=axis)
+            atoms_with_disl = self.add_dislocation(atoms, axis=axis, rotation=rotation)
 
         if inert_atoms is not None:
             if self.full_anis:
                 inert_with_disl = self.add_dislocation_anis(
-                    inert_atoms, axis=axis)
+                    inert_atoms, axis=axis, rotation=rotation)
             else:
-                inert_with_disl = self.add_dislocation(inert_atoms, axis=axis)
+                inert_with_disl = self.add_dislocation(inert_atoms, axis=axis, rotation=rotation)
         else:
             inert_with_disl = None
 

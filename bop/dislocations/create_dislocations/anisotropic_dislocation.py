@@ -81,7 +81,7 @@ def C_hex(C, a=False):
     C_arr = sci.array(
         [
             [c11,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
-            [c12,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
+            [c12,  c11,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
             [c13,  c13,  c33,  0.,  0.,  0.,  0.,  0.,  0.],
             [0.,   0.,   0.,  c44, 0.,  0., c44,  0.,  0.],
             [0.,   0.,   0.,  0., c44,  0.,  0., c44,  0.],
@@ -91,7 +91,13 @@ def C_hex(C, a=False):
             [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66]
         ]
     )
+
+    print("Untransformed  Matrix Hex")
+    print("--------------------------------------------------------------------------------") 
+    print(C_arr)
     if a is not False:
+        print("C rotation")
+        print(a)
         C_arr = c_transform(C_arr, a)
 
     # Map the indicies of the second order tensor to contracted representation
@@ -598,13 +604,7 @@ def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
 #################    MAIN: Generate dislocation in Anisotropic equations     #################
 
 def uij(x1, x2, k, A, L, b, m, n, p):
-    print("k,", k)
-    print("A,", A)
-    print("L,", L)
-    print("b,", b)
-    print("m,", m)
-    print("n,", n)
-    print("p", p)
+
     ui = 0.0
     x = np.array([x1,x2, 0])
     for alphai, p_alpha in enumerate(p):
@@ -617,6 +617,7 @@ def uij(x1, x2, k, A, L, b, m, n, p):
 
 def anis_dislocation(a, b, C, m, n, pure, screw, plot, trans=False):
 
+    print("transform?", trans)
     C, C_arr = C_hex(C, a=trans)
 
     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)

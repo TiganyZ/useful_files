@@ -19,41 +19,9 @@ rcParams["font.serif"] = ["DejaVu Serif"]
 rc("text", usetex=True)
 sci.set_printoptions(linewidth=200, precision=4)
 
+
 ################################################################
-####################     Define Unit cell  #####################
-
-
-####################   Basal square hcp unit cell  #############
-
-# Length array
-
-alat_tbe = 5.575
-clat_tbe = 4.683
-lengths_tbe = np.array([3**(0.5) * alat_tbe,
-                        alat_tbe,
-                        clat_tbe])
-
-alat_bop = 2.9021516207990987
-lengths_bop = np.array([5.026674058492405,
-                        2.9021516207990987,
-                        4.679881023538525])
-
-# Lattice Vectors
-plat = np.array([[1.0, 0.0, 0.0],
-                 [0.0, 1.0, 0.0],
-                 [0.0, 0.0, 1.0]])
-
-# Unit cell
-# This is in units of the *lengths* of each axes.
-unit_cell = np.array([[0.5, 1.0, 0.0],
-                      [0.0, 0.5, 0.0],
-                      [0.166666666667, 1.0, 0.5],
-                      [0.666666666667, 0.5, 0.5]])
-for i, u in enumerate(unit_cell):
-    unit_cell[i, 0] = u[0] * lengths_bop[0] / alat_bop
-    unit_cell[i, 1] = u[1] * lengths_bop[1] / alat_bop
-    unit_cell[i, 2] = u[0] * lengths_bop[2] / alat_bop
-
+#################       Elastic Constants      #################
 
 # Elastic constants in units of 10^{9} Pa (Can actually be in any units)
 c11 = sci.dtype(sci.float128)
@@ -110,24 +78,25 @@ radii = 20, 25
 ninert = radii
 #ninert = n_inert
 
-
-# Burger's Vector (in dislocation coordinate system)
-b = sci.array([0., 0., alat_bop])
-
 # Dislocation Coordinate System
 # Identity is the same reference frame as the elastic constants
-# Prismatic screw means that the dislocation is along y, so z maps to y etc
+# Prismatic screw means that the dislocation is along -x with primitive unit cell, so z maps to -x etc
 # Then must rotate so dislocation is prismatic screw, so z maps to x
 
-disl_coord = np.array([[1., 0.,  0.],
-                       [0., 0., -1.],
-                       [0., 1.,  0.]])
 
-disl_coord = disl_coord.dot(np.array([[0., 0.,  1.],
+# Rotation about z to line up [11-20] with x axis
+disl_coord = np.array([[np.sqrt(3)/2., 0.5,  0.],
+                       [-0.5, np.sqrt(3)/2., 0.],
+                       [0., 0.,  1.]])
+# Rotation about y such that z' is x
+disl_coord = disl_coord.dot(np.array([[0., 0.,  -1.],
                                       [0., 1., 0.],
-                                      [-1., 0.,  0.]]))
+                                      [1., 0.,  0.]]))
 
-disl_axis = 1
+
+
+
+disl_axis = 0
 # Where 0 is x, 1 is y and z is 2
 
 #####################  TBE #########################
@@ -136,6 +105,11 @@ disl_axis = 1
 alat_tbe = 5.575
 clat_tbe = 8.849586805  # 4.683
 q = clat_tbe / alat_tbe
+
+
+rotation= np.array([[np.sqrt(3)/2., 0.5,  0.],
+                       [-0.5, np.sqrt(3)/2., 0.],
+                       [0., 0.,  1.]])
 
 
 lengths_tbe = np.array([alat_tbe,
@@ -158,7 +132,7 @@ unit_cell = unit_cell_prim_hcp
 print("unit cell prim", unit_cell_prim_hcp)
 
 
-# Burger's Vector
+# Burger's Vector in Dislocation coordinate system
 b = sci.array([0., 0., alat_tbe])
 
 # Dislocation Coordinate System
@@ -184,22 +158,50 @@ rcore = [rcore1, rcore2]
 ninert = n_inert
 print("Writing disl supercell")
 
-m = disl_coord[0]
+dc_rot = np.array([[0., 0.,  -1.],
+                    [0., 1., 0.],
+                    [1., 0.,  0.]])
+
+m = disl_coord[1]
 n = disl_coord[2]
 
+m = dc_rot[1]
+n = dc_rot[2]
+
+
+#m = np.array([1,0,0])
+#n = np.array([0,1,0])
+
 dis_tbe_anis1 = anis_dis.anis_dislocation(
-    alat_tbe, b, C, m, n, pure, screw, plot)  # , trans=disl_coord)
+    alat_tbe, b, C, m, n, pure, screw, plot)#, trans=disl_coord)
 dis_tbe_anis2 = anis_dis.anis_dislocation(
-    alat_tbe, -b, C, m, n, pure, screw, plot)  # , trans=disl_coord)
+    alat_tbe, -b, C, m, n, pure, screw, plot)# , trans=disl_coord)
 ndis = 2
 dis_tbe_anis = [dis_tbe_anis1, dis_tbe_anis2]
+
+
+rcore_1d = np.array( [  (1./2.) * ( rotation.dot( plat[0] ) * lengths_tbe[0] * nxyz[0] +
+                                    rotation.dot( plat[1] ) * lengths_tbe[1] * nxyz[1] +
+                                    rotation.dot( plat[2] ) * lengths_tbe[2] * nxyz[2]) ])
+
+print("rcore 1d", rcore_1d)
+disl_axis = 0
 ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
-                    rcphi=[90. * np.pi/180, 90. * np.pi/180], full_anis=True,
-                    rcore=rcore,
-                    ninert=ninert, disl=dis_tbe_anis, n_disl=ndis, disl_axis=disl_axis)
+                    rcphi=-90. * np.pi/180,#[90. * np.pi/180, 90. * np.pi/180],
+                    full_anis=True,
+                    rcore=rcore_1d,
+                    ninert=ninert,
+                    disl=dis_tbe_anis1, n_disl=1, disl_axis=disl_axis)
+
+
+# ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz,   geometry='square',
+#                     rcphi=[0,0],#[90. * np.pi/180, 90. * np.pi/180],
+#                     full_anis=True,
+#                     rcore=rcore,
+#                     ninert=ninert, disl=dis_tbe_anis, n_disl=ndis, disl_axis=disl_axis)
 
 cwd = os.getcwd()
-ds.write_cell_with_dislocation(axis=disl_axis, add_name="anis_prim")
+ds.write_cell_with_dislocation(axis=disl_axis, add_name="anis_prim_rot", rotation=rotation)
 os.chdir(cwd)
 
 # print("Writing cell with no dislocations")
