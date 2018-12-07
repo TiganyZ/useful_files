@@ -121,10 +121,53 @@ class Disl_supercell:
 
         self.inert_cond = types.MethodType(inert_cond, self)
 
-
-    def calculate_dis_pbc(self):
+    def calculate_dis_pbc(self, plat, atoms, disp_atoms, trunc=(20, 20, 20), axis=2):
         # Calculate the error with regards to the non-periodicity of the dislocation dipole displacement
-        # Need to do the conditionally convergent sum and then calculate the error in displacement. 
+        # Need to do the conditionally convergent sum and then calculate the error in displacement. x
+        # plat is the plat of the /supercell/
+        # trunc is the limit for the truncation of the sum over periodic images.
+         # Recipe to remove the spurious non-periodic part of the displacement field:
+         # 1. Evaluate the conditionally convergent sum
+         #     u_sum = np.sum( [u(x + Rx, y + Ry) for Rx, Ry in \
+         #    [ (plat[0]*i, plat[1]*j) for i, j in zip(range(1,i+1),range(1,j+1))]  )
+         #    $u_{z}^{\text{sum}}(\mathbf{r})$, using an arbitrary truncation.
+         # 2. "Measure" the linear spurious part of the resulting field, using
+         #    u_err = s.dot(r)
+         #    equation below, by comparing its values at four points in the
+         #    periodic supercell from the equation
+         #            u_sum = u_pbc + s.dot(r) + u_0
+         #            u_sum_p_ci - u_sum = s.dot(ci)
+         #    \[ u_{z}^{\text{err}}(\mathbf{r}) =  \mathbf{s}\cdot\mathbf{r},  \]
+         #    \[ u_{z}^{\text{sum}}(\mathbf{r} + \mathbf{c}_{i})  -
+         #    u_{z}^{\text{sum}}(\mathbf{r}) = \mathbf{s}\cdot\mathbf{c}_{i}, \]
+         #    where $i=1,2$.
+         # 3. Finally, subtract the linear term $u_{z}^{\text{err}}(\mathbf{r})$ from
+         #    $u_{z}^{\text{sum}}(\mathbf{r})$ to obtain the corrected solution
+         #    $u_{z}^{\text{PBC}}(\mathbf{r})$.
+
+        # Evaluating sum
+        RxRy = ((plat[axis-2]*i, plat[axis-1]*j)
+                for i, j in zip(range(trunc[axis-2]), range(trunc[axis-1])))
+        u_sum = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+
+        for k in range(4):
+            # Evaluating sum
+            RxRy = ((plat[axis-2]*i, plat[axis-1]*j)
+                    for i, j in zip(range(trunc[axis-2]), range(trunc[axis-1])))
+            u_sum = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+
+        u_sum, u_sum_cx, u_sum_cy, u_sum_cz = 0., 0., 0., 0.
+        for i in range(trunc[0]):
+            for j in range(trunc[1]):
+                Rx, Ry = plat[axis-2]*i, plat[axis-1]*j
+                u_sum += u(x + Rx, y + Ry)
+
+        for i in range(trunc[0]):
+            for j in range(trunc[1]):
+                Rx, Ry = plat[axis-2]*(i + 1), plat[axis-1]*j
+                u_sum_ci = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+
+        u_err = s.dot(r)
 
     def add_dislocation_anis(self, atoms, axis=2, rotation=None):
 
@@ -132,15 +175,16 @@ class Disl_supercell:
         rcphi = self.rcphi
         screw = self.screw
         pure = self.pure
-        xil = np.zeros((len(atoms),2))
+        xil = np.zeros((len(atoms), 2))
         print("rcores", rcores)
         new_atom_pos = np.zeros(atoms.shape)
+        disp = np.zeros(len(atoms))
         # axis is the displacement in z direction for screw dislocation by default.
         # For edge dislocation, axis is the one that is *not* displaced.
 
         if rotation is not None:
             for i in range(3):
-                self.plat[i] = rotation.dot(  self.plat[i]  )
+                self.plat[i] = rotation.dot(self.plat[i])
             print("Rotated the lattice vectors")
             print(self.plat)
 
@@ -149,7 +193,7 @@ class Disl_supercell:
                 dis = self.disl
                 rcphi = self.rcphi
                 rcore = rcores[0]
-                print("rcore and axis",rcore, rcore[axis-2], rcore[axis-1])                
+                print("rcore and axis", rcore, rcore[axis-2], rcore[axis-1])
             else:
                 dis = self.disl[j]
                 rcore = rcores[j][0]
@@ -164,35 +208,32 @@ class Disl_supercell:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    
+
                     xi = r12 * np.cos(rcphi + np.arctan2(position[axis-2] - rcore[axis-2],
                                                          position[axis-1] - rcore[axis-1]))
 
-                    yi = r12 * np.sin(rcphi +np.arctan2(position[axis-2] - rcore[axis-2],
+                    yi = r12 * np.sin(rcphi + np.arctan2(position[axis-2] - rcore[axis-2],
                                                          position[axis-1] - rcore[axis-1]))
-                    
+
                     s = dis(xi, yi)
-                    xil[indx,:] = np.array([xi,yi]) 
+                    xil[indx, :] = np.array([xi, yi])
                     position[axis] += s
-                    # print("rcore", rcore)
-                    # print("plat", self.plat)                    
-                    # print("position", position)
-                    # print("r12",position - rcore, r12)
-                    # print("s",s )
-                    # print("xi, yi",xi, yi)
-                    new_atom_pos[indx,:] = position
-                    atoms[indx,:] = position
+                    disp[indx] += s
+                    # Displacement only along the axis specified for screw dislocations.
+
+                    new_atom_pos[indx, :] = position
+                    atoms[indx, :] = position
                 elif pure:
                     # Pure Edge dislocation
                     position[axis - 2] += dis(positon[axis-2] - rcore[axis-2],
                                               positon[axis-1] - rcore[axis-1], k=0)
                     position[axis - 1] += dis(positon[axis-2] - rcore[axis-2],
                                               positon[axis-1] - rcore[axis-1], k=1)
-                    new_atom_pos[indx,:] = position
-        minxil = np.argmin( np.sum(xil**2, axis=1) )
+                    new_atom_pos[indx, :] = position
+        minxil = np.argmin(np.sum(xil**2, axis=1))
         print(minxil)
-        print("min xil ", xil[minxil], atoms[minxil] )
-        return new_atom_pos
+        print("min xil ", xil[minxil], atoms[minxil])
+        return new_atom_pos, disp
 
     def add_dislocation(self, atoms, axis=2, rotation=None):
 
@@ -229,7 +270,7 @@ class Disl_supercell:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    
+
                     s = dis.u_screw((r12 * np.cos(rcphi +
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))),
@@ -237,7 +278,7 @@ class Disl_supercell:
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))))
                     position[axis] += s
-                    new_atom_pos[indx,:] = position
+                    new_atom_pos[indx, :] = position
                 elif pure:
                     # Pure Edge dislocation
                     position[axis - 2] += dis.u_edge(
