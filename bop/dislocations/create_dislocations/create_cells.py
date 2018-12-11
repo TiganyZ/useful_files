@@ -121,7 +121,10 @@ class Disl_supercell:
 
         self.inert_cond = types.MethodType(inert_cond, self)
 
-    def calculate_dis_pbc(self, plat, atoms, disp_atoms, trunc=(20, 20, 20), axis=2):
+    def calculate_dis_pbc(self, u, plat, atoms, disp_atoms, trunc=(20, 20), axis=2,
+                          xy=[(0.5, 0.5), (0.5, -0.5), (-0.5, 0.5), (-0.5, -0.5)]):
+        # Default xy is to measure at the corners of the simulation cell.
+
         # Calculate the error with regards to the non-periodicity of the dislocation dipole displacement
         # Need to do the conditionally convergent sum and then calculate the error in displacement. x
         # plat is the plat of the /supercell/
@@ -143,31 +146,74 @@ class Disl_supercell:
          #    where $i=1,2$.
          # 3. Finally, subtract the linear term $u_{z}^{\text{err}}(\mathbf{r})$ from
          #    $u_{z}^{\text{sum}}(\mathbf{r})$ to obtain the corrected solution
-         #    $u_{z}^{\text{PBC}}(\mathbf{r})$.
+         #    $u_{z}^{\text{PBC}}(\mathbf{r})$
 
-        # Evaluating sum
-        RxRy = ((plat[axis-2]*i, plat[axis-1]*j)
-                for i, j in zip(range(trunc[axis-2]), range(trunc[axis-1])))
-        u_sum = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+        us = np.zeros(len(xy))
+        usm = np.zeros(len(xy))
+        usx = np.zeros(len(xy))
+        usxm = np.zeros(len(xy))
+        usy = np.zeros(len(xy))
+        usym = np.zeros(len(xy))
 
-        for k in range(4):
-            # Evaluating sum
-            RxRy = ((plat[axis-2]*i, plat[axis-1]*j)
-                    for i, j in zip(range(trunc[axis-2]), range(trunc[axis-1])))
-            u_sum = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+        for l in range(len(xy)):
+            x, y = xy[l]
+            x *= plat[axis-2]
+            y *= plat[axis-1]
+            u_sum, u_sum_m = 0., 0.
+            u_sum_cx, u_sum_cxm = 0., 0.
+            u_sum_cy, u_sum_cym = 0., 0.
+            for i in range(trunc[0]):
+                for j in range(trunc[1]):
 
-        u_sum, u_sum_cx, u_sum_cy, u_sum_cz = 0., 0., 0., 0.
-        for i in range(trunc[0]):
-            for j in range(trunc[1]):
-                Rx, Ry = plat[axis-2]*i, plat[axis-1]*j
-                u_sum += u(x + Rx, y + Ry)
+                    Rx, Ry = plat[axis-2]*i, plat[axis-1]*j
+                    u_sum += u(x + Rx, y + Ry)
+                    u_sum_m += u(-x + Rx, -y + Ry)
 
-        for i in range(trunc[0]):
-            for j in range(trunc[1]):
-                Rx, Ry = plat[axis-2]*(i + 1), plat[axis-1]*j
-                u_sum_ci = np.sum([u(x + Rx, y + Ry) for Rx, Ry in RxRy])
+                    Rx, Ry = plat[axis-2]*(i + 1), plat[axis-1]*j
+                    u_sum_cx += u(x + Rx, y + Ry)
+                    u_sum_cx_m += u(-x + Rx, -y + Ry)
 
-        u_err = s.dot(r)
+                    Rx, Ry = plat[axis-2]*i, plat[axis-1]*(j + 1)
+                    u_sum_cy += u(x + Rx, y + Ry)
+                    u_sum_cy_m += u(-x + Rx, -y + Ry)
+
+            us[l] = u_sum
+            usx[l] = u_sum_cx
+            usy[l] = u_sum_cy
+            usm[l] = u_sum_m
+            usxm[l] = u_sum_cx_m
+            usym[l] = u_sum_cy_m
+
+        # Measure the gradient of the error in the displacement
+        s11s21 = usm - us
+
+        u_err_x = usx - us  # = s.dot( c1 ) # This is definitely true
+        u_err_y = usy - us  # = s.dot( c2 )
+
+        u_err_x = usx - us
+        u_err_y = usy - us
+
+        # c1x, c1y = tuple( plat[ axis - 2  ][:-1] )
+        # c2x, c2y = tuple( plat[ axis - 1  ][:-1] )
+
+        s12 = (u_err_x[0] - c1x * u_err_y[0]) / (c2x * c1y - c2y * c1x)
+        s11 = (u_err_x[0] - s12 * c1y) / c1x
+
+        s22 = (u_err_x[1] - c1x * u_err_y[1]) / (c2x * c1y - c2y * c1x)
+        s21 = (u_err_x[1] - s22 * c1y) / c1x
+
+        s = np.array([[s11, s12],
+                      [s21, s22]])
+
+        return s
+
+    def modify_plat_for_strain(self, plat, a, b, axis=2):
+        # Area normal to z of the periodic cell
+        A0 = np.det(np.outer(plat[axis-2],  plat[axis-2]))
+        # Area swept out between dislocation dipoles normal to z of the periodic cell
+        A = np.det(np.outer(a,  plat[axis-2]))
+
+        return
 
     def add_dislocation_anis(self, atoms, axis=2, rotation=None):
 
@@ -285,10 +331,9 @@ class Disl_supercell:
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
                     position[axis - 1] += dis.u_edge(
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
-                    new_atom_pos[indx,:] = position
+                    new_atom_pos[indx, :] = position
         print(atom_copy-new_atom_pos)
         return new_atom_pos
-
 
     def get_atoms(self):
         l = self.lengths
@@ -358,16 +403,19 @@ class Disl_supercell:
         atoms, inert_atoms = self.get_atoms()
 
         if self.full_anis:
-            atoms_with_disl = self.add_dislocation_anis(atoms, axis=axis, rotation=rotation)
+            atoms_with_disl = self.add_dislocation_anis(
+                atoms, axis=axis, rotation=rotation)
         else:
-            atoms_with_disl = self.add_dislocation(atoms, axis=axis, rotation=rotation)
+            atoms_with_disl = self.add_dislocation(
+                atoms, axis=axis, rotation=rotation)
 
         if inert_atoms is not None:
             if self.full_anis:
                 inert_with_disl = self.add_dislocation_anis(
                     inert_atoms, axis=axis, rotation=rotation)
             else:
-                inert_with_disl = self.add_dislocation(inert_atoms, axis=axis, rotation=rotation)
+                inert_with_disl = self.add_dislocation(
+                    inert_atoms, axis=axis, rotation=rotation)
         else:
             inert_with_disl = None
 
@@ -377,10 +425,12 @@ class Disl_supercell:
             self.nxyz[0], self.nxyz[1], self.nxyz[2], self.geometry, self.n_disl) + add_name
 
         if output == 'tbe':
-            wfiles = wf( filename="site.ti" + file_ext,  cwd='./', output_path='./generated_dislocations', write_to_dir=True  )
-            wfiles.write_site_file( all_atoms, self.species, self.alat, self.plat )
+            wfiles = wf(filename="site.ti" + file_ext,  cwd='./',
+                        output_path='./generated_dislocations', write_to_dir=True)
+            wfiles.write_site_file(
+                all_atoms, self.species, self.alat, self.plat)
         if output == 'bop':
-            wfiles = wf( filename="cell.in" + file_ext,  cwd='./',
-                         output_path='./generated_dislocations', write_to_dir=True  )
-            wfiles.write_bop_file( self.plat, all_atoms, self.species,
-                                   self.final_lengths, n_disl=self.n_disl )
+            wfiles = wf(filename="cell.in" + file_ext,  cwd='./',
+                        output_path='./generated_dislocations', write_to_dir=True)
+            wfiles.write_bop_file(self.plat, all_atoms, self.species,
+                                  self.final_lengths, n_disl=self.n_disl)
