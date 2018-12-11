@@ -188,8 +188,14 @@ rcore_2d = np.array( [  (2./3.) * ( rotation.dot( plat[0] ) * lengths_tbe[0] * n
                                     rotation.dot( plat[1] ) * lengths_tbe[1] * nxyz[1] +
                                     rotation.dot( plat[2] ) * lengths_tbe[2] * nxyz[2]) ])
 
-print("rcore 1d", rcore_1d)
 
+
+
+
+
+rcore_1d += rotation.dot( np.array( [1./(2.*3**(0.5)), -1/2.,  q/2] )  )
+
+print("rcore 1d", rcore_1d)
 rcore = [rcore_1d, rcore_2d]
 disl_axis = 0
 ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz, geometry='square',

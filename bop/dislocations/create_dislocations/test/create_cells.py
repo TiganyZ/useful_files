@@ -1,10 +1,13 @@
 from write_input_files import WriteFiles as wf
 import types
+import functools
 from matplotlib import rc
+from matplotlib import cm
 from matplotlib import rcParams
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.ticker as ticker
-import matplotlib.pyplot as pp
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy as sci
 import os
@@ -20,7 +23,7 @@ sci.set_printoptions(linewidth=200, precision=4)
 class Disl_supercell:
     def __init__(self, unit_cell, lengths, alat, plat, nxyz, ninert=(20., 30.), disl=None, n_disl=1,
                  rcore=None, rcphi=0., rotation=np.eye(3), species="Ti", pure=True, screw=True, disl_axis=2,
-                 output='bop', type_plat='square', full_anis=False, in_units_of_len=False,
+                 output='bop', type_plat='square', full_anis=False, in_units_of_len=False, b=None,
                  filename='cell_gen', geometry='circle', labels=['tih', 'hcp']):
 
         self.disl = disl
@@ -43,6 +46,11 @@ class Disl_supercell:
         self.type_plat = type_plat
         self.final_lengths = lengths * nxyz
         self.in_units_of_len = in_units_of_len
+
+        if b is None:
+            self.b = alat * np.array([0.,0.,1.])
+        else:
+            self.b = b
         ##############################################################################
         #######################   Specifying dislocation coords   ####################
 
@@ -121,21 +129,159 @@ class Disl_supercell:
 
         self.inert_cond = types.MethodType(inert_cond, self)
 
-    def add_dislocation_anis(self, atoms, axis=2, rotation=None):
+
+    def obtain_u_pbc(self, u, plat, atoms, disp, rcore, rcphi, trunc=(20, 20), axis=2,
+                          xy=[(0.5, 0.5), (0.5, -0.5), (-0.5, 0.5), (-0.5, -0.5)], plot = True):
+        # This routine corrects a particular component of the displacement field, thus making it periodic.
+        
+        us  = np.zeros(len(xy))
+        usx = np.zeros(len(xy))
+        usy = np.zeros(len(xy))
+
+        for l in range(len(xy)):
+            x, y = xy[l]
+            x = x * plat[axis-2] 
+            y = y * plat[axis-1] 
+
+            x, y, z = tuple( x + y + rcore )
+            r12 = np.sqrt(
+                ( x - rcore[axis-2]) ** 2
+                + (y - rcore[axis-1]) ** 2)
+
+            x = r12 * np.cos( rcphi + np.arctan2(x,y) )
+            y = r12 * np.sin( rcphi + np.arctan2(x,y) )
+            
+            u_sum = 0.
+            u_sum_cx = 0.
+            u_sum_cy = 0.
+            for i in range(trunc[0]):
+                for j in range(trunc[1]):
+
+                    Rx, Ry, Rz = tuple( plat[axis-2]*i + plat[axis-1]*j ) 
+                    u_sum += u(x + Rx, y + Ry)
+
+                    Rx, Ry, Rz = tuple( plat[axis-2]*(i + 1) + plat[axis-1]*j )
+                    u_sum_cx += u(x + Rx, y + Ry)
+
+                    Rx, Ry, Rz = tuple( plat[axis-2]*i +  plat[axis-1]*(j + 1) ) 
+                    u_sum_cy += u(x + Rx, y + Ry)
+
+            print("usum",u_sum)
+            us[l] = u_sum
+            usx[l] = u_sum_cx
+            usy[l] = u_sum_cy
+
+        # Measure the gradient of the error in the displacement
+
+        u_err_x = usx - us  # = s.dot( c1 ) # This is definitely true
+        u_err_y = usy - us  # = s.dot( c2 )
+
+        print("S.r")
+        print("S.cx")
+        print(u_err_x)
+        print("S.cy")
+        print(u_err_y)
+        
+        c1x, c1y = tuple( plat[ axis - 2  ][:-1] )
+        c2x, c2y = tuple( plat[ axis - 1  ][:-1] )
+
+        sy = (u_err_y * c1x - u_err_x) / (c2y * c1x - c1y * c2x  )
+        sx = (u_err_x - sy * c1y) / c1x
+
+        s11s21 = ( c2y * u_err_x  -  c1y * u_err_y  ) / ( c1x * c2y - c2x * c1y )
+        s12s22 = ( c2x * u_err_x  -  c2y * u_err_y  ) / ( c1y * c2x - c2y * c1x )
+
+        # print("Before the average of the S matrix")
+        # print(s11s21)
+        # print(s12s22)
+        # s11, s21 = np.mean( s11s21) 
+        # s12, s22 = np.mean( s12s22) 
+
+        # s = np.array([[s11, s12],
+        #               [s21, s22]])
+
+        # print(" After the average of the S matrix")
+        # print(s)
+
+        s = np.array([sx,sy])
+        s = np.mean(s, axis=1)
+        print("Vector s")
+        print(s)
+
+
+
+        print("changing the displacement so it is periodic")
+        u_err_arr = np.zeros(len(atoms) )
+        new_atoms = np.zeros(atoms.shape)
+        new_disp  = np.zeros(atoms.shape)        
+        for i, position in enumerate( atoms ):
+            u_err = s.dot( position[:-1] )
+            u_err_arr[i] = u_err
+            new_disp[i,:] = disp[i,:] - u_err
+            position[axis] -= u_err
+            new_atoms[i,:] = position
+
+        if plot:
+            x = atoms[:, axis-2 ] - rcore[axis-2]
+            y = atoms[:, axis-1 ] - rcore[axis-1]   
+            fig = plt.figure(figsize=(5,5))
+            ax = fig.add_subplot(1, 1, 1, projection='3d')
+            z = u_err 
+            ax.set_title(r"$u_{err}$")
+            ax.scatter(x,y,z)
+            plt.show()
+
+        print(atoms - new_atoms)
+        
+        if plot:
+            self.plot_displacement(atoms, disp, rcore, axis)
+
+        return new_atoms
+
+    def modify_plat_for_strain(self, axis=2):
+        # With introduction of dislocation dipole the lattice vectors have to be modified
+        # to account for the elastic strain that would counteract plastic strain, with fixed periodic lattice vectors.
+
+        full_plat_disl = 2 * ( sum(self.rcore) / self.n_disl )
+        a = self.rcore[1] - self.rcore[0]
+        b = self.b
+        # Area of plane containing the dislocations, to bounds of the periodic cell
+        A0 = np.linalg.norm( np.cross( full_plat_disl,  self.plat[axis] ) )
+        
+        # Area swept out between dislocation dipoles
+        normal = np.cross(a,  self.plat[axis] )
+        n = normal / np.linalg.norm(normal)
+        A = np.linalg.norm( np.cross(a,  self.plat[axis] ) )
+        # In direction of normal 
+        tilt = b * ( A / A0  )
+        print("tilt", tilt)
+        print("unit normal", n)
+
+        for i, p in enumerate( self.plat ):
+            print("pre-strain plat", i)
+            print(p)
+            dp = p * n * np.linalg.norm( abs(tilt) ) 
+            self.plat[i] = p + dp
+            print("New plat")
+            print(p)
+
+
+    def add_dislocation_anis(self, atoms, axis=2, rotation=None, plotdis=True):
 
         rcores = self.rcore
         rcphi = self.rcphi
         screw = self.screw
         pure = self.pure
-        xil = np.zeros((len(atoms),2))
+        xil = np.zeros((len(atoms), 2))
         print("rcores", rcores)
         new_atom_pos = np.zeros(atoms.shape)
+        disp = np.zeros((len(atoms), 3))
         # axis is the displacement in z direction for screw dislocation by default.
         # For edge dislocation, axis is the one that is *not* displaced.
 
         if rotation is not None:
             for i in range(3):
-                self.plat[i] = rotation.dot(  self.plat[i]  )
+                self.plat[i] = rotation.dot(self.plat[i])
             print("Rotated the lattice vectors")
             print(self.plat)
 
@@ -144,7 +290,7 @@ class Disl_supercell:
                 dis = self.disl
                 rcphi = self.rcphi
                 rcore = rcores[0]
-                print("rcore and axis",rcore, rcore[axis-2], rcore[axis-1])                
+                print("rcore and axis", rcore, rcore[axis-2], rcore[axis-1])
             else:
                 dis = self.disl[j]
                 rcore = rcores[j][0]
@@ -159,36 +305,132 @@ class Disl_supercell:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    
+
                     xi = r12 * np.cos(rcphi + np.arctan2(position[axis-2] - rcore[axis-2],
                                                          position[axis-1] - rcore[axis-1]))
 
-                    yi = r12 * np.sin(rcphi +np.arctan2(position[axis-2] - rcore[axis-2],
+                    yi = r12 * np.sin(rcphi + np.arctan2(position[axis-2] - rcore[axis-2],
                                                          position[axis-1] - rcore[axis-1]))
-                    
+
                     s = dis(xi, yi)
-                    xil[indx,:] = np.array([xi,yi]) 
+                    xil[indx, :] = np.array([xi, yi])
                     position[axis] += s
-                    # print("rcore", rcore)
-                    # print("plat", self.plat)                    
-                    # print("position", position)
-                    # print("r12",position - rcore, r12)
-                    # print("s",s )
-                    # print("xi, yi",xi, yi)
-                    new_atom_pos[indx,:] = position
-                    atoms[indx,:] = position
+                    disp[indx, axis] += s
+                    # Displacement only along the axis specified for screw dislocations.
+
+                    new_atom_pos[indx, :] = position
+                    atoms[indx, :] = position
                 elif pure:
                     # Pure Edge dislocation
-                    position[axis - 2] += dis(positon[axis-2] - rcore[axis-2],
-                                              positon[axis-1] - rcore[axis-1], k=0)
-                    position[axis - 1] += dis(positon[axis-2] - rcore[axis-2],
-                                              positon[axis-1] - rcore[axis-1], k=1)
-                    new_atom_pos[indx,:] = position
-        minxil = np.argmin( np.sum(xil**2, axis=1) )
+
+                    sx = dis(position[axis-2] - rcore[axis-2],
+                                              position[axis-1] - rcore[axis-1], k=0)
+                    
+                    sy = dis(position[axis-2] - rcore[axis-2],
+                                              position[axis-1] - rcore[axis-1], k=1)
+                    
+                    position[axis - 2] += sx                    
+                    position[axis - 1] += sy
+                    
+                    disp[indx, axis-2] += sx
+                    disp[indx, axis-1] += sy
+
+                    new_atom_pos[indx, :] = position
+                    
+        minxil = np.argmin(np.sum(xil**2, axis=1))
         print(minxil)
-        print("min xil ", xil[minxil], atoms[minxil] )
+        print("min xil ", xil[minxil], atoms[minxil])
+
+        if plotdis:
+            self.plot_displacement(atoms, disp, rcore, axis)
+
+        if self.n_disl > 1:
+            # If there is more than one dislocation
+            for j in range(self.n_disl):
+                dis   = self.disl[j]
+                rcore = rcores[j][0]
+                rcphi = self.rcphi[j]
+                print(rcore, rcores)
+                if screw:
+                    new_atom_pos = self.obtain_u_pbc( dis, self.plat, new_atom_pos, disp, rcore, rcphi)
+                else:
+                    for i in range(2):
+                        new_atom_pos = self.obtain_u_pbc( functools.partial( dis, k=i ),
+                                                          self.plat, new_atom_pos, disp, rcore, rcphi)
+            # Change the lattice vectors to account for plastic strain of dislocation dipole. 
+            self.modify_plat_for_strain()
         return new_atom_pos
 
+    
+    def plot_displacement(self, atoms, disp, rcore, axis, fig=None, d3=True, scaledis=False ):
+        # plot the displacement in each coordinate system 
+        x = atoms[:, axis-2 ] - rcore[axis-2]
+        y = atoms[:, axis-1 ] - rcore[axis-1]            
+
+
+        print("plotting displacement")
+        if fig is None:
+            fig = plt.figure(figsize=(15,5))
+        if scaledis:
+            scale = np.floor(np.log10(np.max(np.absolute(disp))))
+        else:
+            scale=0.
+
+        if d3:
+            ax = fig.add_subplot(1, 3, 1, projection='3d')
+            z = disp[:,0]  / (10 ** scale)
+        else:
+            ax = fig.add_subplot(1, 3, 1)
+            z  = disp[:,0]  / (10 ** scale)
+            
+        ax.set_title(r"$x$")
+        
+        if d3:
+            ax.scatter(x,y,z)
+            # surf = ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm,
+            #                        linewidth=0, antialiased=False)
+        else:
+            imx = ax.imshow(z, cmap = 'coolwarm')
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            bc = fig.colorbar(imz, cax=cax, format="%1.3f")
+            bc.solids.set_edgecolor("face")
+
+        ax = fig.add_subplot(1, 3, 2, projection='3d')
+        ax.set_title(r"$y$")   
+        z = disp[:,1] / (10 ** scale)
+        if d3:
+            ax.scatter(x,y,z)
+            # surf = ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm,
+            #                        linewidth=0, antialiased=False)
+        else:
+            imy = ax.imshow(z, cmap = 'coolwarm')
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            bc = fig.colorbar(imy, cax=cax, format="%1.3f")
+            bc.solids.set_edgecolor("face")
+
+        ax = fig.add_subplot(1, 3, 3, projection='3d')
+        ax.set_title(r"$z$")   
+        z = disp[:,2] / (10 ** scale)
+        if d3:
+            ax.scatter(x,y,z)
+            # surf = ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm,
+            #                        linewidth=0, antialiased=False   )
+        else:
+            imz = ax.imshow(z, cmap = 'coolwarm')
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            bc = fig.colorbar(imz, cax=cax, format="%1.3f")
+            bc.solids.set_edgecolor("face")
+
+
+
+        fig.suptitle(r"Displacement field $\,\times\,10^{" + str(int(-scale)) + "}$")
+        plt.show()
+        plt.close()
+
+    
     def add_dislocation(self, atoms, axis=2, rotation=None):
 
         rcores = self.rcore
@@ -224,7 +466,7 @@ class Disl_supercell:
                     r12 = np.sqrt(
                         (position[axis-2] - rcore[axis-2]) ** 2
                         + (position[axis-1] - rcore[axis-1]) ** 2)
-                    
+
                     s = dis.u_screw((r12 * np.cos(rcphi +
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))),
@@ -232,17 +474,16 @@ class Disl_supercell:
                                                   np.arctan2(position[axis-2] - rcore[axis-2],
                                                              position[axis-1] - rcore[axis-1]))))
                     position[axis] += s
-                    new_atom_pos[indx,:] = position
+                    new_atom_pos[indx, :] = position
                 elif pure:
                     # Pure Edge dislocation
                     position[axis - 2] += dis.u_edge(
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
                     position[axis - 1] += dis.u_edge(
                         positon[axis-2] - rcore[axis-2], positon[axis-1] - rcore[axis-1])
-                    new_atom_pos[indx,:] = position
+                    new_atom_pos[indx, :] = position
         print(atom_copy-new_atom_pos)
         return new_atom_pos
-
 
     def get_atoms(self):
         l = self.lengths
@@ -312,16 +553,19 @@ class Disl_supercell:
         atoms, inert_atoms = self.get_atoms()
 
         if self.full_anis:
-            atoms_with_disl = self.add_dislocation_anis(atoms, axis=axis, rotation=rotation)
+            atoms_with_disl = self.add_dislocation_anis(
+                atoms, axis=axis, rotation=rotation)
         else:
-            atoms_with_disl = self.add_dislocation(atoms, axis=axis, rotation=rotation)
+            atoms_with_disl = self.add_dislocation(
+                atoms, axis=axis, rotation=rotation)
 
         if inert_atoms is not None:
             if self.full_anis:
                 inert_with_disl = self.add_dislocation_anis(
                     inert_atoms, axis=axis, rotation=rotation)
             else:
-                inert_with_disl = self.add_dislocation(inert_atoms, axis=axis, rotation=rotation)
+                inert_with_disl = self.add_dislocation(
+                    inert_atoms, axis=axis, rotation=rotation)
         else:
             inert_with_disl = None
 
@@ -331,10 +575,12 @@ class Disl_supercell:
             self.nxyz[0], self.nxyz[1], self.nxyz[2], self.geometry, self.n_disl) + add_name
 
         if output == 'tbe':
-            wfiles = wf( filename="site.ti" + file_ext,  cwd='./', output_path='./generated_dislocations', write_to_dir=True  )
-            wfiles.write_site_file( all_atoms, self.species, self.alat, self.plat )
+            wfiles = wf(filename="site.ti" + file_ext,  cwd='./',
+                        output_path='./generated_dislocations', write_to_dir=True)
+            wfiles.write_site_file(
+                all_atoms, self.species, self.alat, self.plat)
         if output == 'bop':
-            wfiles = wf( filename="cell.in" + file_ext,  cwd='./',
-                         output_path='./generated_dislocations', write_to_dir=True  )
-            wfiles.write_bop_file( self.plat, all_atoms, self.species,
-                                   self.final_lengths, n_disl=self.n_disl )
+            wfiles = wf(filename="cell.in" + file_ext,  cwd='./',
+                        output_path='./generated_dislocations', write_to_dir=True)
+            wfiles.write_bop_file(self.plat, all_atoms, self.species,
+                                  self.final_lengths, n_disl=self.n_disl)
