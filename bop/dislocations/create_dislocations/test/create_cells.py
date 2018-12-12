@@ -130,7 +130,8 @@ class Disl_supercell:
         self.inert_cond = types.MethodType(inert_cond, self)
 
 
-    def obtain_u_pbc(self, u, plat, atoms, disp, rcore, rcphi, trunc=(20, 20), axis=2,
+    def obtain_u_pbc(self, dis, plat, atoms, disp, rcore, rcphi,
+                     trunc=(20, 20), axis=2, coord=2, edge=False,
                           xy=[(0.5, 0.5), (0.5, -0.5), (-0.5, 0.5), (-0.5, -0.5)], plot = True):
         # This routine corrects a particular component of the displacement field, thus making it periodic.
         
@@ -144,9 +145,7 @@ class Disl_supercell:
             y = y * plat[axis-1] 
 
             x, y, z = tuple( x + y + rcore )
-            r12 = np.sqrt(
-                ( x - rcore[axis-2]) ** 2
-                + (y - rcore[axis-1]) ** 2)
+            r12 = np.sqrt( x**2 +  y**2 )
 
             x = r12 * np.cos( rcphi + np.arctan2(x,y) )
             y = r12 * np.sin( rcphi + np.arctan2(x,y) )
@@ -157,16 +156,29 @@ class Disl_supercell:
             for i in range(trunc[0]):
                 for j in range(trunc[1]):
 
-                    Rx, Ry, Rz = tuple( plat[axis-2]*i + plat[axis-1]*j ) 
-                    u_sum += u(x + Rx, y + Ry)
+                    Rx, Ry, Rz = tuple( plat[axis-2]*i + plat[axis-1]*j )
+                    for u in dis:
+                        if edge:
+                            u_sum += u(x + Rx, y + Ry, k=coord)
+                        else:
+                            ust = u(x + Rx, y + Ry)
+                            u_sum += u(x + Rx, y + Ry)
+                            print("ust", ust)
 
                     Rx, Ry, Rz = tuple( plat[axis-2]*(i + 1) + plat[axis-1]*j )
-                    u_sum_cx += u(x + Rx, y + Ry)
+                    for u in dis:
+                        if edge:
+                            u_sum_cx += u(x + Rx, y + Ry, k=coord)
+                        else:
+                            u_sum_cx += u(x + Rx, y + Ry)
 
-                    Rx, Ry, Rz = tuple( plat[axis-2]*i +  plat[axis-1]*(j + 1) ) 
-                    u_sum_cy += u(x + Rx, y + Ry)
+                    Rx, Ry, Rz = tuple( plat[axis-2]*i +  plat[axis-1]*(j + 1) )
+                    for u in dis:
+                        if edge:
+                            u_sum_cy += u(x + Rx, y + Ry, k=coord)
+                        else:
+                            u_sum_cy += u(x + Rx, y + Ry)
 
-            print("usum",u_sum)
             us[l] = u_sum
             usx[l] = u_sum_cx
             usy[l] = u_sum_cy
@@ -176,20 +188,25 @@ class Disl_supercell:
         u_err_x = usx - us  # = s.dot( c1 ) # This is definitely true
         u_err_y = usy - us  # = s.dot( c2 )
 
-        print("S.r")
+        print("\nu_sum(r)")
+        print(us)
+        print("u_sum(r + cx)")        
+        print(usx)
+        print("u_sum(r + cy)")                
+        print(usy)
         print("S.cx")
         print(u_err_x)
         print("S.cy")
         print(u_err_y)
         
-        c1x, c1y = tuple( plat[ axis - 2  ][:-1] )
-        c2x, c2y = tuple( plat[ axis - 1  ][:-1] )
+        c1x, c1y, c1z = tuple( plat[ axis - 2  ] )
+        c2x, c2y, c2z = tuple( plat[ axis - 1  ] )
 
         sy = (u_err_y * c1x - u_err_x) / (c2y * c1x - c1y * c2x  )
         sx = (u_err_x - sy * c1y) / c1x
 
-        s11s21 = ( c2y * u_err_x  -  c1y * u_err_y  ) / ( c1x * c2y - c2x * c1y )
-        s12s22 = ( c2x * u_err_x  -  c2y * u_err_y  ) / ( c1y * c2x - c2y * c1x )
+        sx = ( c2y * u_err_x  -  c1y * u_err_y  ) / ( c1x * c2y - c2x * c1y )
+        sy = (-c2x * u_err_x  +  c1x * u_err_y  ) / ( c1y * c2x - c2y * c1x )
 
         # print("Before the average of the S matrix")
         # print(s11s21)
@@ -215,15 +232,21 @@ class Disl_supercell:
         new_atoms = np.zeros(atoms.shape)
         new_disp  = np.zeros(atoms.shape)        
         for i, position in enumerate( atoms ):
-            u_err = s.dot( position[:-1] )
+            print("rcore", rcore)
+            u_err = s.dot( (position - sum(rcore)/len(rcore))[:-1] )
+            #print("u_err", u_err)
             u_err_arr[i] = u_err
-            new_disp[i,:] = disp[i,:] - u_err
-            position[axis] -= u_err
+            disp[i,coord] -= u_err
+            new_disp[i,:] = disp[i,:]
+            position[coord] -= u_err
             new_atoms[i,:] = position
 
         if plot:
-            x = atoms[:, axis-2 ] - rcore[axis-2]
-            y = atoms[:, axis-1 ] - rcore[axis-1]   
+
+            x,y,z = tuple( atoms - sum(rcore)/len(rcore) ) 
+            # x = atoms[:, axis-2 ] - rcore
+            # y = atoms[:, axis-1 ]   
+            
             fig = plt.figure(figsize=(5,5))
             ax = fig.add_subplot(1, 1, 1, projection='3d')
             z = u_err 
@@ -233,8 +256,8 @@ class Disl_supercell:
 
         print(atoms - new_atoms)
         
-        if plot:
-            self.plot_displacement(atoms, disp, rcore, axis)
+        if plot and self.n_disl > 1:
+            self.plot_displacement(new_atoms, new_disp, rcore, axis)
 
         return new_atoms
 
@@ -346,17 +369,17 @@ class Disl_supercell:
 
         if self.n_disl > 1:
             # If there is more than one dislocation
-            for j in range(self.n_disl):
-                dis   = self.disl[j]
-                rcore = rcores[j][0]
-                rcphi = self.rcphi[j]
-                print(rcore, rcores)
-                if screw:
-                    new_atom_pos = self.obtain_u_pbc( dis, self.plat, new_atom_pos, disp, rcore, rcphi)
-                else:
-                    for i in range(2):
-                        new_atom_pos = self.obtain_u_pbc( functools.partial( dis, k=i ),
-                                                          self.plat, new_atom_pos, disp, rcore, rcphi)
+            # for j in range(self.n_disl):
+            #     dis   = self.disl[j]
+            #     rcore = rcores[j][0]
+            #     rcphi = self.rcphi[j]
+            #     print(rcore, rcores)
+            if screw:
+                new_atom_pos = self.obtain_u_pbc( self.disl, self.plat, new_atom_pos, disp, rcore, rcphi)
+            else:
+                for i in range(2):
+                    new_atom_pos = self.obtain_u_pbc( self.disl,  self.plat, new_atom_pos,
+                                                      disp, rcore, rcphi, edge=True, coord=i)
             # Change the lattice vectors to account for plastic strain of dislocation dipole. 
             self.modify_plat_for_strain()
         return new_atom_pos
