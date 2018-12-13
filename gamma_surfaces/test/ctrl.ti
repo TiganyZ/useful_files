@@ -136,7 +136,7 @@ SITE
         ATOM=Ti POS= 0 0 0
 % endif
 % endif
-SYMGRP  find
+SYMGRP  I*I
 BZ      GETQP=getqp NKABC=nkx nky nkz TETRA={tetra} METAL={metal}
         EFMAX=2 EF0=ef0 DELEF=0.01 N={norder} W={width}
         NPTS=5001 BZJOB=bzj SAVDOS=T NOINV=F

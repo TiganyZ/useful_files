@@ -93,7 +93,7 @@ def C_hex(C, a=False):
     )
 
     print("Untransformed  Matrix Hex")
-    print("--------------------------------------------------------------------------------") 
+    print("--------------------------------------------------------------------------------")
     print(C_arr)
     if a is not False:
         print("C rotation")
@@ -103,16 +103,13 @@ def C_hex(C, a=False):
     # Map the indicies of the second order tensor to contracted representation
     n_dic = {(0, 0): 0, (1, 1): 1, (2, 2): 2, (1, 2): 3, (2, 0): 4, (0, 1): 5, (2, 1): 6, (0, 2): 7, (1, 0): 8}
 
-    
-    C = lambda i, j, k, l: C_arr[  n_dic[i,j] ][  n_dic[k,l] ]
+    def C(i, j, k, l): return C_arr[n_dic[i, j]][n_dic[k, l]]
 
-  
     print("Stiffness Matrix Hex")
-    print("--------------------------------------------------------------------------------") 
+    print("--------------------------------------------------------------------------------")
     print(C_arr)
     print("\n")
     return C, C_arr
-
 
 
 ################################################################################
@@ -127,28 +124,27 @@ def C_cubic():
     c12 = 1.381e-3
     c44 = 1.219e-3
 
-
     E = sci.dtype(sci.float128)
     nu = sci.dtype(sci.float128)
 
-    ##  Isotropic case
-    
+    # Isotropic case
+
     E = 123-3
     nu = 0.35
-    
+
     c11 = E * (1 - nu) / ((1 + nu) * (1 - 2 * nu))
     c12 = E * (nu) / ((1 + nu) * (1 - 2 * nu))
     c44 = E / 2 / (1 + nu)
 
     H = sci.dtype(sci.float128)
     H = 2.0 * c44 + c12 - c11
-    C = lambda i, j, k, l: c44 * ((i == k) * (j == l) + (i == l) * (j == k)) + \
-    c12 * (i == j) * (k == l) - H * (i == j) * (k == l) * (i == k)
 
-    ## Map the indicies of the second order tensr to contracted representation
+    def C(i, j, k, l): return c44 * ((i == k) * (j == l) + (i == l) * (j == k)) + \
+        c12 * (i == j) * (k == l) - H * (i == j) * (k == l) * (i == k)
+
+    # Map the indicies of the second order tensr to contracted representation
     n_dic = {(0, 0): 0, (1, 1): 1, (2, 2): 2, (1, 2): 3, (2, 0): 4, (0, 1): 5, (2, 1): 6, (0, 2): 7, (1, 0): 8}
     n_dic_inv = {n_dic[k]: k for k in n_dic}
-
 
     C_contracted = sci.zeros((9, 9))
 
@@ -163,19 +159,24 @@ def C_cubic():
     return C, C_contracted
 
 
-
-
 ################################################################################
 #################     Definition of a_ik and Stroh Vectors     #################
 
 
 def get_Chrid_tensors(C, n, m):
-    ##  Define Chridtoffe tensors
+    # Define Chridtoffe tensors
 
-    nn = lambda i, k: sum(sum(C(i, j, k, l) * n[j] * n[l] for j in range(3)) for l in range(3))
-    mn = lambda i, k: sum(sum(C(i, j, k, l) * m[j] * n[l] for j in range(3)) for l in range(3))
-    nm = lambda i, k: sum(sum(C(i, j, k, l) * n[j] * m[l] for j in range(3)) for l in range(3))
-    mm = lambda i, k: sum(sum(C(i, j, k, l) * m[j] * m[l] for j in range(3)) for l in range(3))
+    def nn(i, k): return sum(
+        sum(C(i, j, k, l) * n[j] * n[l] for j in range(3)) for l in range(3))
+
+    def mn(i, k): return sum(
+        sum(C(i, j, k, l) * m[j] * n[l] for j in range(3)) for l in range(3))
+
+    def nm(i, k): return sum(
+        sum(C(i, j, k, l) * n[j] * m[l] for j in range(3)) for l in range(3))
+
+    def mm(i, k): return sum(
+        sum(C(i, j, k, l) * m[j] * m[l] for j in range(3)) for l in range(3))
 
     NN = sci.empty((3, 3), dtype=sci.float128)
     MN = sci.empty((3, 3), dtype=sci.float128)
@@ -192,7 +193,7 @@ def get_Chrid_tensors(C, n, m):
 
 
 def get_stroh_and_ps(NN, MN, NM, MM):
-    ## From the Chridtoffe tensors we can define an eigen problem such that one can obtain the p_a's 
+    # From the Chridtoffe tensors we can define an eigen problem such that one can obtain the p_a's
 
     NN_inv = sci.linalg.inv(NN)
     R = sci.dot(NN_inv, NM)
@@ -200,29 +201,25 @@ def get_stroh_and_ps(NN, MN, NM, MM):
     F = sci.dot(np.dot(MN, NN_inv), NM) - MM
     G = sci.dot(MN, NN_inv)
 
-    print(  "  Matrix to determine eigenvalues of is N\n  [ -(nn)^{-1} (nm)                   -(nn)^{-1} ]\n  [ -{ (mn)(nn)^{-1}(nm) - (mm)}   (mm)(nn)^{-1} ]"
-)
-
+    print("  Matrix to determine eigenvalues of is N\n  [ -(nn)^{-1} (nm)                   -(nn)^{-1} ]\n  [ -{ (mn)(nn)^{-1}(nm) - (mm)}   (mm)(nn)^{-1} ]"
+          )
 
     N1 = sci.concatenate((R, H), axis=1)
     N2 = sci.concatenate((F, G), axis=1)
     N = -sci.concatenate((N1, N2), axis=0)
 
-    ##  Matrix to determine eigenvalues of is N
+    # Matrix to determine eigenvalues of is N
     ##  [ -(nn)^{-1} (nm)                   -(nn)^{-1} ]
     ##  [ -{ (mn)(nn)^{-1}(nm) - (mm)}   (mm)(nn)^{-1} ]
-
- 
 
     eigen, stroh_vectors = eig(N)
 
     print("Determinant versus eigenvalues")
     print("--------------------------------------------------------------------------------")
     print("Eigenvalues: ", sci.sort(eigen))
-    p =  np.asarray(eigen)
+    p = np.asarray(eigen)
     print("Roots: ", sci.sort(p))
     print("Stroh Vectors:")
-    
 
     A = []
     L = []
@@ -232,20 +229,18 @@ def get_stroh_and_ps(NN, MN, NM, MM):
 
     print("\n")
     print(" A: ")
-    print(  A  )
+    print(A)
     print(" L: ")
-    print(  L  , "\n")
+    print(L, "\n")
     return p, A, L
-
-
 
 
 ################################################################################
 #################   Orthogonality and Normalisation Checks     #################
 
 def orthog_check(A, L, eigen):
-    ##  Verify orthogonality
-    ##  A_{αi} L_{βi}  +  L_{αi} A_{βi} = 0 if α != β (11)
+    # Verify orthogonality
+    # A_{αi} L_{βi}  +  L_{αi} A_{βi} = 0 if α != β (11)
 
     print("Orthogonality check")
     print("--------------------------------------------------------------------------------")
@@ -253,17 +248,19 @@ def orthog_check(A, L, eigen):
         for beta in range(6):
             s = sum(A[alpha][i] * L[beta][i] + L[alpha][i] * A[beta][i]
 
-    for i in range(3))
+                    for i in range(3))
         print("{:d} | {:d} | {:+.5f} | {:+.5f} | {:+.16f} |".format(alpha,
-        beta, eigen[alpha], eigen[beta], s))
+                                                                    beta, eigen[alpha], eigen[beta], s))
     print("\n")
 
+
 def normalise_check(A, L):
-    ##  Normalise Stroh vectors
-    ##  2 * A_{αi} L_{αi} = 1 
+    # Normalise Stroh vectors
+    # 2 * A_{αi} L_{αi} = 1
 
     for alpha in range(6):
-        scale = 1.0 / sci.sqrt(sum(2.0 * A[alpha][i] * L[alpha][i] for i in range(3)))
+        scale = 1.0 / \
+            sci.sqrt(sum(2.0 * A[alpha][i] * L[alpha][i] for i in range(3)))
         L[alpha] = scale * L[alpha]
         A[alpha] = scale * A[alpha]
 
@@ -275,72 +272,79 @@ def normalise_check(A, L):
     return A, L
 
 
-
-
 ################################################################################
 #################    Functions to define displacement field    #################
 
 def pm(p_alpha):
     return sci.sign(np.imag(p_alpha))
 
+
 def f(x, m, n, p_alpha):
     return sci.log(sci.dot(m, x) + sci.dot(n, x) * p_alpha)
+
 
 def mx_pnx(x, m, n, p_alpha):
     return (sci.dot(m, x) + sci.dot(n, x) * p_alpha)
 
+
 def df(x, m, n, p_alpha):
-    return 1./ ( sci.dot(m, x) + sci.dot(n, x) * p_alpha )
+    return 1. / (sci.dot(m, x) + sci.dot(n, x) * p_alpha)
+
 
 def D(L_alpha, b):
     return sum(b[i] * L_alpha[i] for i in range(3))
 
+
 def ui(x, k, A, L, b, m, n, p):
     ui = 0.0
     for alphai, p_alpha in enumerate(p):
-        uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * f(x, m, n, p_alpha)
+        uit = pm(p_alpha) * A[alphai][k] * \
+            D(L[alphai], b) * f(x, m, n, p_alpha)
         ui += uit
         #print("ui", uit)
     ui = ui / 2.0 / sci.pi / 1.0j
     #print("ui total", ui)
     return ui
+
 
 def distortion_kl(x, k, l, A, L, b, m, n, p):
     ui = 0.0
     for alphai, p_alpha in enumerate(p):
-        uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * df(x, m, n, p_alpha) * ( m[l] + p_alpha * n[l] )
+        uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * \
+            df(x, m, n, p_alpha) * (m[l] + p_alpha * n[l])
         ui += uit
         #print("ui", uit)
     ui = ui / 2.0 / sci.pi / 1.0j
     #print("ui total", ui)
     return ui
 
+
 def strain_ij(x, i, j, A, L, b, m, n, p):
     dui_dxj = distortion_kl(x, i, j, A, L, b, m, n, p)
     duj_dxi = distortion_kl(x, j, i, A, L, b, m, n, p)
-    strain = 0.5 * ( dui_dxj + duj_dxi  )
+    strain = 0.5 * (dui_dxj + duj_dxi)
     return strain
-    
+
 
 def stress_ij(x, k, l,  A, L, b, m, n, p, C):
     ui = 0.0
     for alphai, p_alpha in enumerate(p):
         for ii in range(3):
             for jj in range(3):
-                uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * df(x, m, n, p_alpha) * ( m[l] + p_alpha * n[l] ) * C(ii, jj, k, l)
+                uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * df(x,
+                                                                        m, n, p_alpha) * (m[l] + p_alpha * n[l]) * C(ii, jj, k, l)
                 ui += uit
         #print("ui", uit)
     ui = ui / 2.0 / sci.pi / 1.0j
     #print("ui total", ui)
     return ui
 
+
 def ui2(x, k, A, L, b, m, n, p):
-    ui2 = sum(A[alpha][k] * D(L[alpha], b) * f(x, m, n, p_alpha)  
-        for alpha, p_alpha in enumerate(p) if sci.imag(p_alpha) < 0)
+    ui2 = sum(A[alpha][k] * D(L[alpha], b) * f(x, m, n, p_alpha)
+              for alpha, p_alpha in enumerate(p) if sci.imag(p_alpha) < 0)
     ui2 = -ui2 / 2.0 / np.pi / 1.0j
     return ui2
-
-
 
 
 ################################################################################
@@ -351,9 +355,10 @@ def trial_sol(x, a, A, L, b, m, n, eigen):
 
     print("Trial solution")
     print("--------------------------------------------------------------------------------")
-    print("\n x = %s,\n\n a = %s,\n\n A = %s,\n\n L = %s,\n\n b = %s,\n\n m = %s,\n\n n = %s,\n\n eigen = %s \\nn"%(x, a, A, L, b, m, n, eigen))
+    print("\n x = %s,\n\n a = %s,\n\n A = %s,\n\n L = %s,\n\n b = %s,\n\n m = %s,\n\n n = %s,\n\n eigen = %s \\nn" % (
+        x, a, A, L, b, m, n, eigen))
 
-    #for indx, p_val in enumerate(eigen):
+    # for indx, p_val in enumerate(eigen):
     #    print("index %s, p_val = %s"%(indx, p_val))
 
     #print(ui(x, a, A, L, b, m, n, eigen))
@@ -361,12 +366,14 @@ def trial_sol(x, a, A, L, b, m, n, eigen):
     print("\n")
 
 
-def get_Disl_edge(a, A, L, b, m, n, eigen ):
+def get_Disl_edge(a, A, L, b, m, n, eigen):
     length = 200
-    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
-    DIS = [sci.zeros((length, length), dtype=sci.complex256), sci.zeros((length, length), dtype=sci.complex256)]
+    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                        sci.linspace(-5 * a, 5 * a, length))
+    DIS = [sci.zeros((length, length), dtype=sci.complex256),
+           sci.zeros((length, length), dtype=sci.complex256)]
     dis = [sci.zeros((length, length), dtype=np.float64),
-    sci.zeros((length, length), dtype=np.float64)]
+           sci.zeros((length, length), dtype=np.float64)]
 
     x = np.zeros(3)
     for k in range(2):
@@ -379,9 +386,11 @@ def get_Disl_edge(a, A, L, b, m, n, eigen ):
 
     return DIS, dis
 
-def get_Disl_screw(a, A, L, b, m, n, eigen ):
+
+def get_Disl_screw(a, A, L, b, m, n, eigen):
     length = 200
-    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
+    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                        sci.linspace(-5 * a, 5 * a, length))
     DIS = sci.zeros((length, length), dtype=sci.complex256)
     dis = sci.zeros((length, length), dtype=np.float64)
 
@@ -392,16 +401,19 @@ def get_Disl_screw(a, A, L, b, m, n, eigen ):
             x[0] = u[i, j]
             x[1] = v[i, j]
             DIS[i, j] = ui(x, k, A, L, b, m, n, eigen)
-            dis[i, j] = sci.real(DIS[i, j])    
+            dis[i, j] = sci.real(DIS[i, j])
 
     return DIS, dis
 
-def get_Disl_full(a, A, L, b, m, n, eigen ):
+
+def get_Disl_full(a, A, L, b, m, n, eigen):
     length = 200
-    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
-    DIS = [sci.zeros((length, length), dtype=sci.complex256), sci.zeros((length, length), dtype=sci.complex256), sci.zeros((length, length), dtype=sci.complex256)]
+    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                        sci.linspace(-5 * a, 5 * a, length))
+    DIS = [sci.zeros((length, length), dtype=sci.complex256), sci.zeros(
+        (length, length), dtype=sci.complex256), sci.zeros((length, length), dtype=sci.complex256)]
     dis = [sci.zeros((length, length), dtype=np.float64), sci.zeros((length, length), dtype=np.float64),
-    sci.zeros((length, length), dtype=np.float64)]
+           sci.zeros((length, length), dtype=np.float64)]
 
     x = np.zeros(3)
     for k in range(3):
@@ -415,29 +427,30 @@ def get_Disl_full(a, A, L, b, m, n, eigen ):
     return DIS, dis
 
 
-def get_strain_full(a, A, L, b, m, n, eigen ):
+def get_strain_full(a, A, L, b, m, n, eigen):
     length = 200
-    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
+    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                        sci.linspace(-5 * a, 5 * a, length))
     DIS = [sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
-           sci.zeros((length, length), dtype=sci.complex256), 
-           sci.zeros((length, length), dtype=sci.complex256), 
+           sci.zeros((length, length), dtype=sci.complex256),
+           sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256)]
 
-    dis = [sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
+    dis = [sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
            sci.zeros((length, length), dtype=np.float64)]
-    
+
     x = np.zeros(3)
     for k in range(3):
         for l in range(3):
@@ -445,34 +458,37 @@ def get_strain_full(a, A, L, b, m, n, eigen ):
                 for j in range(length):
                     x[0] = u[i, j]
                     x[1] = v[i, j]
-                    DIS[k*3 + l][i, j] = strain_ij(x, k, l, A, L, b, m, n, eigen)
+                    DIS[k*3 + l][i,
+                                 j] = strain_ij(x, k, l, A, L, b, m, n, eigen)
                     dis[k*3 + l][i, j] = sci.real(DIS[k][i, j])
 
     return DIS, dis
 
-def get_stress_full(a, A, L, b, m, n, eigen, C ):
+
+def get_stress_full(a, A, L, b, m, n, eigen, C):
     length = 200
-    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length), sci.linspace(-5 * a, 5 * a, length))
+    u, v = sci.meshgrid(sci.linspace(-5 * a, 5 * a, length),
+                        sci.linspace(-5 * a, 5 * a, length))
     DIS = [sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
-           sci.zeros((length, length), dtype=sci.complex256), 
-           sci.zeros((length, length), dtype=sci.complex256), 
+           sci.zeros((length, length), dtype=sci.complex256),
+           sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256),
            sci.zeros((length, length), dtype=sci.complex256)]
 
-    dis = [sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
-           sci.zeros((length, length), dtype=np.float64),\
+    dis = [sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
+           sci.zeros((length, length), dtype=np.float64),
            sci.zeros((length, length), dtype=np.float64)]
-    
+
     x = np.zeros(3)
     for k in range(3):
         for l in range(3):
@@ -480,7 +496,8 @@ def get_stress_full(a, A, L, b, m, n, eigen, C ):
                 for j in range(length):
                     x[0] = u[i, j]
                     x[1] = v[i, j]
-                    DIS[k*3 + l][i, j] = stress_ij(x, k, l, A, L, b, m, n, eigen, C)
+                    DIS[k*3 + l][i,
+                                 j] = stress_ij(x, k, l, A, L, b, m, n, eigen, C)
                     dis[k*3 + l][i, j] = sci.real(DIS[k][i, j])
 
     return DIS, dis
@@ -490,13 +507,15 @@ def get_stress_full(a, A, L, b, m, n, eigen, C ):
 
 
 def plot_dis_strain_full(dis):
-    fig = pp.figure(1, figsize=(18, 18), dpi = 100)
+    fig = pp.figure(1, figsize=(18, 18), dpi=100)
     for k in range(3):
         for l in range(3):
             scale = np.floor(np.log10(np.max(np.absolute(dis[k]))))
             ax = fig.add_subplot(3, 3, (3*k + l) + 1)
-            ax.set_title(r" $ \epsilon_{" + str(k + 1) + str(l + 1)  + "} $ Strain field $ \\times 10^{" + str(int(-scale)) + "}$ ")
-            im = ax.imshow(dis[k] / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+            ax.set_title(r" $ \epsilon_{" + str(k + 1) + str(l + 1) +
+                         "} $ Strain field $ \\times 10^{" + str(int(-scale)) + "}$ ")
+            im = ax.imshow(dis[k] / (10 ** scale),
+                           extent=(-5, 5, -5, 5), cmap='coolwarm')
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="5%", pad=0.05)
             bc = fig.colorbar(im, cax=cax, format="%1.3f")
@@ -505,26 +524,31 @@ def plot_dis_strain_full(dis):
 
 
 def plot_dis_stress_full(dis):
-    fig = pp.figure(1, figsize=(18, 18), dpi = 100)
+    fig = pp.figure(1, figsize=(18, 18), dpi=100)
     for k in range(3):
         for l in range(3):
-            scale = 0#np.floor(np.log10(np.max(np.absolute(dis[k])))) - 1
+            scale = 0  # np.floor(np.log10(np.max(np.absolute(dis[k])))) - 1
             ax = fig.add_subplot(3, 3, (3*k + l) + 1)
-            ax.set_title(r" $ \sigma_{" + str(k + 1) + str(l + 1)  + "} $ Stress field $ \\times 10^{" + str(int(-scale)) + "}$ ")
-            im = ax.imshow(np.log10(dis[k]) / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+            ax.set_title(r" $ \sigma_{" + str(k + 1) + str(l + 1) +
+                         "} $ Stress field $ \\times 10^{" + str(int(-scale)) + "}$ ")
+            im = ax.imshow(
+                np.log10(dis[k]) / (10 ** scale), extent=(-5, 5, -5, 5), cmap='coolwarm')
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="5%", pad=0.05)
             bc = fig.colorbar(im, cax=cax, format="%1.3f")
             bc.solids.set_edgecolor("face")
     pp.show()
 
+
 def plot_dis_full(dis):
-    fig = pp.figure(1, figsize=(18, 6), dpi = 100)
+    fig = pp.figure(1, figsize=(18, 6), dpi=100)
     for k in range(3):
         scale = np.floor(np.log10(np.max(np.absolute(dis[k]))))
         ax = fig.add_subplot(1, 3, k + 1)
-        ax.set_title(r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$ ")
-        im = ax.imshow(dis[k] / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+        ax.set_title(
+            r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$ ")
+        im = ax.imshow(dis[k] / (10 ** scale),
+                       extent=(-5, 5, -5, 5), cmap='coolwarm')
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         bc = fig.colorbar(im, cax=cax, format="%1.3f")
@@ -533,35 +557,41 @@ def plot_dis_full(dis):
 
 
 def plot_dis_edge(dis):
-    fig = pp.figure(1, figsize=(12, 6), dpi = 100)
+    fig = pp.figure(1, figsize=(12, 6), dpi=100)
     for k in range(2):
         scale = np.floor(np.log10(np.max(np.absolute(dis[k]))))
         ax = fig.add_subplot(1, 2, k + 1)
-        ax.set_title(r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$: Edge ")
-        im = ax.imshow(dis[k] / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+        ax.set_title(
+            r" $ x^{" + str(k + 1) + "} $ Displacement field $ \\times 10^{" + str(int(-scale)) + "}$: Edge ")
+        im = ax.imshow(dis[k] / (10 ** scale),
+                       extent=(-5, 5, -5, 5), cmap='coolwarm')
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         bc = fig.colorbar(im, cax=cax, format="%1.3f")
         bc.solids.set_edgecolor("face")
     pp.show()
 
+
 def plot_dis_screw(dis):
-    fig = pp.figure(1, figsize=(12, 6), dpi = 100)
+    fig = pp.figure(1, figsize=(12, 6), dpi=100)
     scale = np.floor(np.log10(np.max(np.absolute(dis))))
-    print("scale",scale)
+    print("scale", scale)
     ax = fig.add_subplot(111)
-    ax.set_title(r"Displacement field $\,\times\,10^{" + str(int(-scale)) + "}$")
-    im = ax.imshow(dis / (10 ** scale), extent=(-5, 5, -5, 5), cmap = 'coolwarm')
+    ax.set_title(
+        r"Displacement field $\,\times\,10^{" + str(int(-scale)) + "}$")
+    im = ax.imshow(dis / (10 ** scale), extent=(-5, 5, -5, 5), cmap='coolwarm')
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
     bc = fig.colorbar(im, cax=cax, format="%1.3f")
     bc.solids.set_edgecolor("face")
     pp.show()
 
-def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
-    ##  DEMONSTRATION
 
-    x_, y_ = np.meshgrid( np.linspace(-5*a, 5*a, 20), np.linspace(-5*a, 5*a, 20) )
+def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
+    # DEMONSTRATION
+
+    x_, y_ = np.meshgrid(np.linspace(-5*a, 5*a, 20),
+                         np.linspace(-5*a, 5*a, 20))
     x = np.zeros(3)
     for k in range(2):
         for i in range(20):
@@ -570,7 +600,6 @@ def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
                 x[1] = y_[i, j]
                 DIS[k][i, j] = ui(x, k, A, L, b, m, n, eigen)
 
-
     for k in range(2):
         for i in range(20):
             for j in range(20):
@@ -578,16 +607,16 @@ def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
 
     for i in range(20):
         for j in range(20):
-            x_[i,j] = x_[i,j] + dis[0][i,j]
-            y_[i,j] = y_[i,j] + dis[1][i,j]
+            x_[i, j] = x_[i, j] + dis[0][i, j]
+            y_[i, j] = y_[i, j] + dis[1][i, j]
 
-    fig = pp.figure(1, figsize = (6, 6))
-    ax = fig.add_subplot(1,1,1)
+    fig = pp.figure(1, figsize=(6, 6))
+    ax = fig.add_subplot(1, 1, 1)
 
     for k in range(19):
         for l in range(19):
-            ax.plot([x_[k,l], x_[k,l+1]], [y_[k,l], y_[k,l+1]], "k-")
-            ax.plot([x_[l,k], x_[l+1,k]], [y_[l,k], y_[l+1,k]], "k-")
+            ax.plot([x_[k, l], x_[k, l+1]], [y_[k, l], y_[k, l+1]], "k-")
+            ax.plot([x_[l, k], x_[l+1, k]], [y_[l, k], y_[l+1, k]], "k-")
 
     #ax.plot([-5*a,0.25*a], [0,0], "k-")
     ax.set_xlim(-4.5*a, 4.5*a)
@@ -598,22 +627,22 @@ def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
     pp.show()
 
 
-
-
 ##############################################################################################
 #################    MAIN: Generate dislocation in Anisotropic equations     #################
 
 def uij(x1, x2, k, A, L, b, m, n, p):
 
     ui = 0.0
-    x = np.array([x1,x2, 0])
+    x = np.array([x1, x2, 0])
     for alphai, p_alpha in enumerate(p):
-        uit = pm(p_alpha) * A[alphai][k] * D(L[alphai], b) * f(x, m, n, p_alpha)
+        uit = pm(p_alpha) * A[alphai][k] * \
+            D(L[alphai], b) * f(x, m, n, p_alpha)
         ui += uit
         #print("ui", uit)
     ui = ui / 2.0 / sci.pi / 1.0j
     #print("ui total", ui)
     return sci.real(ui)
+
 
 def anis_dislocation(a, b, C, m, n, pure, screw, plot, trans=False):
 
@@ -621,104 +650,103 @@ def anis_dislocation(a, b, C, m, n, pure, screw, plot, trans=False):
     C, C_arr = C_hex(C, a=trans)
 
     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
-    
-    p, A, L        = get_stroh_and_ps(NN, MN, NM, MM)
-    
+
+    p, A, L = get_stroh_and_ps(NN, MN, NM, MM)
+
     orthog_check(A, L, p)
     normalise_check(A, L)
 
     if pure and screw:
-        return functools.partial(uij, k=2, A=A, L=L, b=b, m=m, n=n, p=p )
-    
+        return functools.partial(uij, k=2, A=A, L=L, b=b, m=m, n=n, p=p)
+
     elif pure and not screw:
         # have extra variable k such that one can get the x and y displacement
-        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p )
+        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p)
     else:
         # have extra variable k such that one can get the x and y displacement
-        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p )
+        return functools.partial(uij, A=A, L=L, b=b, m=m, n=n, p=p)
 
 
 def gen_disl_u(a, b, C, m, n, pure, screw, plot):
 
-     #aik, ps        = get_aik(C)
-     
-     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
-     
-     p, A, L        = get_stroh_and_ps(NN, MN, NM, MM)
+    #aik, ps        = get_aik(C)
 
-     orthog_check(A, L, p)
-     normalise_check(A, L)
+    NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
 
-     if pure and screw:
-         DIS, dis       = get_Disl_screw(a, A, L, b, m, n, p)
-         if plot:
-             plot_dis_screw(dis)
-     elif pure and not screw:
-         DIS, dis       = get_Disl_edge(a, A, L, b, m, n, p)
-         if plot:
-             plot_dis_edge(dis)
-     else:
-         DIS, dis       = get_Disl_full(a, A, L, b, m, n, p)
-         if plot:
-             plot_dis_full(dis)
+    p, A, L = get_stroh_and_ps(NN, MN, NM, MM)
 
-     if plot:
-         ## Plot Dislocation displacement heatmap
-         b_demonstration(DIS, dis, m, n, a, b, A, L, p)
-             
-     return DIS, dis
+    orthog_check(A, L, p)
+    normalise_check(A, L)
+
+    if pure and screw:
+        DIS, dis = get_Disl_screw(a, A, L, b, m, n, p)
+        if plot:
+            plot_dis_screw(dis)
+    elif pure and not screw:
+        DIS, dis = get_Disl_edge(a, A, L, b, m, n, p)
+        if plot:
+            plot_dis_edge(dis)
+    else:
+        DIS, dis = get_Disl_full(a, A, L, b, m, n, p)
+        if plot:
+            plot_dis_full(dis)
+
+    if plot:
+        # Plot Dislocation displacement heatmap
+        b_demonstration(DIS, dis, m, n, a, b, A, L, p)
+
+    return DIS, dis
+
 
 def gen_disl_strain(a, b, C, m, n):
 
-     #aik, ps        = get_aik(C)
-     
-     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
-     
-     p, A, L        = get_stroh_and_ps(NN, MN, NM, MM)
+    #aik, ps        = get_aik(C)
 
-     orthog_check(A, L, p)
-     normalise_check(A, L)
+    NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
 
+    p, A, L = get_stroh_and_ps(NN, MN, NM, MM)
 
-     DIS, dis       = get_strain_full(a, A, L, b, m, n, p )
-     if plot:
-         plot_dis_strain_full(dis)
+    orthog_check(A, L, p)
+    normalise_check(A, L)
 
-     if plot:
-         ## Plot Dislocation displacement heatmap
-         b_demonstration(DIS, dis, m, n, a, b, A, L, p)
-             
-     return DIS, dis
+    DIS, dis = get_strain_full(a, A, L, b, m, n, p)
+    if plot:
+        plot_dis_strain_full(dis)
+
+    if plot:
+        # Plot Dislocation displacement heatmap
+        b_demonstration(DIS, dis, m, n, a, b, A, L, p)
+
+    return DIS, dis
+
 
 def gen_disl_stress(a, b, C, m, n):
 
-     #aik, ps        = get_aik(C)
-     
-     NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
-     
-     p, A, L        = get_stroh_and_ps(NN, MN, NM, MM)
+    #aik, ps        = get_aik(C)
 
-     orthog_check(A, L, p)
-     normalise_check(A, L)
+    NN, MN, NM, MM = get_Chrid_tensors(C, n, m)
+
+    p, A, L = get_stroh_and_ps(NN, MN, NM, MM)
+
+    orthog_check(A, L, p)
+    normalise_check(A, L)
+
+    DIS, dis = get_stress_full(a, A, L, b, m, n, p, C)
+    if plot:
+        plot_dis_stress_full(dis)
+
+    if plot:
+        # Plot Dislocation displacement heatmap
+        b_demonstration(DIS, dis, m, n, a, b, A, L, p)
+
+    return DIS, dis
 
 
-     DIS, dis       = get_stress_full(a, A, L, b, m, n, p, C )
-     if plot:
-         plot_dis_stress_full(dis)
-
-     if plot:
-         ## Plot Dislocation displacement heatmap
-         b_demonstration(DIS, dis, m, n, a, b, A, L, p)
-             
-     return DIS, dis
-
-     
 ###############################################################################################
 ###############################################################################################
 
 
-
-# # Dislocation reference frame 
+# # Dislocation reference frame
 # m   = sci.array([   1.0,       0.0,    0.0 ], dtype=sci.float128)
 # n   = sci.array([   0.0,       1.0,     0.0 ], dtype=sci.float128)
 # tau = sci.array([   0.0,       0.0,     1.0 ], dtype=sci.float128)
@@ -773,7 +801,7 @@ def gen_disl_stress(a, b, C, m, n):
 # """
 
 # ##  Transformation matrix for the dislocation reference frame
-# ##  Transformation for pure screw dislocation with that burgers vector: k' on j axis, 
+# ##  Transformation for pure screw dislocation with that burgers vector: k' on j axis,
 # a_trans = (2**(-0.5)) * sci.array([ [-1,1,0],  [0,0,2**(0.5)],  [1,1,0]]  )
 
 
@@ -785,17 +813,14 @@ def gen_disl_stress(a, b, C, m, n):
 # C, C_arr =  C_hex(a_trans)
 
 
-
-
-
 # b = sci.array([0., a, 0.])
 # b = sci.array([0., a, 0.])
 # ## Get Dislocation
 
 # #"""
-# ##  Dislocation reference frame 
+# ##  Dislocation reference frame
 # #m   = sci.array([1., -1., 0.], dtype=sci.float128) * (1. / 2**(0.5))
-# #n   = sci.array([0., 0., 1.], dtype=sci.float128) 
+# #n   = sci.array([0., 0., 1.], dtype=sci.float128)
 # #tau = sci.array([1., 1., 0.], dtype=sci.float128) * (1. / 2**(0.5))
 
 
@@ -818,4 +843,3 @@ def gen_disl_stress(a, b, C, m, n):
 # plot  = True
 
 # DIS, dis = gen_disl_u(a, b, C, m, n, pure, screw, plot)
-

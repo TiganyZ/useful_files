@@ -725,3 +725,27 @@ t hcp=1 forces=1 nkx=8 nky=30 nkz=3 rfile=1 mmom=0 sev=-2.103234 erep=.737486 et
 t hcp=1 forces=1 nkx=8 nky=30 nkz=4 rfile=1 mmom=0 sev=-2.103234 erep=.737486 etot=-1.365748 emad=0 3pv=.298869 TS=.000002
 t hcp=1 rfile=1 nk=15 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.406505 erep=23.707145 etot=-43.69936 emad=0 3pv=10.160027 TS=.000105
 t hcp=1 rfile=1 nk=15 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.397835 erep=23.725381 etot=-43.672454 emad=0 3pv=10.291235 TS=.000109
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.406505 erep=23.707145 etot=-43.69936 emad=0 3pv=10.160027 TS=.000105
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.4041 erep=23.711819 etot=-43.692281 emad=0 3pv=10.194044 TS=.0001
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.397835 erep=23.725381 etot=-43.672454 emad=0 3pv=10.291235 TS=.000109
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.389537 erep=23.746457 etot=-43.64308 emad=0 3pv=10.438857 TS=.000028
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.137892 erep=23.671519 etot=-43.466373 emad=0 3pv=10.489861 TS=.000665
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.15903 erep=23.72387 etot=-43.43516 emad=0 3pv=10.807222 TS=.000629
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.172881 erep=23.769697 etot=-43.403184 emad=0 3pv=11.083437 TS=.000397
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.178185 erep=23.805828 etot=-43.372357 emad=0 3pv=11.300727 TS=.000239
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.17521 erep=23.829124 etot=-43.346086 emad=0 3pv=11.440406 TS=.000221
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.165255 erep=23.836934 etot=-43.328321 emad=0 3pv=11.486556 TS=.000267
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-66.954336 erep=23.730008 etot=-43.224328 emad=0 3pv=11.157409 TS=.000277
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.165303 erep=23.836934 etot=-43.328369 emad=0 3pv=11.486385 TS=.000241
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.175249 erep=23.829124 etot=-43.346125 emad=0 3pv=11.440269 TS=.000201
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.178215 erep=23.805828 etot=-43.372387 emad=0 3pv=11.300618 TS=.000225
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.172974 erep=23.769697 etot=-43.403277 emad=0 3pv=11.083183 TS=.000332
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.159167 erep=23.72387 etot=-43.435297 emad=0 3pv=10.806883 TS=.000535
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.138028 erep=23.671519 etot=-43.466509 emad=0 3pv=10.489549 TS=.00058
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.389667 erep=23.746457 etot=-43.64321 emad=0 3pv=10.438514 TS=-.000063
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.398079 erep=23.725381 etot=-43.672698 emad=0 3pv=10.290547 TS=-.000073
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.404351 erep=23.711819 etot=-43.692532 emad=0 3pv=10.193307 TS=-.000092
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.406505 erep=23.707145 etot=-43.69936 emad=0 3pv=10.160027 TS=.000105
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.4041 erep=23.711819 etot=-43.692281 emad=0 3pv=10.194044 TS=.0001
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.397835 erep=23.725381 etot=-43.672454 emad=0 3pv=10.291235 TS=.000109
+t hcp=1 rfile=1 nkx=9 nky=15 nkz=4 mmom=0 sev=-67.389537 erep=23.746457 etot=-43.64308 emad=0 3pv=10.438857 TS=.000028

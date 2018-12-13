@@ -557,7 +557,7 @@ def plot_dis_screw(dis):
     bc = fig.colorbar(im, cax=cax, format="%1.3f")
     bc.solids.set_edgecolor("face")
     pp.show()
-
+    
 def b_demonstration(DIS, dis, m, n, a, b, A, L, eigen):
     ##  DEMONSTRATION
 

@@ -94,8 +94,6 @@ disl_coord = disl_coord.dot(np.array([[0., 0.,  -1.],
                                       [1., 0.,  0.]]))
 
 
-
-
 disl_axis = 0
 # Where 0 is x, 1 is y and z is 2
 
@@ -107,9 +105,9 @@ clat_tbe = 8.849586805  # 4.683
 q = clat_tbe / alat_tbe
 
 
-rotation= np.array([[np.sqrt(3)/2., 0.5,  0.],
-                       [-0.5, np.sqrt(3)/2., 0.],
-                       [0., 0.,  1.]])
+rotation = np.array([[np.sqrt(3)/2., 0.5,  0.],
+                     [-0.5, np.sqrt(3)/2., 0.],
+                     [0., 0.,  1.]])
 
 
 lengths_tbe = np.array([alat_tbe,
@@ -159,8 +157,8 @@ ninert = n_inert
 print("Writing disl supercell")
 
 dc_rot = np.array([[0., 0.,  -1.],
-                    [0., 1., 0.],
-                    [1., 0.,  0.]])
+                   [0., 1., 0.],
+                   [1., 0.,  0.]])
 
 m = disl_coord[1]
 n = disl_coord[2]
@@ -173,27 +171,23 @@ n = dc_rot[2]
 #n = np.array([0,1,0])
 
 dis_tbe_anis1 = anis_dis.anis_dislocation(
-    alat_tbe, b, C, m, n, pure, screw, plot)#, trans=disl_coord)
+    alat_tbe, b, C, m, n, pure, screw, plot)  # , trans=disl_coord)
 dis_tbe_anis2 = anis_dis.anis_dislocation(
-    alat_tbe, -b, C, m, n, pure, screw, plot)# , trans=disl_coord)
+    alat_tbe, -b, C, m, n, pure, screw, plot)  # , trans=disl_coord)
 ndis = 2
 dis_tbe_anis = [dis_tbe_anis1, dis_tbe_anis2]
 
 
-rcore_1d = np.array( [  (1./3.) * ( rotation.dot( plat[0] ) * lengths_tbe[0] * nxyz[0] +
-                                    rotation.dot( plat[1] ) * lengths_tbe[1] * nxyz[1] +
-                                    rotation.dot( plat[2] ) * lengths_tbe[2] * nxyz[2]) ])
+rcore_1d = ((1./3.) * (rotation.dot(plat[0]) * lengths_tbe[0] * nxyz[0] +
+                       rotation.dot(plat[1]) * lengths_tbe[1] * nxyz[1] +
+                       rotation.dot(plat[2]) * lengths_tbe[2] * nxyz[2]))
 
-rcore_2d = np.array( [  (2./3.) * ( rotation.dot( plat[0] ) * lengths_tbe[0] * nxyz[0] +
-                                    rotation.dot( plat[1] ) * lengths_tbe[1] * nxyz[1] +
-                                    rotation.dot( plat[2] ) * lengths_tbe[2] * nxyz[2]) ])
-
-
+rcore_2d = ((2./3.) * (rotation.dot(plat[0]) * lengths_tbe[0] * nxyz[0] +
+                       rotation.dot(plat[1]) * lengths_tbe[1] * nxyz[1] +
+                       rotation.dot(plat[2]) * lengths_tbe[2] * nxyz[2]))
 
 
-
-
-rcore_1d += rotation.dot( np.array( [1./(2.*3**(0.5)), -1/2.,  q/2] )  )
+rcore_1d += rotation.dot(np.array([1./(2.*3**(0.5)), -1/2.,  q/2]))
 
 print("rcore 1d", rcore_1d)
 rcore = [rcore_1d, rcore_2d]
@@ -214,7 +208,8 @@ ds = Disl_supercell(unit_cell, lengths_tbe, alat_tbe, plat, nxyz, geometry='squa
 #                     ninert=ninert, disl=dis_tbe_anis, n_disl=ndis, disl_axis=disl_axis)
 
 cwd = os.getcwd()
-ds.write_cell_with_dislocation(axis=disl_axis, add_name="anis_prim_multi", rotation=rotation)
+ds.write_cell_with_dislocation(
+    axis=disl_axis, add_name="anis_prim_multi", rotation=rotation)
 os.chdir(cwd)
 
 # print("Writing cell with no dislocations")
