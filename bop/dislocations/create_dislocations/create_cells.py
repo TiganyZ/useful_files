@@ -153,7 +153,7 @@ class Disl_supercell:
 
                     Rx, Ry, Rz = tuple( plat[axis-2]*i + plat[axis-1]*j )
                     for ind, u in enumerate(dis):
-                        x, y, z = tuple( x + y +  rcore[ind]  )
+                        x, y, z = tuple( xt + yt +  rcore[ind]  )
                         r12 = np.sqrt( x**2 +  y**2 )
                         x = r12 * np.cos( rcphi + np.arctan2(x,y) )
                         y = r12 * np.sin( rcphi + np.arctan2(x,y) )

@@ -1,0 +1,198 @@
+ --------------  START TBE - ref: db4d0eea6 ---------------
+ HEADER pure Ti
+
+ TBE:      nbas = 4  nspec = 1  verb 31
+ TB:       rmaxh = 20, rho
+ bz:       metal 
+
+                Plat                                  Qlat
+   1.732051   0.000000   0.000000        0.577350   0.000000   0.000000
+   0.000000   1.000000   0.000000        0.000000   1.000000   0.000000
+   0.000000   0.000000   1.598005        0.000000   0.000000   0.625780
+   alat = 5.5125  Cell vol = 463.643783
+
+ LATTC:  as= 2.000   tol=1.00e-14   alat= 5.51250   awald= 0.258   lmax=6
+         r1=  5.049   nkd= 185      q1=  3.102   nkg= 329
+
+ Generator 1 already in group as element 1
+ SGROUP: 1 symmetry operations from 1 generators
+ MKSYM:  found 1 space group operations; adding inversion generated 2 ops
+ rdctrl: (warning) class "O" not in class table
+ rdctrl: (warning) class "H" not in class table
+ rdctrl: (warning) class "OO" not in class table
+ rdctrl: (warning) class "NN" not in class table
+ BZMESH: 962 irreducible QP from 1920 ( 12 32 5 )  shift= F F F
+
+ TBZINT: use spherical dipole correction
+ Process grid dims:            1           1           1
+ k-point : process map :  0 962
+
+ TBZINT: zval=8.125307 electrons from START category      
+
+ RDTBH: found global matrix elements with mode 5: Goodwin-Skinner-Pettifor
+No atoms of type H were found in the structure. Discarding pair H H.
+No atoms of type O were found in the structure. Discarding pair Ti O.
+No atoms of type O were found in the structure. Discarding pair O Ti.
+No atoms of type O were found in the structure. Discarding pair O O.
+No atoms of type H were found in the structure. Discarding pair Ti H.
+No atoms of type H were found in the structure. Discarding pair H Ti.
+No atoms of type O were found in the structure. Discarding pair O H.
+No atoms of type H were found in the structure. Discarding pair H O.
+No atoms of type OO were found in the structure. Discarding pair OO OO.
+No atoms of type NN were found in the structure. Discarding pair NN NN.
+No atoms of type NN were found in the structure. Discarding pair NN OO.
+No atoms of type OO were found in the structure. Discarding pair OO NN.
+No atoms of type O were found in the structure. Discarding pair O OO.
+No atoms of type OO were found in the structure. Discarding pair OO O.
+No atoms of type NN were found in the structure. Discarding pair NN O.
+No atoms of type O were found in the structure. Discarding pair O NN.
+
+ SHOTBM: 17 rules for pair potential
+ ... no pairs matching rule 1
+ Ti,Ti:
+   type 10 (Exp x Power law), V0(d) = sum [a d^b exp(-c d)]
+   coeffs: a1=  112.93   b1=  0      c1= 1.4989
+           a2=  0        b2=  0      c2= 0
+           a3=  0        b3=  0      c3= 0
+   cutoff type 2 (multiplicative), 5th order polynomial, range [6.2, 8.5]
+ ... no pairs matching rule 3
+ ... no pairs matching rule 4
+ ... no pairs matching rule 5
+ ... no pairs matching rule 6
+ ... no pairs matching rule 7
+ ... no pairs matching rule 8
+ ... no pairs matching rule 9
+ ... no pairs matching rule 10
+ ... no pairs matching rule 11
+ ... no pairs matching rule 12
+ ... no pairs matching rule 13
+ ... no pairs matching rule 14
+ ... no pairs matching rule 15
+ ... no pairs matching rule 16
+ ... no pairs matching rule 17
+
+ SHOTBM: 17 rules for Hamiltonian
+ ... no pairs matching rule 1
+ Ti,Ti:
+   type 2 (Exp. decay), V(d) = a exp (- b d)
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   coeff:   0.00   0.00   0.00   0.00   0.00   0.00   0.00  -1.76   1.18  -0.29
+   decay:   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.58   0.58   0.58
+   cutoff type 2 (multiplicative), 5th order polynomial, range [r1, rc]
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   r1:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   6.20   6.20   6.20
+   rc:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   8.50   8.50   8.50
+ ... no pairs matching rule 3
+ ... no pairs matching rule 4
+ ... no pairs matching rule 5
+ ... no pairs matching rule 6
+ ... no pairs matching rule 7
+ ... no pairs matching rule 8
+ ... no pairs matching rule 9
+ ... no pairs matching rule 10
+ ... no pairs matching rule 11
+ ... no pairs matching rule 12
+ ... no pairs matching rule 13
+ ... no pairs matching rule 14
+ ... no pairs matching rule 15
+ ... no pairs matching rule 16
+ ... no pairs matching rule 17
+
+ pairc, ib=  1: 293 neighbors in range  3.628*alat =  20.00
+ pairc, ib=  2: 293 neighbors in range  3.628*alat =  20.00
+ pairc, ib=  3: 293 neighbors in range  3.628*alat =  20.00
+ pairc, ib=  4: 293 neighbors in range  3.628*alat =  20.00
+ pairc:  1172 pairs total  293 is max cluster size
+
+ BZWTS : --- Brillouin Zone sampling; N=1, W=.005 ---
+ N=1, W=0.005, E_F=-0.383515, sumev=-3.74718, entropy term: 0.000027, 8.125307 electrons
+
+ SECMTB:  kpt 1 of 962, k=  0.00000  0.00000  0.00000
+ -0.6006 -0.5266 -0.4912 -0.4043 -0.3135 -0.2906 -0.2720 -0.2720 -0.2432
+
+ SECMTB:  kpt 100 of 962, k=  0.38490  0.25000  0.00000
+ -0.4956 -0.4673 -0.4370 -0.3959 -0.3759 -0.3554 -0.3392 -0.2743 -0.2470
+
+ SECMTB:  kpt 200 of 962, k=  0.24056  0.00000  0.12516
+ -0.5036 -0.4590 -0.4201 -0.3556 -0.3454 -0.3195 -0.2800 -0.2661 -0.2579
+
+ SECMTB:  kpt 300 of 962, k=  0.43301  0.25000  0.12516
+ -0.4845 -0.4791 -0.3951 -0.3838 -0.3640 -0.3630 -0.3320 -0.2722 -0.2523
+
+ SECMTB:  kpt 400 of 962, k=  0.04811  0.53125  0.12516
+ -0.4932 -0.4885 -0.4262 -0.4180 -0.3644 -0.3596 -0.3411 -0.3364 -0.2631
+
+ SECMTB:  kpt 500 of 962, k=  0.24056  0.78125  0.12516
+ -0.4714 -0.4700 -0.4058 -0.3960 -0.3670 -0.3478 -0.3344 -0.2781 -0.2614
+
+ SECMTB:  kpt 600 of 962, k=  0.43301  0.03125  0.25031
+ -0.5133 -0.4628 -0.4232 -0.4120 -0.3688 -0.3564 -0.3269 -0.3083 -0.2787
+
+ SECMTB:  kpt 700 of 962, k=  0.04811  0.31250  0.25031
+ -0.4477 -0.4224 -0.4068 -0.4055 -0.3610 -0.3518 -0.3088 -0.3045 -0.2373
+
+ SECMTB:  kpt 800 of 962, k=  0.24056  0.56250  0.25031
+ -0.5301 -0.5252 -0.4934 -0.4894 -0.4358 -0.4335 -0.3998 -0.3985 -0.2098
+
+ SECMTB:  kpt 900 of 962, k=  0.43301  0.81250  0.25031
+ -0.4728 -0.4286 -0.4226 -0.3833 -0.3783 -0.3395 -0.3217 -0.3117 -0.2439
+
+ Forces on atom    1    Species: Ti  
+  Coordinates:    0.86602540    1.00000000    0.00000000
+  From bands :    0.00012404   -0.00000000   -0.00000000
+  From pairs :    0.00000000    0.00000000    0.00000000
+  Total      :    0.00012404   -0.00000000   -0.00000000
+
+ Forces on atom    2    Species: Ti  
+  Coordinates:    0.00000000    0.50000000    0.00000000
+  From bands :    0.00012404    0.00000000   -0.00000000
+  From pairs :    0.00000000    0.00000000    0.00000000
+  Total      :    0.00012404    0.00000000   -0.00000000
+
+ Forces on atom    3    Species: Ti  
+  Coordinates:    0.28867514    1.00000000    0.79900227
+  From bands :   -0.00012404   -0.00000000    0.00000000
+  From pairs :   -0.00000000    0.00000000    0.00000000
+  Total      :   -0.00012404   -0.00000000    0.00000000
+
+ Forces on atom    4    Species: Ti  
+  Coordinates:    1.15470054    0.50000000    0.79900227
+  From bands :   -0.00012404    0.00000000   -0.00000000
+  From pairs :   -0.00000000    0.00000000    0.00000000
+  Total      :   -0.00012404    0.00000000   -0.00000000
+
+ Maximum force= 0.000124 on atom 3 (Ti)
+  
+ tbtote: sum of all forces = -0.1572E-16  0.1176E-17  0.1872E-17
+
+ Atom    1   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.031327 (Total:   2.031327)
+  POS=  0.866025  1.000000  0.000000  Dq/e= -0.000000
+
+ Atom    2   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.031327 (Total:   2.031327)
+  POS=  0.000000  0.500000  0.000000  Dq/e= -0.000000
+
+ Atom    3   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.031327 (Total:   2.031327)
+  POS=  0.288675  1.000000  0.799002  Dq/e= -0.000000
+
+ Atom    4   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.031327 (Total:   2.031327)
+  POS=  1.154701  0.500000  0.799002  Dq/e= -0.000000
+ 
+ Tr[rho]                 :        8.12530688
+ band structure energy   :       -3.74718042
+ pair potential energy   :        0.74546397
+ reference energy        :       -1.85419503
+ total energy            :       -1.14752142
+ free energy             :       -1.14754828
+ 3PV              pair   :        6.18289739
+                 bands   :       -6.24151242
+                 charges :        0.00000000
+                 total   :       -0.05861502
+ 
+ 
+t hcp=1 forces=1 nkx=12 nky=32 nkz=5 rfile=1 mmom=0 sev=-3.74718 erep=.745464 etot=-1.147521 emad=0 3pv=-.058615 TS=.000027
+ Exit 0 TBE 
+ CPU time:  1.040s   Wall clock 1.066s  at  18:30:52 23.11.2018  on  gherkin
