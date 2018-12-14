@@ -10122,3 +10122,475 @@ bz met T  tet F  ef -0.179898  sev -67.369318534  zval 256.0 qval 256.0 dosef 17
  TB:       rmaxh = 6.06298, rho
  bz:       metal 
  bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179847  sev -67.397939283  zval 256.0 qval 256.0 dosef 1762
+ CPU time:  105.934s   Wall clock 105.954s  at  09:13:33 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179780  sev -67.421239915  zval 256.0 qval 256.0 dosef 1758
+ CPU time:  104.807s   Wall clock 104.828s  at  09:15:18 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179724  sev -67.436484192  zval 256.0 qval 256.0 dosef 1766
+ CPU time:  107.147s   Wall clock 107.167s  at  09:17:05 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179704  sev -67.441768239  zval 256.0 qval 256.0 dosef 1774
+ CPU time:  104.947s   Wall clock 104.967s  at  09:18:50 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179733  sev -67.436388386  zval 256.0 qval 256.0 dosef 1774
+ CPU time:  105.531s   Wall clock 105.560s  at  09:20:36 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179795  sev -67.421093009  zval 256.0 qval 256.0 dosef 1769
+ CPU time:  108.037s   Wall clock 108.060s  at  09:22:24 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179864  sev -67.397804129  zval 256.0 qval 256.0 dosef 1772
+ CPU time:  106.321s   Wall clock 106.342s  at  09:24:10 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179912  sev -67.369258436  zval 256.0 qval 256.0 dosef 1785
+ CPU time:  103.984s   Wall clock 104.006s  at  09:25:55 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179892  sev -67.338566196  zval 256.0 qval 256.0 dosef 1797
+ CPU time:  106.041s   Wall clock 106.061s  at  09:27:41 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179613  sev -67.187305922  zval 256.0 qval 256.0 dosef 1836
+ CPU time:  103.923s   Wall clock 103.943s  at  09:29:25 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179449  sev -67.176259327  zval 256.0 qval 256.0 dosef 1821
+ CPU time:  104.023s   Wall clock 104.049s  at  09:31:09 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180074  sev -67.432856171  zval 256.0 qval 256.0 dosef 1768
+ CPU time:  107.151s   Wall clock 107.175s  at  09:32:56 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180019  sev -67.443485608  zval 256.0 qval 256.0 dosef 1767
+ CPU time:  107.809s   Wall clock 107.829s  at  09:34:44 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179990  sev -67.447424146  zval 256.0 qval 256.0 dosef 1761
+ CPU time:  109.191s   Wall clock 109.212s  at  09:36:33 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180306  sev -67.560158503  zval 256.0 qval 256.0 dosef 1719
+ CPU time:  112.221s   Wall clock 112.245s  at  09:38:26 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180339  sev -67.553537382  zval 256.0 qval 256.0 dosef 1716
+ CPU time:  113.740s   Wall clock 113.760s  at  09:40:20 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179729  sev -67.280525805  zval 256.0 qval 256.0 dosef 1760
+ CPU time:  109.358s   Wall clock 109.384s  at  09:42:09 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179888  sev -67.281740211  zval 256.0 qval 256.0 dosef 1771
+ CPU time:  119.100s   Wall clock 119.129s  at  09:44:08 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180182  sev -67.421292172  zval 256.0 qval 256.0 dosef 1766
+ CPU time:  109.126s   Wall clock 109.156s  at  09:45:58 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180178  sev -67.437487726  zval 256.0 qval 256.0 dosef 1780
+ CPU time:  108.566s   Wall clock 108.597s  at  09:47:46 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180047  sev -67.453297326  zval 256.0 qval 256.0 dosef 1775
+ CPU time:  112.632s   Wall clock 112.661s  at  09:49:39 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179856  sev -67.468263674  zval 256.0 qval 256.0 dosef 1778
+ CPU time:  109.035s   Wall clock 109.056s  at  09:51:28 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179677  sev -67.481054411  zval 256.0 qval 256.0 dosef 1790
+ CPU time:  110.674s   Wall clock 110.697s  at  09:53:19 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179550  sev -67.489785357  zval 256.0 qval 256.0 dosef 1806
+ CPU time:  104.928s   Wall clock 104.948s  at  09:55:04 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179504  sev -67.492864283  zval 256.0 qval 256.0 dosef 1816
+ CPU time:  111.286s   Wall clock 111.306s  at  09:56:56 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179554  sev -67.489701120  zval 256.0 qval 256.0 dosef 1813
+ CPU time:  111.538s   Wall clock 111.558s  at  09:58:47 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179687  sev -67.480896285  zval 256.0 qval 256.0 dosef 1803
+ CPU time:  110.689s   Wall clock 110.709s  at  10:00:38 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179874  sev -67.468127692  zval 256.0 qval 256.0 dosef 1790
+ CPU time:  109.711s   Wall clock 109.734s  at  10:02:28 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180067  sev -67.453262799  zval 256.0 qval 256.0 dosef 1777
+ CPU time:  109.127s   Wall clock 109.148s  at  10:04:17 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180196  sev -67.437551867  zval 256.0 qval 256.0 dosef 1773
+ CPU time:  104.479s   Wall clock 104.506s  at  10:06:02 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180194  sev -67.421351690  zval 256.0 qval 256.0 dosef 1760
+ CPU time:  108.020s   Wall clock 108.041s  at  10:07:50 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179882  sev -67.281559266  zval 256.0 qval 256.0 dosef 1785
+ CPU time:  113.640s   Wall clock 113.660s  at  10:09:44 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179725  sev -67.280406740  zval 256.0 qval 256.0 dosef 1768
+ CPU time:  106.261s   Wall clock 106.291s  at  10:11:30 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180357  sev -67.553321620  zval 256.0 qval 256.0 dosef 1730
+ CPU time:  104.119s   Wall clock 104.139s  at  10:13:14 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180325  sev -67.560000229  zval 256.0 qval 256.0 dosef 1729
+ CPU time:  106.752s   Wall clock 106.781s  at  10:15:01 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180615  sev -67.687228787  zval 256.0 qval 256.0 dosef 1691
+ CPU time:  104.609s   Wall clock 104.630s  at  10:16:46 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180039  sev -67.418155104  zval 256.0 qval 256.0 dosef 1712
+ CPU time:  103.702s   Wall clock 103.723s  at  10:18:30 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180227  sev -67.419103769  zval 256.0 qval 256.0 dosef 1715
+ CPU time:  107.118s   Wall clock 107.139s  at  10:20:17 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180440  sev -67.404623836  zval 256.0 qval 256.0 dosef 1730
+ CPU time:  104.662s   Wall clock 104.683s  at  10:22:02 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180708  sev -67.551019203  zval 256.0 qval 256.0 dosef 1749
+ CPU time:  103.731s   Wall clock 103.752s  at  10:23:46 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180584  sev -67.548993246  zval 256.0 qval 256.0 dosef 1747
+ CPU time:  105.591s   Wall clock 105.617s  at  10:25:31 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180313  sev -67.544471616  zval 256.0 qval 256.0 dosef 1760
+ CPU time:  102.073s   Wall clock 102.095s  at  10:27:14 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179989  sev -67.540840944  zval 256.0 qval 256.0 dosef 1782
+ CPU time:  101.794s   Wall clock 101.814s  at  10:28:56 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179710  sev -67.539450770  zval 256.0 qval 256.0 dosef 1810
+ CPU time:  108.130s   Wall clock 108.150s  at  10:30:44 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179518  sev -67.539499747  zval 256.0 qval 256.0 dosef 1835
+ CPU time:  109.654s   Wall clock 109.677s  at  10:32:34 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179451  sev -67.539737356  zval 256.0 qval 256.0 dosef 1843
+ CPU time:  107.920s   Wall clock 107.941s  at  10:34:22 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179523  sev -67.539516665  zval 256.0 qval 256.0 dosef 1834
+ CPU time:  111.602s   Wall clock 111.623s  at  10:36:13 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179725  sev -67.539431318  zval 256.0 qval 256.0 dosef 1812
+ CPU time:  105.730s   Wall clock 105.750s  at  10:37:59 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180012  sev -67.540838388  zval 256.0 qval 256.0 dosef 1782
+ CPU time:  106.549s   Wall clock 106.578s  at  10:39:46 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180336  sev -67.544537398  zval 256.0 qval 256.0 dosef 1754
+ CPU time:  109.801s   Wall clock 109.830s  at  10:41:36 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180600  sev -67.549113572  zval 256.0 qval 256.0 dosef 1736
+ CPU time:  106.486s   Wall clock 106.507s  at  10:43:22 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180714  sev -67.551121850  zval 256.0 qval 256.0 dosef 1740
+ CPU time:  105.441s   Wall clock 105.461s  at  10:45:08 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180440  sev -67.404453232  zval 256.0 qval 256.0 dosef 1744
+ CPU time:  109.939s   Wall clock 109.959s  at  10:46:58 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180230  sev -67.419015191  zval 256.0 qval 256.0 dosef 1721
+ CPU time:  105.143s   Wall clock 105.163s  at  10:48:43 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180049  sev -67.418143734  zval 256.0 qval 256.0 dosef 1712
+ CPU time:  104.572s   Wall clock 104.598s  at  10:50:28 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180637  sev -67.687215691  zval 256.0 qval 256.0 dosef 1690
+ CPU time:  109.409s   Wall clock 109.430s  at  10:52:18 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.179680  sev -67.348082168  zval 256.0 qval 256.0 dosef 1737
+ CPU time:  108.183s   Wall clock 108.203s  at  10:54:06 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180413  sev -67.586074999  zval 256.0 qval 256.0 dosef 1721
+ CPU time:  107.360s   Wall clock 107.380s  at  10:55:53 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T
+bz met T  tet F  ef -0.180646  sev -67.576003550  zval 256.0 qval 256.0 dosef 1724
+ CPU time:  108.718s   Wall clock 108.738s  at  10:57:42 14.12.2018  on  gherkin
+ --------------  START TBE - ref: db4d0eea6 ---------------
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+ bz nq 338 ( 15 15 3 )  shift  T T T

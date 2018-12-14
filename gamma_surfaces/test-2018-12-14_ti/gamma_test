@@ -1,0 +1,185 @@
+ --------------  START TBE - ref: db4d0eea6 ---------------
+ HEADER pure Ti
+
+ TBE:      nbas = 128  nspec = 1  verb 31
+ TB:       rmaxh = 20, rho
+ bz:       metal 
+
+                Plat                                  Qlat
+   3.464102   0.000000   0.000000        0.288675   0.000000  -0.002937
+   0.000000   2.000000   0.000000        0.000000   0.500000   0.022517
+   0.129904  -0.575000  12.768243        0.000000   0.000000   0.078319
+   alat = 5.5118  Cell vol = 14812.627398
+ lctoff (warning): tol gt gq1
+
+ xlgen: added missing plat: ivck= 0 0 1  rmax=   7.838  rpad*rmax=   0.000
+
+ xlgen: added missing plat: ivck= 0 1 0  rmax=   0.359  rpad*rmax=   0.000
+
+ LATTC:  as= 2.000   tol=1.00e-6   alat= 5.51180   awald= 0.081   lmax=6
+         r1=  7.838   nkd= 81       q1=  0.359   nkg= 57
+
+ Generator 1 already in group as element 1
+ SGROUP: 1 symmetry operations from 1 generators
+ MKSYM:  found 1 space group operations; adding inversion generated 2 ops
+ BZMESH: 270 irreducible QP from 540 ( 9 15 4 )  shift= T T T
+
+ TBZINT: use spherical dipole correction
+ Process grid dims:            1           1           1
+ k-point : process map :  0 270
+
+ TBZINT: zval=256 electrons from START category      
+
+ RDTBH: found global matrix elements with mode 2: Exp. decay
+
+ SHOTBM: 1 rules for pair potential
+ Ti,Ti:
+   type 10 (Exp x Power law), V0(d) = sum [a d^b exp(-c d)]
+   coeffs: a1=  112.8    b1=  0      c1= 1.5
+           a2=  0        b2=  0      c2= 0
+           a3=  0        b3=  0      c3= 0
+   cutoff type 2 (multiplicative), 5th order polynomial, range [6.063, 8.2677]
+
+ SHOTBM: 1 rules for Hamiltonian
+ Ti,Ti:
+   type 2 (Exp. decay), V(d) = a exp (- b d)
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   coeff:   0.00   0.00   0.00   0.00   0.00   0.00   0.00  -1.29   0.86  -0.21
+   decay:   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.50   0.50   0.50
+   cutoff type 2 (multiplicative), 5th order polynomial, range [r1, rc]
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   r1:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   6.06   6.06   6.06
+   rc:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   8.27   8.27   8.27
+
+ pairc, ib=  1: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  2: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  3: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  4: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  5: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  6: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  7: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  8: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  9: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 10: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 11: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 12: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 13: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 14: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 15: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 16: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 17: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 18: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 19: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 20: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 21: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 22: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 23: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 24: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 25: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 26: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 27: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 28: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 29: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 30: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 31: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 32: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 33: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 34: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 35: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 36: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 37: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 38: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 39: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 40: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 41: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 42: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 43: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 44: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 45: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 46: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 47: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 48: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 49: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 50: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 51: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 52: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 53: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 54: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 55: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 56: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 57: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 58: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 59: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 60: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 61: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 62: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 63: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 64: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 65: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 66: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 67: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 68: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 69: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 70: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 71: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 72: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 73: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 74: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 75: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 76: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 77: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 78: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 79: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 80: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 81: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 82: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 83: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 84: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 85: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 86: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 87: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 88: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 89: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 90: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 91: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 92: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 93: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 94: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 95: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 96: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 97: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 98: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 99: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=100: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=101: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=102: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=103: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=104: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=105: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=106: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=107: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=108: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=109: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=110: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=111: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=112: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=113: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=114: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=115: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=116: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=117: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=118: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=119: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=120: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=121: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=122: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=123: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=124: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=125: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=126: 301 neighbors in range  3.629*alat =  20.00
+ pairc, ib=127: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=128: 298 neighbors in range  3.629*alat =  20.00
+ pairc:  37872 pairs total  301 is max cluster size
+
+ BNDTB: allocating  1687 MiB memory for evecs at root
+
