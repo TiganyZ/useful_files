@@ -6,27 +6,27 @@
  bz:       metal 
 
                 Plat                                  Qlat
-   3.464102   0.000000   0.000000        0.288675   0.000000   0.000000
-   0.000000   2.000000   0.000000        0.000000   0.500000   0.007832
-   0.000000  -0.200000  12.768243        0.000000   0.000000   0.078319
+   2.000000   0.000000   0.000000        0.500000   0.000000  -0.012630
+   0.000000   3.192061   0.000000        0.000000   0.313277  -0.005413
+   0.350000   0.239405  13.856406        0.000000   0.000000   0.072169
    alat = 5.5118  Cell vol = 14812.627398
  lctoff (warning): tol gt gq1
 
  xlgen: added missing plat: ivck= 0 0 1  rmax=   7.838  rpad*rmax=   0.000
 
- xlgen: added missing plat: ivck= 0 1 0  rmax=   0.359  rpad*rmax=   0.000
+ xlgen: added missing plat: ivck= 1 0 0  rmax=   0.359  rpad*rmax=   0.000
 
  LATTC:  as= 2.000   tol=1.00e-6   alat= 5.51180   awald= 0.081   lmax=6
-         r1=  7.838   nkd= 81       q1=  0.359   nkg= 57
+         r1=  7.838   nkd= 93       q1=  0.359   nkg= 57
 
  Generator 1 already in group as element 1
  SGROUP: 1 symmetry operations from 1 generators
  MKSYM:  found 1 space group operations; adding inversion generated 2 ops
- BZMESH: 270 irreducible QP from 540 ( 9 15 4 )  shift= T T T
+ BZMESH: 338 irreducible QP from 675 ( 15 15 3 )  shift= T T T
 
  TBZINT: use spherical dipole correction
  Process grid dims:            1           1           1
- k-point : process map :  0 270
+ k-point : process map :  0 338
 
  TBZINT: zval=256 electrons from START category      
 
@@ -52,8 +52,8 @@
    rc:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   8.27   8.27   8.27
 
  pairc, ib=  1:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib=  2:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib=  3:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib=  2:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib=  3:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib=  4:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=  5:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=  6:  13 neighbors in range  1.100*alat =   6.06
@@ -80,12 +80,12 @@
  pairc, ib= 27:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 28:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 29:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 30:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 31:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 30:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 31:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 32:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib= 33:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 34:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 35:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 34:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 35:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib= 36:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 37:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 38:  13 neighbors in range  1.100*alat =   6.06
@@ -112,12 +112,12 @@
  pairc, ib= 59:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 60:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 61:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 62:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 63:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 62:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 63:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 64:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib= 65:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 66:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 67:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 66:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 67:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib= 68:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 69:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 70:  13 neighbors in range  1.100*alat =   6.06
@@ -144,12 +144,12 @@
  pairc, ib= 91:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 92:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 93:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 94:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib= 95:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 94:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 95:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib= 96:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib= 97:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 98:  12 neighbors in range  1.100*alat =   6.06
- pairc, ib= 99:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 98:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib= 99:  12 neighbors in range  1.100*alat =   6.06
  pairc, ib=100:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=101:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=102:  13 neighbors in range  1.100*alat =   6.06
@@ -176,10 +176,7 @@
  pairc, ib=123:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=124:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=125:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib=126:  13 neighbors in range  1.100*alat =   6.06
- pairc, ib=127:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib=126:  12 neighbors in range  1.100*alat =   6.06
+ pairc, ib=127:  13 neighbors in range  1.100*alat =   6.06
  pairc, ib=128:  12 neighbors in range  1.100*alat =   6.06
  pairc:  1648 pairs total  13 is max cluster size
-
- BNDTB: allocating  1687 MiB memory for evecs at root
-
