@@ -1,0 +1,177 @@
+HEADER  pure Ti
+% const fp=0 cpl=1 xcf=4 gga=3
+% const bcc=0 fcc=0 hcp=1 omega=0
+% const nbas=hcp?2:(omega?3:1) nspec=1 
+% const cp=0 cpp=0 c44=0 R=0 H=0
+% const alpha=0 gamma=0 
+% const norder=1 width=0.005
+% const sd=0 spd=sd ovlp=spd?1:0 ul=0 u1=0 tbu=0 io=0 nitq=100
+% const verb=31 so=0 nsp=1 tetra=0 metal=1 width=0.002 N=1
+% const au=0.529177 
+% const beta=0.5 nx=5 kmix=300 nav=0
+% const show=0 mpol=0 eccal=0
+% const dyn=0 relax=0 temp=300 taup=10 taub=100 time=100000 tstep=5
+% const fs=0.048377 K=1/0.6333328d-5 amass=1.09716d-3
+VERS    TB=10 LM=7 FP=7
+IO      SHOW=0 HELP=F VERBOS={verb} WKP=F
+CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
+# Tony's original a/c
+#       a0hcp=5.57678969 c0hcp=8.85210082
+# Tigany reoptimsation of A/C
+#        a0hcp=5.492857142857143 c0hcp=a0hcp*1.6173517700292839
+# Tony's re-opt
+        a0hcp=5.5118 c0hcp=8.7970 
+        ahcp=a0hcp chcp=c0hcp q=chcp/ahcp
+        ai=0 aj=0 ak=0
+        aii=1/(2*sqrt(3)) ajj=-1/2  akk=q/2
+        V0hcp=0.5*sqrt(3)*q*ahcp^3
+        uomega=1 qomega=sqrt(3/8)
+        abcc0=V0hcp^(1/3) afcc0=2*V0hcp^(1/3) aomega0=sqrt(2)*abcc0
+# vary the volume at fixed axial ratio
+        vfrac=1 Vhcp=V0hcp*vfrac
+        ahcpv=(2*Vhcp/(sqrt(3)*q))^(1/3)
+        abcc=(vfrac*abcc0^3)^(1/3) afcc=afcc0 aomega=aomega0
+        nk=30 mull=-1 bzj=1 ewtol=1d-6 qtol=1d-6
+# Spanjard Dejun model
+        q0sTi=0 q0pTi=0 q0dTi=2 esTi=0 epTi=0 edTi=0 UTi=0
+        fdd=0.215 cr1=-6 cr2=4 cr3=-1 
+        fdds=fdd*cr1 fddp=fdd*cr2 fddd=fdd*cr3 qdds=0.5 qddp=qdds qddd=qdds
+        r1dd=1.1*a0hcp rcdd=1.5*a0hcp r1pp=1.1*a0hcp rcpp=1.5*a0hcp
+        b0=112.8 m0=0 p0=1.5 b1=0 m1=0 p1=0 cutmod=2
+# Final GA fit by Tony; 2018-08-28
+        fdd=0.2939228243 
+        qdds=0.5832592246 
+        b0=112.9050409 
+        p0=1.507105391 
+        ndti=2.051341768
+        q0dTi=ndti
+
+% ifdef hcp
+        rmaxh=1.1*ahcp 
+% elseifd bcc
+        rmaxh=1.1*abcc
+% elseifd omega
+        rmaxh=1.05*aomega
+% endif
+        getqp=0
+        pv=1
+        R=2.2 RC=0.8
+        gmax=18 pwmode=1 pwemax=3 oveps=1d-7
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=B13,b={beta},bv={beta},wc=-1,wa=0,w=1,1
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=B13,b={beta},bv={beta},wc=-1,wa=1,w=1,1
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b=0.1,bv=0,r<0.001,n=1;A{nx},b=0,bv=0.2,r<0.01,n=2;A{nx},b=0.1,bv=0,n=10;A{nx},b=0.2,bv=0.2,r<1d-5,n=2
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b=0.1,bv=0,r<0.0001,n=1;A{nx},b=0,bv=0.2,n=1
+ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b={beta},bv={beta}
+DYN
+% if dyn==1|dyn==2|dyn==3
+        MD[MODE={dyn} TSTEP={tstep/fs} TEMP={temp/K} TAUP={taup/fs}
+           TIME={time/fs} TAUB={taub/fs}]
+% elseif relax>0
+        MSTAT[MODE={relax} HESS={hess} XTOL={xtol} GTOL={gtol}
+              STEP={step} NKILL={nkill}] NIT={nitf}
+% endif        
+STR     MXNBR=mxnbr
+STRUC   NBAS={nbas} NSPEC={nspec} NL=3
+% ifdef bcc
+        ALAT=abcc PLAT=-1/2 1/2 1/2   1/2 -1/2 1/2  1/2 1/2 -1/2
+% elseifd fcc
+        ALAT=afcc PLAT=0 1/2 1/2   1/2 0 1/2   1/2 1/2 0
+% elseifd hcp
+        ALAT=ahcpv PLAT= 0              -1         0
+                        sqrt(3)/2       0.5        0
+                        0               0          q
+% elseifd omega
+        ALAT=aomega
+        PLAT= 1      0          0
+              1/2   sqrt(3)/2   0
+              0      0     qomega
+% endif
+% ifdef bcc
+%  ifdef cp
+        ALPHA=alpha STRAIN=-1/2 -1/2 1 0 0 0
+%  endif
+%  ifdef c44
+        ALPHA=alpha STRAIN=0 0 0 1/2 1/2 1/2
+%  endif
+% endif
+% ifdef hcp
+%  ifdef c11
+        ALPHA=alpha STRAIN=1 0 0 0 0 0
+%  endif
+%  ifdef c33
+        ALPHA=alpha STRAIN=0 0 1 0 0 0
+%  endif
+%  ifdef cp
+        ALPHA=alpha STRAIN=1 -1 0 0 0 0
+%  endif
+%  ifdef cpp
+        ALPHA=alpha STRAIN=1 0 -1 0 0 0
+%  endif
+%  ifdef c44
+        ALPHA=alpha STRAIN=0 0 0 0 1/2 0
+%  endif
+%  ifdef R
+        ALPHA=alpha STRAIN=-1/2 -1/2 1 0 0 0
+%  endif
+%  ifdef H
+        ALPHA=alpha STRAIN=1 -1/2 -1/2 0 0 0
+%  endif
+%  ifdef S
+        ALPHA=alpha STRAIN= 0 0 0 1/2 1/2 1/2
+%  endif
+% endif
+SITE    
+% ifdef hcp
+%  ifdef eccal
+        ATOM=Ti POS= ai aj ak
+        ATOM=Ti POS= aii ajj akk
+%  else
+        ATOM=Ti POS= 0              0     0
+        ATOM=Ti POS= 1/(2*sqrt(3)) -1/2  q/2
+%  endif
+% elseifd omega
+# for omega uomega=1, uomega=0 is bcc in the hexagonal setting
+        ATOM=Ti POS= 0              0     0
+        ATOM=Ti POS= 1/2   1/(2*sqrt(3))  (1/3+uomega/6)*qomega
+        ATOM=Ti POS= 1     1/sqrt(3)      (2/3-uomega/6)*qomega
+% else
+        ATOM=Ti POS= 0 0 0
+% endif
+SYMGRP  I*I
+BZ      GETQP=getqp NKABC=nk TETRA={tetra} METAL={metal}
+        EFMAX=2 EF0=ef0 DELEF=0.01 N={norder} W={width}
+        NPTS=5001 BZJOB=bzj SAVDOS=T NOINV=F
+        INVIT=F MULL=mull DOS=-4.5 1 EFMAX=2 ZVAL=0
+HAM     NSPIN={nsp} ELIND=-0.8 GMAX=gmax REL=T SO={so}
+        XCFUN={xcf} GGA={gga} FORCES=12
+        PWMODE=pwmode PWEMIN=1 PWEMAX=pwemax OVEPS=oveps
+SPEC
+        ATOM=Ti Z=22 R=R I=0 A=0.025 AMASS=47.9/{amass}
+        IDU= 0 0 0 0 UH= 0 0 0 0  JH=stniFe stniFe stniFe stniFe
+        COLOUR=0.1 0.1 0.1  RADIUS=0.5
+%  ifdef fp
+        LMX=2 LMXA=4 KMXA=4 LFOCA=1
+        RSMH=0.95 0.95 0.95 0 EH=-0.1 -0.1 -0.1 -0.1
+        RSMH2=0.95 0.95 0.95 EH2=-1.1 -1.1 -1.1
+        Q=2 0 6 MMOM=0 0 2 PZ=0 {cpl?3.9:0}
+%  else
+        IDXDN={sd?1:3} 3 1 QPOL= 0 0 0 0 0 0 0 0 0 0
+%  endif
+START   CNTROL=T
+        ATOM=Ti   P= 4 4 3 4 4 3
+                  Q= q0sTi   esTi   UTi
+                     q0pTi   epTi   UTi
+                     q0dTi   edTi   UTi
+                     q0sTi   esTi   UTi
+                     q0pTi   epTi   UTi
+                     q0dTi   edTi   UTi
+ME      2
+        Ti Ti MEMODE=2 PPMODE=10 POLY=5 CUTMOD=cutmod CUTPP=r1pp rcpp
+            | 0 0 0 0 0 0 0 fdds fddp fddd
+        DECAY=0 0 0 0 0 0 0 qdds qddp qddd
+        CUT=0 0 0 0 0 0 0 0 0 0 0 0 0 0 r1dd rcdd r1dd rcdd r1dd rcdd
+            ! b0 m0 p0   b1 m1 p1   0 0 0
+TB      FORCES=0 EVDISC=T RMAXH=rmaxh TRH=F RHO=T 3PV=pv
+        MOL=mol GAMMA={gamma} PAIR=pair SCALE=0
+        UL={ul} IODEL={io} OVLP={ovlp} TBU={tbu} NOUAVG={nav} U1={u1}
+EWALD   TOL=ewtol NKDMX=1999 NKRMX=1999

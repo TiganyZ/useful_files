@@ -1,0 +1,51 @@
+ --------------  START TBE - ref: db4d0eea6 ---------------
+ HEADER pure Ti
+
+ TBE:      nbas = 2  nspec = 1  verb 31
+ TB:       rmaxh = 6.06298, rho
+ bz:       metal 
+
+                Plat                                  Qlat
+   0.000000  -1.000000   0.000000        0.577350  -1.000000   0.000000
+   0.866025   0.500000   0.000000        1.154701   0.000000   0.000000
+   0.000000   0.000000   1.596030        0.000000   0.000000   0.626555
+   alat = 5.5118  Cell vol = 231.447303
+
+ LATTC:  as= 2.000   tol=1.00e-6   alat= 5.51180   awald= 0.326   lmax=6
+         r1=  2.967   nkd= 69       q1=  2.808   nkg= 135
+
+ Generator 1 already in group as element 1
+ SGROUP: 1 symmetry operations from 1 generators
+ MKSYM:  found 1 space group operations; adding inversion generated 2 ops
+ BZMESH: 13500 irreducible QP from 27000 ( 30 30 30 )  shift= T T T
+
+ TBZINT: use spherical dipole correction
+ Process grid dims:            1           1           1
+ k-point : process map :  0 13500
+
+ TBZINT: zval=4 electrons from START category      
+
+ RDTBH: found global matrix elements with mode 2: Exp. decay
+
+ SHOTBM: 1 rules for pair potential
+ Ti,Ti:
+   type 10 (Exp x Power law), V0(d) = sum [a d^b exp(-c d)]
+   coeffs: a1=  112.8    b1=  0      c1= 1.5
+           a2=  0        b2=  0      c2= 0
+           a3=  0        b3=  0      c3= 0
+   cutoff type 2 (multiplicative), 5th order polynomial, range [6.063, 8.2677]
+
+ SHOTBM: 1 rules for Hamiltonian
+ Ti,Ti:
+   type 2 (Exp. decay), V(d) = a exp (- b d)
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   coeff:   0.00   0.00   0.00   0.00   0.00   0.00   0.00  -1.29   0.86  -0.21
+   decay:   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.50   0.50   0.50
+   cutoff type 2 (multiplicative), 5th order polynomial, range [r1, rc]
+             sss    sps    pps    ppp    sds    pds    pdp    dds    ddp    ddd
+   r1:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   6.06   6.06   6.06
+   rc:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   8.27   8.27   8.27
+
+ pairc, ib=  1:  13 neighbors in range  1.100*alat =   6.06
+ pairc, ib=  2:  13 neighbors in range  1.100*alat =   6.06
+ pairc:  26 pairs total  13 is max cluster size
