@@ -1,0 +1,14 @@
+# This is a bash script for obtaining the derivatives to find the force constant matrix.
+
+# For the derivateves of the energy we have the force consant matrix that shoudld be positive definite.
+# One needs to work out the eigenvalues. If the stability criteria are met then the the structure is stable
+# The stability criteria are met if the matrix is positive definite an 
+
+module purge
+module load lmto
+
+ainame="ai"
+ajname="ajj"
+args=
+
+for i
