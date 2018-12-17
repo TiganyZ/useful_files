@@ -6,27 +6,27 @@
  bz:       metal 
 
                 Plat                                  Qlat
-   3.464102   0.000000   0.000000        0.288675   0.000000  -0.002937
-   0.000000   2.000000   0.000000        0.000000   0.500000   0.022517
-   0.129904  -0.575000  12.768243        0.000000   0.000000   0.078319
+   2.000000   0.000000   0.000000        0.500000   0.000000  -0.036084
+   0.000000   3.192061   0.000000        0.000000   0.313277  -0.036084
+   1.000000   1.596030  13.856406        0.000000   0.000000   0.072169
    alat = 5.5118  Cell vol = 14812.627398
  lctoff (warning): tol gt gq1
 
  xlgen: added missing plat: ivck= 0 0 1  rmax=   7.838  rpad*rmax=   0.000
 
- xlgen: added missing plat: ivck= 0 1 0  rmax=   0.359  rpad*rmax=   0.000
+ xlgen: added missing plat: ivck= 1 0 0  rmax=   0.359  rpad*rmax=   0.000
 
  LATTC:  as= 2.000   tol=1.00e-6   alat= 5.51180   awald= 0.081   lmax=6
-         r1=  7.838   nkd= 81       q1=  0.359   nkg= 57
+         r1=  7.838   nkd= 93       q1=  0.359   nkg= 51
 
  Generator 1 already in group as element 1
  SGROUP: 1 symmetry operations from 1 generators
  MKSYM:  found 1 space group operations; adding inversion generated 2 ops
- BZMESH: 270 irreducible QP from 540 ( 9 15 4 )  shift= T T T
+ BZMESH: 338 irreducible QP from 675 ( 15 15 3 )  shift= T T T
 
  TBZINT: use spherical dipole correction
  Process grid dims:            1           1           1
- k-point : process map :  0 270
+ k-point : process map :  0 338
 
  TBZINT: zval=256 electrons from START category      
 
@@ -51,14 +51,14 @@
    r1:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   6.06   6.06   6.06
    rc:      0.00   0.00   0.00   0.00   0.00   0.00   0.00   8.27   8.27   8.27
 
- pairc, ib=  1: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=  2: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=  3: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=  4: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=  5: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=  6: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=  7: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=  8: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  1: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  2: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  3: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  4: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  5: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  6: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  7: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=  8: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=  9: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 10: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 11: 293 neighbors in range  3.629*alat =  20.00
@@ -75,22 +75,22 @@
  pairc, ib= 22: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 23: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 24: 293 neighbors in range  3.629*alat =  20.00
- pairc, ib= 25: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 26: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 27: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 28: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 29: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 30: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 31: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 32: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 33: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 34: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 35: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 36: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 37: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 38: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 39: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 40: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 25: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 26: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 27: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 28: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 29: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 30: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 31: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 32: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 33: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 34: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 35: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 36: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 37: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 38: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 39: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 40: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 41: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 42: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 43: 293 neighbors in range  3.629*alat =  20.00
@@ -107,22 +107,22 @@
  pairc, ib= 54: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 55: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 56: 293 neighbors in range  3.629*alat =  20.00
- pairc, ib= 57: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 58: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 59: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 60: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 61: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 62: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 63: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 64: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 65: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 66: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 67: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 68: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 69: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 70: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 71: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 72: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 57: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 58: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 59: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 60: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 61: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 62: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 63: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 64: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 65: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 66: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 67: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 68: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 69: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 70: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 71: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 72: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 73: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 74: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 75: 293 neighbors in range  3.629*alat =  20.00
@@ -139,22 +139,22 @@
  pairc, ib= 86: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 87: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib= 88: 293 neighbors in range  3.629*alat =  20.00
- pairc, ib= 89: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 90: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 91: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 92: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 93: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 94: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib= 95: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 96: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 97: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 98: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib= 99: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=100: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=101: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=102: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=103: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=104: 298 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 89: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 90: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 91: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 92: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 93: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 94: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 95: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 96: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 97: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 98: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib= 99: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=100: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=101: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=102: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=103: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=104: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=105: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=106: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=107: 293 neighbors in range  3.629*alat =  20.00
@@ -171,15 +171,556 @@
  pairc, ib=118: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=119: 293 neighbors in range  3.629*alat =  20.00
  pairc, ib=120: 293 neighbors in range  3.629*alat =  20.00
- pairc, ib=121: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=122: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=123: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=124: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=125: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=126: 301 neighbors in range  3.629*alat =  20.00
- pairc, ib=127: 298 neighbors in range  3.629*alat =  20.00
- pairc, ib=128: 298 neighbors in range  3.629*alat =  20.00
- pairc:  37872 pairs total  301 is max cluster size
+ pairc, ib=121: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=122: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=123: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=124: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=125: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=126: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=127: 293 neighbors in range  3.629*alat =  20.00
+ pairc, ib=128: 293 neighbors in range  3.629*alat =  20.00
+ pairc:  37504 pairs total  293 is max cluster size
 
- BNDTB: allocating  1687 MiB memory for evecs at root
+ BZWTS : --- Brillouin Zone sampling; N=1, W=.005 ---
+ N=1, W=0.005, E_F=-0.179078, sumev=-67.562599, entropy term: -0.000459, 256 electrons
 
+ SECMTB:  kpt 1 of 338, k=  0.01667  0.01044  0.00962
+ -0.4220 -0.4210 -0.4194 -0.4166 -0.4145 -0.4139 -0.4092 -0.3918 -0.3880
+
+ SECMTB:  kpt 100 of 338, k=  0.31667  0.13575  -0.02646
+ -0.3366 -0.3356 -0.3303 -0.3263 -0.3256 -0.3255 -0.3249 -0.3239 -0.3229
+
+ SECMTB:  kpt 200 of 338, k=  0.15000  0.28195  -0.03127
+ -0.3740 -0.3738 -0.3617 -0.3579 -0.3577 -0.3533 -0.3352 -0.3292 -0.3280
+
+ SECMTB:  kpt 300 of 338, k=  0.48333  0.09398  -0.00962
+ -0.4050 -0.4043 -0.4033 -0.4011 -0.3939 -0.3896 -0.3887 -0.3855 -0.3820
+  
+
+ Atom    1   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  0.000000  Dq/e=  0.000000
+
+ Atom    2   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  0.866025  Dq/e= -0.000000
+
+ Atom    3   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  0.288675  Dq/e=  0.000000
+
+ Atom    4   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  1.154701  Dq/e= -0.000000
+
+ Atom    5   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  1.732051  Dq/e= -0.000000
+
+ Atom    6   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  2.598076  Dq/e=  0.000000
+
+ Atom    7   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  2.020726  Dq/e=  0.000000
+
+ Atom    8   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  2.886751  Dq/e=  0.000000
+
+ Atom    9   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  3.464102  Dq/e=  0.000000
+
+ Atom   10   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  4.330127  Dq/e= -0.000000
+
+ Atom   11   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  3.752777  Dq/e= -0.000000
+
+ Atom   12   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  4.618802  Dq/e= -0.000000
+
+ Atom   13   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  5.196152  Dq/e= -0.000000
+
+ Atom   14   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  6.062178  Dq/e= -0.000000
+
+ Atom   15   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  5.484828  Dq/e= -0.000000
+
+ Atom   16   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  6.350853  Dq/e= -0.000000
+
+ Atom   17   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  6.928203  Dq/e= -0.000000
+
+ Atom   18   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  7.794229  Dq/e=  0.000000
+
+ Atom   19   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  7.216878  Dq/e= -0.000000
+
+ Atom   20   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  8.082904  Dq/e=  0.000000
+
+ Atom   21   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000  8.660254  Dq/e=  0.000000
+
+ Atom   22   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000  9.526279  Dq/e= -0.000000
+
+ Atom   23   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015  8.948929  Dq/e=  0.000000
+
+ Atom   24   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015  9.814955  Dq/e= -0.000000
+
+ Atom   25   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000 10.392305  Dq/e= -0.000000
+
+ Atom   26   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000 11.258330  Dq/e= -0.000000
+
+ Atom   27   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015 10.680980  Dq/e= -0.000000
+
+ Atom   28   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015 11.547005  Dq/e= -0.000000
+
+ Atom   29   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.000000 12.124356  Dq/e= -0.000000
+
+ Atom   30   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.000000 12.990381  Dq/e= -0.000000
+
+ Atom   31   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  0.798015 12.413031  Dq/e= -0.000000
+
+ Atom   32   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  0.798015 13.279056  Dq/e=  0.000000
+
+ Atom   33   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  0.000000  Dq/e=  0.000000
+
+ Atom   34   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  0.866025  Dq/e= -0.000000
+
+ Atom   35   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  0.288675  Dq/e= -0.000000
+
+ Atom   36   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  1.154701  Dq/e= -0.000000
+
+ Atom   37   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  1.732051  Dq/e= -0.000000
+
+ Atom   38   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  2.598076  Dq/e=  0.000000
+
+ Atom   39   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  2.020726  Dq/e=  0.000000
+
+ Atom   40   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  2.886751  Dq/e=  0.000000
+
+ Atom   41   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  3.464102  Dq/e=  0.000000
+
+ Atom   42   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  4.330127  Dq/e= -0.000000
+
+ Atom   43   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  3.752777  Dq/e= -0.000000
+
+ Atom   44   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  4.618802  Dq/e= -0.000000
+
+ Atom   45   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  5.196152  Dq/e= -0.000000
+
+ Atom   46   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  6.062178  Dq/e= -0.000000
+
+ Atom   47   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  5.484828  Dq/e= -0.000000
+
+ Atom   48   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  6.350853  Dq/e= -0.000000
+
+ Atom   49   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  6.928203  Dq/e= -0.000000
+
+ Atom   50   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  7.794229  Dq/e=  0.000000
+
+ Atom   51   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  7.216878  Dq/e= -0.000000
+
+ Atom   52   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  8.082904  Dq/e=  0.000000
+
+ Atom   53   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030  8.660254  Dq/e=  0.000000
+
+ Atom   54   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030  9.526279  Dq/e= -0.000000
+
+ Atom   55   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046  8.948929  Dq/e=  0.000000
+
+ Atom   56   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046  9.814955  Dq/e= -0.000000
+
+ Atom   57   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030 10.392305  Dq/e= -0.000000
+
+ Atom   58   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030 11.258330  Dq/e= -0.000000
+
+ Atom   59   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046 10.680980  Dq/e= -0.000000
+
+ Atom   60   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046 11.547005  Dq/e= -0.000000
+
+ Atom   61   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  1.596030 12.124356  Dq/e= -0.000000
+
+ Atom   62   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  1.596030 12.990381  Dq/e=  0.000000
+
+ Atom   63   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.000000  2.394046 12.413031  Dq/e= -0.000000
+
+ Atom   64   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  0.500000  2.394046 13.279056  Dq/e=  0.000000
+
+ Atom   65   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  0.000000  Dq/e=  0.000000
+
+ Atom   66   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  0.866025  Dq/e= -0.000000
+
+ Atom   67   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  0.288675  Dq/e=  0.000000
+
+ Atom   68   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  1.154701  Dq/e= -0.000000
+
+ Atom   69   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  1.732051  Dq/e= -0.000000
+
+ Atom   70   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  2.598076  Dq/e=  0.000000
+
+ Atom   71   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  2.020726  Dq/e=  0.000000
+
+ Atom   72   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  2.886751  Dq/e=  0.000000
+
+ Atom   73   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  3.464102  Dq/e=  0.000000
+
+ Atom   74   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  4.330127  Dq/e= -0.000000
+
+ Atom   75   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  3.752777  Dq/e= -0.000000
+
+ Atom   76   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  4.618802  Dq/e= -0.000000
+
+ Atom   77   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  5.196152  Dq/e= -0.000000
+
+ Atom   78   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  6.062178  Dq/e= -0.000000
+
+ Atom   79   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  5.484828  Dq/e= -0.000000
+
+ Atom   80   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  6.350853  Dq/e= -0.000000
+
+ Atom   81   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  6.928203  Dq/e= -0.000000
+
+ Atom   82   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  7.794229  Dq/e=  0.000000
+
+ Atom   83   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  7.216878  Dq/e= -0.000000
+
+ Atom   84   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  8.082904  Dq/e=  0.000000
+
+ Atom   85   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000  8.660254  Dq/e=  0.000000
+
+ Atom   86   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000  9.526279  Dq/e= -0.000000
+
+ Atom   87   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015  8.948929  Dq/e=  0.000000
+
+ Atom   88   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015  9.814955  Dq/e= -0.000000
+
+ Atom   89   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000 10.392305  Dq/e= -0.000000
+
+ Atom   90   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000 11.258330  Dq/e= -0.000000
+
+ Atom   91   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015 10.680980  Dq/e= -0.000000
+
+ Atom   92   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015 11.547005  Dq/e= -0.000000
+
+ Atom   93   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.000000 12.124356  Dq/e= -0.000000
+
+ Atom   94   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.000000 12.990381  Dq/e= -0.000000
+
+ Atom   95   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  0.798015 12.413031  Dq/e= -0.000000
+
+ Atom   96   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  0.798015 13.279056  Dq/e=  0.000000
+
+ Atom   97   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  0.000000  Dq/e=  0.000000
+
+ Atom   98   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  0.866025  Dq/e= -0.000000
+
+ Atom   99   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  0.288675  Dq/e= -0.000000
+
+ Atom  100   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  1.154701  Dq/e= -0.000000
+
+ Atom  101   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  1.732051  Dq/e= -0.000000
+
+ Atom  102   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  2.598076  Dq/e=  0.000000
+
+ Atom  103   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  2.020726  Dq/e=  0.000000
+
+ Atom  104   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  2.886751  Dq/e=  0.000000
+
+ Atom  105   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  3.464102  Dq/e=  0.000000
+
+ Atom  106   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  4.330127  Dq/e= -0.000000
+
+ Atom  107   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  3.752777  Dq/e= -0.000000
+
+ Atom  108   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  4.618802  Dq/e= -0.000000
+
+ Atom  109   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  5.196152  Dq/e= -0.000000
+
+ Atom  110   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  6.062178  Dq/e= -0.000000
+
+ Atom  111   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  5.484828  Dq/e= -0.000000
+
+ Atom  112   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  6.350853  Dq/e= -0.000000
+
+ Atom  113   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  6.928203  Dq/e= -0.000000
+
+ Atom  114   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  7.794229  Dq/e=  0.000000
+
+ Atom  115   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  7.216878  Dq/e= -0.000000
+
+ Atom  116   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  8.082904  Dq/e=  0.000000
+
+ Atom  117   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030  8.660254  Dq/e=  0.000000
+
+ Atom  118   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030  9.526279  Dq/e= -0.000000
+
+ Atom  119   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046  8.948929  Dq/e=  0.000000
+
+ Atom  120   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046  9.814955  Dq/e= -0.000000
+
+ Atom  121   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030 10.392305  Dq/e= -0.000000
+
+ Atom  122   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030 11.258330  Dq/e= -0.000000
+
+ Atom  123   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046 10.680980  Dq/e= -0.000000
+
+ Atom  124   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046 11.547005  Dq/e= -0.000000
+
+ Atom  125   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  1.596030 12.124356  Dq/e= -0.000000
+
+ Atom  126   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  1.596030 12.990381  Dq/e=  0.000000
+
+ Atom  127   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.000000  2.394046 12.413031  Dq/e= -0.000000
+
+ Atom  128   Species Ti  
+  Charges: NL=3:    0.000000   0.000000   2.000000 (Total:   2.000000)
+  POS=  1.500000  2.394046 13.279056  Dq/e=  0.000000
+ 
+ Tr[rho]                 :      256.00000000
+ band structure energy   :      -67.56259949
+ pair potential energy   :       23.74436492
+ reference energy        :        0.00000000
+ total energy            :      -43.81823457
+ free energy             :      -43.81777522
+ 3PV              pair   :      196.26224912
+                 bands   :     -191.15223913
+                 charges :        0.00000000
+                 total   :        5.11000999
+ 
+ 
+t hcp=1 rfile=1 nkx=15 nky=15 nkz=3 mmom=0 sev=-67.562599 erep=23.744365 etot=-43.818235 emad=0 3pv=5.11001 TS=-.000459
+ Exit 0 TBE 
+ CPU time:  127.503s   Wall clock 127.523s  at  20:16:24 15.12.2018  on  gherkin
