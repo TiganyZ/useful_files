@@ -55,7 +55,9 @@ rc('font', **{'family': 'serif', 'serif': ['Palatino'],  'size': 18})
 rc('text', usetex=True)
 sci.set_printoptions(linewidth=200, precision=4)
 
-
+#==========================================================================
+############################    General    ################################
+#==========================================================================
 def cmd_result(cmd):
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     result, err = proc.communicate()
@@ -68,6 +70,11 @@ def cmd_write_to_file(cmd, filename):
     retval = subprocess.call(cmd, shell=True, stdout=output_file)
     output_file.close()
 
+
+
+#========================================================================================
+############################    Get Elastic Constants    ################################
+#========================================================================================
 
 def Cijkl(X_p, X_n, S_np, V_prim_uc):
     # X_n, X_p are the original positons of the atoms.
@@ -87,12 +94,9 @@ def Cijkl(X_p, X_n, S_np, V_prim_uc):
 
 def S_np(LMarg, h, check_pos_def=True,
          use_forces=False, second_order=False):
-    # Force constant matrix defined to be Phi_ij(M,N) = change in phi with respect to displacements U_i(M) and U_j(N).
+    # Force constant matrix defined to be Phi_ij(M,N) = change in Energy with respect to displacements U_i(M) and U_j(N).
     # h is degree of displacements.
-    # phi is the total energy of the configuration
-    # Init pos of atom 1 is
-    # Init pos of atom 2 is 1/(2*sqrt(3)) -1/2  q/2 in units of alat
-    
+
     Phi0 = find_energy(LMarg, args, 'forceconstant')
 
     # First atom displacements
@@ -108,9 +112,6 @@ def S_np(LMarg, h, check_pos_def=True,
     arr2 = [aii, ajj, akk]
 
     Phi = np.zeros((3, 3))
-    # split into 4, 3x3 matrices
-    # [ (1,1) (1,2) ]
-    # [ (2,1) (2,2) ]
 
     if use_forces:
         m_11 = np.zeros((3, 3))
@@ -138,7 +139,6 @@ def S_np(LMarg, h, check_pos_def=True,
         Phi[3:, 3:] = m_22
 
     else:
-        a = arr + arr2
         for i in range(3):
             a1 = arr[i]
             for j in range(3):
@@ -151,6 +151,11 @@ def S_np(LMarg, h, check_pos_def=True,
 
     return S
 
+def get_elastic_constants(X_p, X_n, V_prim_uc):
+    
+    Cijkl = Cijkl(X_p, X_n, S_np, V_prim_uc)
+    C = get_Cij(Cijkl)
+    return C
 
 def contract_index(i, j):
 
@@ -189,7 +194,16 @@ def get_Q_rot(a):
                     i2 = contract_index(k, l)
                     b[i1][i2] = a[k][i] * a[l][j]
     return b
-
+def get_Cij(C):
+    new_C = np.zeros((9,9))
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    i1 = contract_index(i, j)
+                    i2 = contract_index(k, l)
+                    new_C[i1,i2] = C[i,j,k,l]
+    return new_C
 
 def c_transform(C, a):
     Q = get_Q_rot(a)
@@ -197,50 +211,11 @@ def c_transform(C, a):
     return C_t
 
 
-def C_hex(a=False):
-    c11 = sci.dtype(sci.float128)
-    c12 = sci.dtype(sci.float128)
-    c13 = sci.dtype(sci.float128)
-    c33 = sci.dtype(sci.float128)
-    c44 = sci.dtype(sci.float128)
 
-    # Elastic constants in units of 10^{9} Pa
-    c11 = 1.761e2
-    c12 = 0.868e2
-    c13 = 0.682e2
-    c33 = 1.905e2
-    c44 = 0.508e2
-    c66 = 0.450e2
 
-    #c66 = 0.5 * ( c11 - c12 )
-
-    C_arr = sci.array(
-        [
-            [c11,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
-            [c12,  c12,  c13,  0.,  0.,  0.,  0.,  0.,  0.],
-            [c13,  c13,  c33,  0.,  0.,  0.,  0.,  0.,  0.],
-            [0.,   0.,   0.,  c44, 0.,  0., c44,  0.,  0.],
-            [0.,   0.,   0.,  0., c44,  0.,  0., c44,  0.],
-            [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66],
-            [0.,   0.,   0., c44,  0.,  0., c44,  0.,  0.],
-            [0.,   0.,   0.,  0., c44,  0.,  0., c44,  0.],
-            [0.,   0.,   0.,  0.,  0., c66,  0.,  0., c66]
-        ]
-    )
-    if a is not False:
-        C_arr = c_transform(C_arr, a)
-
-    # Map the indicies of the second order tensor to contracted representation
-    n_dic = {(0, 0): 0, (1, 1): 1, (2, 2): 2, (1, 2): 3, (2, 0)
-              : 4, (0, 1): 5, (2, 1): 6, (0, 2): 7, (1, 0): 8}
-
-    def C(i, j, k, l): return C_arr[n_dic[i, j]][n_dic[k, l]]
-
-    print("Stiffness Matrix Hex")
-    print("--------------------------------------------------------------------------------")
-    print(C_arr)
-    print("\n")
-    return C, C_arr
+#========================================================================================
+############################    Girshick Method for EC    ###############################
+#========================================================================================
 
 
 def get_strains(strain):
@@ -345,34 +320,6 @@ def get_elastic_constant(BIN, ext, vargs,
     Epp = try_value(cmd, ec)
     return Epp
 
-
-##########################################################################################
-########################     Elastic Constant Strain Routines      #######################
-
-    s_2_C11_2_C22 = np.array([1.0, 1, 0, 0, 0, 0])
-    # 4
-
-    s_5o4_C11_C12 = np.array([0.5, 1, 0, 0, 0, 0])
-
-    s_C11_C33_2_C13 = np.array([1, 0, 1, 0, 0, 0])
-
-    # 6
-
-    s_C11_C33_2_C13_2 = np.array([0, 1, 1, 0, 0, 0])
-    # 7
-
-    s_4_C44 = np.array([0, 0, 0, 0, 1, 0])
-
-    s_4_C44_2 = np.array([0, 0, 0, 1, 0, 0])
-    # 10
-
-    s_8_C44 = np.array([0, 0, 0, 1, 1, 1])
-
-    # 11
-
-    s_4_C66 = np.array([1, -1, 0, 0, 0, 0])
-
-    s_4C662 = np.array([0, 0, 0, 0, 0, 1])
 
     c11 = 0.5 * (curvature[1-1] + curvature[2-1])  # / (10**(9)) #Correct
     c33 = 1.0 * curvature[3-1]  # / (10**(9)) #Correct
@@ -487,8 +434,10 @@ def get_min_lp(phase="hcp"):
     return ret
 
 
-def is_positive_definite(c11, c33, c44, c12, c13):
-    C_arr = sci.array(
+def is_positive_definite(c11, c33, c44, c12, c13, C=None):
+
+    if C is None:
+        C_arr = sci.array(
         [
             [c11,  c12,  c13,  0.,  0.,  0.],
             [c12,  c12,  c13,  0.,  0.,  0.],
@@ -496,7 +445,9 @@ def is_positive_definite(c11, c33, c44, c12, c13):
             [0.,   0.,   0.,  c44, 0.,  0.],
             [0.,   0.,   0.,  0., c44,  0.],
             [0.,   0.,   0.,  0.,  0., c66]]
-    )
+        )
+    else:
+        C_arr = C
 
     is_stable = np.all(np.linalg.eigvals(C_arr) > 0)
 
@@ -604,111 +555,6 @@ def cds_second_order(args, ai, h):
     print("Derivative2 = %s" % (derivatives2))
 
     return derivatives1, derivatives2
-
-
-def build_force_constant_matrix(LMarg, h, check_pos_def=True,
-                                use_forces=False, second_order=False):
-    # Force constant matrix defined to be Phi_ij(M,N) = change in phi with respect to displacements U_i(M) and U_j(N).
-    # h is degree of displacements.
-
-    Phi0 = find_energy(LMarg, args, 'forceconstant')
-
-    # First atom displacements
-    ai = ("ai", 0)
-    aj = ("aj", 0)
-    ak = ("ak", 0)
-    arr = [ai, aj, ak]
-
-    # Second atom displacements
-    aii = ("aii", 0)
-    ajj = ("ajj", 0)
-    akk = ("akk", 0)
-    arr2 = [aii, ajj, akk]
-
-    Phi = np.zeros((6, 6))
-    # split into 4, 3x3 matrices
-    # [ (1,1) (1,2) ]
-    # [ (2,1) (2,2) ]
-
-    if use_forces:
-        m_11 = np.zeros((3, 3))
-        m_12 = np.zeros((3, 3))
-        m_21 = np.zeros((3, 3))
-        m_22 = np.zeros((3, 3))
-
-        for i in range(3):
-            a = arr[i]
-            print("Derivatives using ", a)
-            da1, da2 = cds_second_order(args, a, h)
-            m_11[:, i] = -da1
-            m_21[:, i] = -da2
-
-        for i in range(3):
-            a = arr2[i]
-            print("Derivatives using ", a)
-            da1, da2 = cds_second_order(args, a, h)
-            m_22[:, i] = -da1
-            m_12[:, i] = -da2
-
-        Phi[:3, :3] = m_11
-        Phi[3:, :3] = m_21
-        Phi[:3, 3:] = m_12
-        Phi[3:, 3:] = m_22
-
-    else:
-        a = arr + arr2
-        for i in range(6):
-            a1 = a[i]
-            for j in range(6):
-                a2 = a[j]
-                Phi[i, j] = cds_fourth_order(
-                    args, a1, a2, h, second_order=second_order)
-                print(Phi[i, j])
-
-    print(Phi)
-
-    if check_pos_def:
-        # Check if the force constant matrix is positive definite.
-        print("Eigenvalues")
-        print(np.linalg.eigvals(Phi))
-        is_stable = np.all(np.linalg.eigvals(Phi) > 0)
-        print("\n Is force constant matrix positive definite?", is_stable)
-
-    return Phi
-
-
-def make_symm_file(args, a, c, npts, hcp=True, bands=True):
-    # G,K,M,G,A,H,L,A,H
-    G = np.array([0.,               0.,                   0.])
-    A = np.array([0.,               0.,                   np.pi/c])
-    K = np.array([4*np.pi/(3.*a),   0.,                   0.])
-    H = np.array([4*np.pi/(3.*a),   0.,                   np.pi/c])
-    M = np.array([np.pi/a,         -np.pi/(3**(0.5)*a),   0.])
-    L = np.array([np.pi/a,         -np.pi/(3**(0.5)*a),   np.pi/c])
-
-    labels = ['G', 'K', 'M', 'G', 'A', 'H', 'L', 'A', 'H']
-    values = [G, K, M, G, A, H, L, A, H]
-
-    k_point_dict = {label: value for label, value in zip(labels, values)}
-
-    sym_file = open("syml.ti", 'w')
-    for i, label in enumerate(labels):
-        if i == len(labels) - 1:
-            sym_file.write("0 0 0 0 0 0 0")
-            sym_file.close()
-            break
-        k1, k2 = values[i], values[i+1]
-        print(k1, k2, label, labels[i+1])
-        sym_file.write("{:d}  {:<12.8f} {:<12.8f} {:<12.8f}  {:<12.8f} {:<12.8f} {:<12.8f}  {} to {}\n".format(
-            npts, k1[0], k1[1], k1[2], k2[0], k2[1], k2[2], label, labels[i+1]))
-
-    ef = '-' + cmd_result(args + " | grep  'E_F' | awk '{print$3}' ")[5:]
-    print("Fermi energy", ef)
-    cmd_result(args + "   --band~fn=syml" + " -vef0=" + ef)
-    cmd_result(
-        "echo -13.6,13.6 / | plbnds -fplot -ef=0 -scl=13.6 -lbl=G,K,M,G,A,H,L,A,H bnds.ti")
-    cmd_result("fplot -f plot.plbnds")
-
 
 # Elastic constants from Tony's model
 

@@ -37,7 +37,7 @@ def cmd_write_to_file(cmd, filename):
 ########################   Convert file to XYZ   ###############################
 
 def convert_file_to_xyz(plat, atom_pos, species, filename):
-
+
     if type(atom_pos) == tuple:
         atom_pos, inert_atom_pos = atom_pos
         n_inert = len(inert_atom_pos)

@@ -9,7 +9,7 @@ HEADER  pure Ti
 % const verb=31 so=0 nsp=1 tetra=0 metal=1 width=0.002 N=1
 % const au=0.529177 
 % const beta=0.5 nx=5 kmix=300 nav=0
-% const show=0 mpol=0 eccal=0
+% const show=0 mpol=0
 % const dyn=0 relax=0 temp=300 taup=10 taub=100 time=100000 tstep=5
 % const fs=0.048377 K=1/0.6333328d-5 amass=1.09716d-3
 VERS    TB=10 LM=7 FP=7
@@ -20,11 +20,9 @@ CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
 # Tigany reoptimsation of A/C
 #        a0hcp=5.492857142857143 c0hcp=a0hcp*1.6173517700292839
 # Tony's re-opt
-        a0hcp=5.5118 c0hcp=8.7970
-        nkx=9 nky=15 nkz=4
+        a0hcp=5.5118 c0hcp=8.7970 
+        
         ahcp=a0hcp chcp=c0hcp q=chcp/ahcp
-	ai=0 aj=0 ak=0
-	aii=1/(2*sqrt(3)) ajj=-1/2  akk=q/2
         V0hcp=0.5*sqrt(3)*q*ahcp^3
         uomega=1 qomega=sqrt(3/8)
         abcc0=V0hcp^(1/3) afcc0=2*V0hcp^(1/3) aomega0=sqrt(2)*abcc0
@@ -32,7 +30,7 @@ CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
         vfrac=1 Vhcp=V0hcp*vfrac
         ahcpv=(2*Vhcp/(sqrt(3)*q))^(1/3)
         abcc=(vfrac*abcc0^3)^(1/3) afcc=afcc0 aomega=aomega0
-        nk=30 mull=-1 bzj=1 ewtol=1d-6 qtol=1d-6
+        nk=20 mull=-1 bzj=1 ewtol=1d-6 qtol=1d-6
 # Spanjard Dejun model
         q0sTi=0 q0pTi=0 q0dTi=2 esTi=0 epTi=0 edTi=0 UTi=0
         fdd=0.215 cr1=-6 cr2=4 cr3=-1 
@@ -46,21 +44,13 @@ CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
         p0=1.507105391 
         ndti=2.051341768
         q0dTi=ndti
-        fdd=0.1820811922 cr2=4.0690851 cr3=-1.007401971
-        qdds=0.5890606343 qddp=0.6304987776 qddd=0.6548686083
-        b0=112.8405787 p0=1.594107506 ndt=1.938012096
-        r1dd=5.427051129 rcdd=7.539638811
-        q0dTi=ndt
 
 % ifdef hcp
-#        rmaxh=1.1*ahcp
-	rmaxh=20
+        rmaxh=1.1*ahcp 
 % elseifd bcc
-#        rmaxh=1.1*abcc
-        rmaxh=20
+        rmaxh=1.1*abcc
 % elseifd omega
-#        rmaxh=1.05*aomega
-        rmaxh=20
+        rmaxh=1.05*aomega
 % endif
         getqp=0
         pv=1
@@ -80,10 +70,6 @@ DYN
               STEP={step} NKILL={nkill}] NIT={nitf}
 % endif        
 STR     MXNBR=mxnbr
-% ifdef rfile
-STRUC   FILE=site                                                         
-SITE    FILE=site   
-% else
 STRUC   NBAS={nbas} NSPEC={nspec} NL=3
 % ifdef bcc
         ALAT=abcc PLAT=-1/2 1/2 1/2   1/2 -1/2 1/2  1/2 1/2 -1/2
@@ -135,13 +121,8 @@ STRUC   NBAS={nbas} NSPEC={nspec} NL=3
 % endif
 SITE    
 % ifdef hcp
-%  ifdef eccal
-        ATOM=Ti POS= ai aj ak
-        ATOM=Ti POS= aii ajj akk
-%  else
         ATOM=Ti POS= 0              0     0
         ATOM=Ti POS= 1/(2*sqrt(3)) -1/2  q/2
-%  endif
 % elseifd omega
 # for omega uomega=1, uomega=0 is bcc in the hexagonal setting
         ATOM=Ti POS= 0              0     0
@@ -150,9 +131,8 @@ SITE
 % else
         ATOM=Ti POS= 0 0 0
 % endif
-% endif
-SYMGRP  I*I
-BZ      GETQP=getqp NKABC=nkx nky nkz TETRA={tetra} METAL={metal}
+SYMGRP  find
+BZ      GETQP=getqp NKABC=nk TETRA={tetra} METAL={metal}
         EFMAX=2 EF0=ef0 DELEF=0.01 N={norder} W={width}
         NPTS=5001 BZJOB=bzj SAVDOS=T NOINV=F
         INVIT=F MULL=mull DOS=-4.5 1 EFMAX=2 ZVAL=0

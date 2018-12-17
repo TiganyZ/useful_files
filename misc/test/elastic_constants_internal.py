@@ -87,12 +87,9 @@ def Cijkl(X_p, X_n, S_np, V_prim_uc):
 
 def S_np(LMarg, h, check_pos_def=True,
          use_forces=False, second_order=False):
-    # Force constant matrix defined to be Phi_ij(M,N) = change in phi with respect to displacements U_i(M) and U_j(N).
+    # Force constant matrix defined to be Phi_ij(M,N) = change in Energy with respect to displacements U_i(M) and U_j(N).
     # h is degree of displacements.
-    # phi is the total energy of the configuration
-    # Init pos of atom 1 is
-    # Init pos of atom 2 is 1/(2*sqrt(3)) -1/2  q/2 in units of alat
-    
+
     Phi0 = find_energy(LMarg, args, 'forceconstant')
 
     # First atom displacements
