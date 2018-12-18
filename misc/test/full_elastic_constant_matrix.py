@@ -51,6 +51,7 @@ from scipy.optimize import minimize
 import subprocess
 import matplotlib.pyplot as plt
 from matplotlib import rc
+import copy
 rc('font', **{'family': 'serif', 'serif': ['Palatino'],  'size': 18})
 rc('text', usetex=True)
 sci.set_printoptions(linewidth=200, precision=4)
@@ -80,7 +81,7 @@ def Cijkl(X_p, X_n, S_np, V_prim_uc):
     # X_n, X_p are the original positons of the atoms.
     # S_np is the force constant matrix: S_ij^(np) =  d^2 E/d u_i^(n) d u_j^(p)
     C = np.zeros((3, 3, 3, 3))
-    C_sym = np.zeros((3, 3, 3, 3))    
+    C_sym = np.zeros((3, 3, 3, 3))
     if X_p is not X_n:
         for i in range(3):
             for k in range(3):
@@ -100,20 +101,19 @@ def Cijkl(X_p, X_n, S_np, V_prim_uc):
 def print_full_cij(C, extra_args=''):
     bohr_to_ang = 0.529177
     convert = (13.606 / bohr_to_ang**3) * 160.21766208
-    for i in range(3):
-        for j in range(3):
-            for k in range(3):
-                for l in range(3):
-                    print(
-                            "C_{:d}{:d} {} = {: .10f} GPa".format(
-                                contract_index(i,k, within_six=True)+1,
-                                contract_index(j,l, within_six=True)+1, extra_args, C[i, k, j, l] * convert))
+    # for i in range(3):
+    #     for j in range(3):
+    #         for k in range(3):
+    #             for l in range(3):
+    #                 print("C_{:d}{:d} {} = {: .10f} GPa".format(
+    #                             contract_index(i,k, within_six=True)+1,
+    #                             contract_index(j,l, within_six=True)+1, extra_args, C[i, k, j, l] * convert))
 
     for ii in range(6):
         for jj in range(6):
             i, j = contract_index(ii,0, expand=True)
             k, l = contract_index(jj,0, expand=True)
-            print(i,j,k,l)
+            #print(i,j,k,l)
             print(
                 "C_{:d}{:d} {} = {: .10f} GPa C_{:d}{:d} {} = {: .10f} GPa".format(
                     ii+1, jj+1,
@@ -125,8 +125,6 @@ def S_np(LMarg, h, alat, X_n, X_p, check_pos_def=True,
          use_forces=False, second_order=False):
     # Force constant matrix defined to be Phi_ij(M,N) = change in Energy with respect to displacements U_i(M) and U_j(N).
     # h is degree of displacements.
-
-    Phi0 = find_energy(LMarg, args, 'forceconstant')
 
     # First atom displacements
     ai = ("ai", X_n[0])
@@ -141,31 +139,14 @@ def S_np(LMarg, h, alat, X_n, X_p, check_pos_def=True,
     arr2 = [aii, ajj, akk]
 
     Phi = np.zeros((3, 3))
+    Phi_nn = np.zeros((3,3))
 
     if use_forces:
-        m_11 = np.zeros((3, 3))
-        m_12 = np.zeros((3, 3))
-        m_21 = np.zeros((3, 3))
-        m_22 = np.zeros((3, 3))
-
         for i in range(3):
             a = arr[i]
             print("Derivatives using ", a)
             da1, da2 = cds_second_order(args, a, h, alat=alat)
-            m_11[:, i] = -da1
-            m_21[:, i] = -da2
-
-        for i in range(3):
-            a = arr2[i]
-            print("Derivatives using ", a)
-            da1, da2 = cds_second_order(args, a, h, alat=alat)
-            m_22[:, i] = -da1
-            m_12[:, i] = -da2
-
-        Phi[:3, :3] = m_11
-        Phi[3:, :3] = m_21
-        Phi[:3, 3:] = m_12
-        Phi[3:, 3:] = m_22
+            Phi[:, i] = -da2
 
     else:
         for i in range(3):
@@ -176,11 +157,105 @@ def S_np(LMarg, h, alat, X_n, X_p, check_pos_def=True,
                 Phi[i, j] = cds_fourth_order(
                     args, a1, a2, h, second_order=second_order, alat=alat)
                 print(Phi[i, j])
+                Phi_nn[i, j] = cds_fourth_order(
+                    args, a1, a1, h, second_order=second_order, alat=alat)
+                print("\nChecking if equilibrium condition holds:")
+                print("S_nn_ij = - sum_{n != p}( S_np_ij  ) ")
+                print(Phi[i, j], -Phi_nn[i,j])
+                print(Phi[i, j] == -Phi_nn[i,j] , '\n')
 
     print(Phi)
     
     return Phi
 
+
+#==========================================================================================
+#################################     Derivatives     #####################################
+#==========================================================================================
+
+
+def cds_second_order(args, ai, h, alat=5.57):
+    ai_name, ai_val = ai
+
+    print("Moving atom ", ai_name)
+    
+    filename = 'force_derivatives'
+    forces_atom_p1 = np.zeros(3)
+    forces_atom_p2 = np.zeros(3)
+    forces_atom_m1 = np.zeros(3)
+    forces_atom_m2 = np.zeros(3)
+
+    for j in [-1, 1]:
+        cmd_write_to_file(args + " -v" + ai_name + "=" + str(j * h), filename)
+        #print( cmd_result(" grep -A4 'Forces on atom' " + filename  ) )
+        for i in range(3):
+            greparg = " grep -A4 'Forces on atom' " + filename + \
+                " | grep 'Total' | awk '{print$" + str(i + 3) + "}'"
+            if j == -1:
+                forces_atom_m1[i], forces_atom_m2[i] = tuple(
+                    [float(x) for x in (cmd_result(greparg).strip('\n')).split()])
+            else:
+                forces_atom_p1[i], forces_atom_p2[i] = tuple(
+                    [float(x) for x in (cmd_result(greparg).strip('\n')).split()])
+
+    h *= alat
+    derivatives1 = (forces_atom_p1 - forces_atom_m1) / (2. * h)
+    derivatives2 = (forces_atom_p2 - forces_atom_m2) / (2. * h)
+    print("For", ai)
+    print("forces atom 1: - h = %s" % (forces_atom_m1))
+    print("forces atom 2: - h = %s" % (forces_atom_m2))
+    print("forces atom 1: + h = %s" % (forces_atom_p1))
+    print("forces atom 2: + h = %s" % (forces_atom_p2))
+    print("df^1/du_%s = %s" % (ai_name, derivatives1))
+    print("df^2/du_%s = %s" % (ai_name, derivatives2))
+
+    return derivatives1, derivatives2
+
+def cds_fourth_order(args, ai, aj, h, alat=5.57, second_order=False, use_bind=False):
+
+    ai_name, ai_val = ai
+    aj_name, aj_val = aj
+
+    n_disp = np.array([-2, -1, 1, 2])
+    f_arr = np.zeros((len(n_disp), len(n_disp)))
+    del_h_dict = {}
+
+    if second_order:
+        n_disp = np.array([-1, 1])
+    for i, ni in enumerate(n_disp):
+        for j, nj in enumerate(n_disp):
+            xargs = args \
+                + " -v" + ai_name + "=" \
+                + str(ni * h + ai_val) \
+                + " -v" + aj_name + "=" \
+                + str(nj * h + aj_val)
+            print(xargs)
+            f_arr[i, j] = find_energy(xargs, '',  'cds_fourth_order')
+            del_h_dict[(ni, nj)] = (i, j)
+
+    def fa(ni, nj): return f_arr[del_h_dict[(ni, nj)]]
+
+    h = h * alat
+    print("new h = ", h)
+    if second_order:
+        mixed_derivative = (1./(4. * h**2)) * (fa(-1, -1) +
+                                               fa(1, 1) - fa(1, -1) - fa(-1, 1))
+    else:
+        mixed_derivative = (1. / (144. * h**2)) * (
+            8. * (fa(1, -2) + fa(2, -1) + fa(-2, 1) + fa(-1, 2))
+            - 8. * (fa(-1, -2) + fa(-2, -1) + fa(1, 2) + fa(2, 1))
+            - 1. * (fa(2, -2) + fa(-2, 2) - fa(-2, -2) - fa(2, 2))
+            + 64. * (fa(-1, -1) + fa(1, 1) - fa(1, -1) - fa(-1, 1)))
+
+    print("\nDerivative = %s" % (mixed_derivative))
+
+    return mixed_derivative
+
+
+
+#==========================================================================================
+#################################     Contracting Indices     #############################
+#==========================================================================================
 
 
 def contract_index(i, j, within_six=False, expand=False):
@@ -261,25 +336,32 @@ def get_elastic_constants_from_energy(LMarg, X_n, X_p, V_prim_uc, h, alat,
          C_sym = c_transform(C_sym, rot)
     
     C = get_Cij(C)
-    np.set_printoptions(precision=3)
-    print("Elastic constant matrix Ryd/bohr**3:\n",C)
+    np.set_printoptions(precision=5)
+    print("\nElastic constant matrix Ryd/bohr**3:\n",C)
     C_sym = get_Cij(C_sym)
-    np.set_printoptions(precision=1)
-    print("Elastic constant matrix Ryd/bohr**3 sym:\n",C_sym)
+    print("\nElastic constant matrix Ryd/bohr**3 sym:\n",C_sym)
     bohr_to_ang =  0.529177
-    C_sym *= (13.606 / bohr_to_ang**3)
-    C_sym *= 160.21766208
-    print("Elastic constant matrix GPa:\n",C.round(3))
-    print("Elastic constant matrix GPa: sym\n",C_sym.round(3))    
+    convert = (13.606 / bohr_to_ang**3) * 160.21766208
+    C *= convert
+    C_sym *= convert
+    np.set_printoptions(precision=3)
+    Cpr = copy.copy(C)
+    Cpr[Cpr < 0.1] = 0
+    print("\nElastic constant matrix GPa:\n",Cpr)
+    Cpr = copy.copy(C_sym)
+    Cpr[Cpr < 0.1] = 0
+    print("\nElastic constant matrix GPa: sym\n",Cpr)    
 
     print("\n Checking Stability for tbe elastic constants. \n")
     is_stable = np.all(np.linalg.eigvals( C ) > 0)
     print("is positive definite = ", is_stable)
+    print("\nEigenvalues are ", np.linalg.eigvals(C))
     print(is_stability_satisfied(C[0,0], C[2,2], C[3,3], C[0,1], C[0,2]))
 
     print("\n Checking Stability for tbe sym elastic constants. \n")
     is_stable = np.all(np.linalg.eigvals( C_sym ) > 0)
     print("is positive definite = ", is_stable)
+    print("\nEigenvalues are ", np.linalg.eigvals(C_sym))
     print(is_stability_satisfied(C_sym[0,0], C_sym[2,2], C_sym[3,3], C_sym[0,1], C_sym[0,2]))
     return C
 
@@ -378,6 +460,8 @@ def is_positive_definite(c11, c33, c44, c12, c13, C=None):
     is_stable = np.all(np.linalg.eigvals(C_arr) > 0)
 
     print("is positive definite = ", is_stable)
+    print("Eigenvalues are ", np.linalg.eigvals(C_arr))
+    print(C_arr)
     return np.all(np.linalg.eigvals(C_arr) > 0)
 
 
@@ -411,96 +495,85 @@ def is_stability_satisfied(C_11, C_33, C_44, C_12, C_13):
     c9 = C_11 > 0
     print("C_11 > 0\n", c9)
 
-
-def cds_fourth_order(args, ai, aj, h, alat=5.57, second_order=False):
-
-    ai_name, ai_val = ai
-    aj_name, aj_val = aj
-
-    n_disp = np.array([-2, -1, 1, 2])
-    f_arr = np.zeros((len(n_disp), len(n_disp)))
-    del_h_dict = {}
-
-    if second_order:
-        n_disp = np.array([-1, 1])
-    for i, ni in enumerate(n_disp):
-        for j, nj in enumerate(n_disp):
-            xargs = args \
-                + " -v" + ai_name + "=" \
-                + str(ni * h + ai_val) \
-                + " -v" + aj_name + "=" \
-                + str(nj * h + aj_val)
-            print(xargs)
-            f_arr[i, j] = find_energy(xargs, '',  'cds_fourth_order')
-            del_h_dict[(ni, nj)] = (i, j)
-
-    def fa(ni, nj): return f_arr[del_h_dict[(ni, nj)]]
-
-    h = h * alat
-    print("new h = ", h)
-    if second_order:
-        mixed_derivative = (1./(4. * h**2)) * (fa(-1, -1) +
-                                               fa(1, 1) - fa(1, -1) - fa(-1, 1))
-    else:
-        mixed_derivative = (1. / (144. * h**2)) * (
-            8. * (fa(1, -2) + fa(2, -1) + fa(-2, 1) + fa(-1, 2))
-            - 8. * (fa(-1, -2) + fa(-2, -1) + fa(1, 2) + fa(2, 1))
-            - 1. * (fa(2, -2) + fa(-2, 2) - fa(-2, -2) - fa(2, 2))
-            + 64. * (fa(-1, -1) + fa(1, 1) - fa(1, -1) - fa(-1, 1)))
-
-    print("\nDerivative = %s" % (mixed_derivative))
-
-    return mixed_derivative
+def check_old_elastic_constants(args, alpha, strain):
+    return
+    
+def tony_strains(ec):
+    if ec == 'c11':
+        strain = np.array( [ 1, 0, 0, 0, 0, 0 ] )
+    elif ec == 'c33':
+        strain = np.array( [ 0, 0, 1, 0, 0, 0 ] )
+    
+    elif ec == 'cp':
+        strain = np.array( [ 1 ,-1, 0, 0, 0, 0 ] )
+    
+    elif ec == 'cpp':
+        strain = np.array( [ 1, 0, -1, 0, 0, 0 ] )
+    
+    elif ec == 'c44':
+        strain = np.array( [ 0, 0, 0, 0, 0.5, 0 ] )
+    
+    elif ec == 'R':
+        strain = np.array( [ -0.5, -0.5, 1, 0, 0, 0 ] )
+    
+    elif ec == 'H':
+        strain = np.array( [ 1, -0.5 ,-0.5, 0, 0, 0 ] )
+    
+    elif ec == 'S':
+        strain = np.array( [  0, 0, 0, 0.5, 0.5, 0.5 ] )
+    return strain
 
 
-def cds_second_order(args, ai, h, alat=5.57):
 
-    ai_name, ai_val = ai
-
-    filename = 'force_derivatives'
-    forces_atom_p1 = np.zeros(3)
-    forces_atom_p2 = np.zeros(3)
-    forces_atom_m1 = np.zeros(3)
-    forces_atom_m2 = np.zeros(3)
-
-    for j in [-1, 1]:
-        cmd_write_to_file(args + " -v" + ai_name + "=" + str(j * h), filename)
-        #print( cmd_result(" grep -A4 'Forces on atom' " + filename  ) )
-        for i in range(3):
-            greparg = " grep -A4 'Forces on atom' " + filename + \
-                " | grep 'Total' | awk '{print$" + str(i + 3) + "}'"
-            if j == -1:
-                forces_atom_m1[i], forces_atom_m2[i] = tuple(
-                    [float(x) for x in (cmd_result(greparg).strip('\n')).split()])
-            else:
-                forces_atom_p1[i], forces_atom_p2[i] = tuple(
-                    [float(x) for x in (cmd_result(greparg).strip('\n')).split()])
-
-    h *= alat
-    derivatives1 = (forces_atom_p1 - forces_atom_m1) / (2. * h)
-    derivatives2 = (forces_atom_p2 - forces_atom_m2) / (2. * h)
-    print("For", ai)
-    print("forces atom 1: - h = %s" % (forces_atom_m1))
-    print("forces atom 2: - h = %s" % (forces_atom_m2))
-    print("forces atom 1: + h = %s" % (forces_atom_p1))
-    print("forces atom 2: + h = %s" % (forces_atom_p2))
-    print("Derivative1 = %s" % (derivatives1))
-    print("Derivative2 = %s" % (derivatives2))
-
-    return derivatives1, derivatives2
-
-
-args = ' tbe ti -vhcp=1 -veccal=1'  # + varg
-ahcp = 5.5125
-chcp = 8.8090
-ahcp = 5.5118
-chcp = 8.7970
+args = ' tbe ti -vhcp=1 -vspecpos=1 -vspecplat=1 -vforces=1 '  # + varg
+# ahcp = 5.5125
+# chcp = 8.8090
+# ahcp = 5.5118
+# chcp = 8.7970
+ahcp=5.6361
+chcp=9.0429
 q = chcp/ahcp
 
 h = 0.002
 X_n = np.array([0.,0.,0.])
 X_p = np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) 
 V_prim_uc = (3**(0.5) / 2) * ahcp**2 * chcp
+
+rotation = np.array([[np.sqrt(3)/2., 0.5,  0.],
+                     [-0.5, np.sqrt(3)/2., 0.],
+                     [0., 0.,  1.]])
+
+plat = np.array([ [     0,         -1,  0 ],
+                   [np.sqrt(3)/2,  0.5,  0 ],
+                   [     0,         0,   q ] ] )
+
+new_plat = np.zeros(plat.shape)
+rotate_plat = True
+plat_str = [ [ '-vplxa=', '-vplya=', '-vplza='  ],
+             [ '-vplxb=', '-vplyb=', '-vplzb='  ],
+             [ '-vplxc=', '-vplyc=', '-vplzc='  ] ]
+plat_comm = ' '
+if rotate_plat:
+    X_n = rotation.dot(X_n)
+    X_p = rotation.dot(X_p)    
+    for i in range(3):
+        new_plat[i,:] = rotation.dot( plat[i] )
+        n_p_str = plat_str[i]
+        for k, var in enumerate( n_p_str ):
+            n_p_str[k] = var + str( new_plat[i,k].round(10) )
+        plat_comm += ' '.join( n_p_str ) + ' '
+
+print("rotated plat")
+print(new_plat)
+print("New rotated plat command")
+print(plat_comm)
+args += plat_comm
+
+print("Volume", V_prim_uc)
+
+Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp, 
+                                         use_forces=True, second_order=True)
+
 Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp, 
                                          use_forces=False, second_order=True)
 
@@ -509,11 +582,12 @@ Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp,
 ############################     Find min lps and see difference     ######################
 #==========================================================================================
 
+print("Finding Minimum lattice parameters to see if there is a difference." )
 
 ahcp = 5.5118
 chcp = 8.7970
 global lpargs
-lpargs = ' -vhcp=1 '
+lpargs = ' -vhcp=1 -vspecpos=1 -vspecplat=1 -vforces=1 ' + plat_comm
 
 ahcp, chcp, etot = get_min_lp(phase="hcp")
 print("Minimum lattice parameters\n a = {:.8f}\n c = {:.8f}".format(ahcp, chcp) )
@@ -523,30 +597,28 @@ X_n = np.array([0.,0.,0.])
 X_p = np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) 
 V_prim_uc = (3**(0.5) / 2) * ahcp**2 * chcp
 
-args = ' tbe ti -vhcp=1 -veccal=1 -vahcp={:.8f} -vchcp={:.8f}'.format(ahcp, chcp,   )
-Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp, 
-                                         use_forces=False, second_order=True, rot=rotation)
+args_mn = args + ' -vahcp={:.8f} -vchcp={:.8f}'.format(ahcp, chcp)
+Cij =  get_elastic_constants_from_energy(args_mn, X_n, X_p, V_prim_uc, h, ahcp, 
+                                         use_forces=False, second_order=True)
 
 
 
-#==========================================================================================
-#############################          Add rotation          ##############################
-#==========================================================================================
+# #==========================================================================================
+# #############################          Add rotation          ##############################
+# #==========================================================================================
 
+# print("Adding rotation." )
+# rotation = np.array([[np.sqrt(3)/2., 0.5,  0.],
+#                      [-0.5, np.sqrt(3)/2., 0.],
+#                      [0., 0.,  1.]])
 
-rotation = np.array([[np.sqrt(3)/2., 0.5,  0.],
-                     [-0.5, np.sqrt(3)/2., 0.],
-                     [0., 0.,  1.]])
+# ahcp = 5.5118
+# chcp = 8.7970
+# q = chcp/ahcp
 
-ahcp = 5.5118
-chcp = 8.7970
-q = chcp/ahcp
-
-h = 0.002
-X_n = np.array([0.,0.,0.])
-X_p = np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) 
-V_prim_uc = (3**(0.5) / 2) * ahcp**2 * chcp
-Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp, 
-                                         use_forces=False, second_order=True, rot=rotation)
-
-
+# h = 0.002
+# X_n = np.array([0.,0.,0.])
+# X_p = np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) 
+# V_prim_uc = (3**(0.5) / 2) * ahcp**2 * chcp
+# Cij =  get_elastic_constants_from_energy(args, X_n, X_p, V_prim_uc, h, ahcp, 
+#                                          use_forces=False, second_order=True, rot=rotation)

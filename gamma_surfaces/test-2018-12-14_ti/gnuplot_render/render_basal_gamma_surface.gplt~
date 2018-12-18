@@ -1,0 +1,29 @@
+#  Gnuplot for basal and pyramidal planes
+#set terminal pngcairo  transparent enhanced font "arial,10" fontscale 1.0 size 600, 400
+
+set terminal epslatex size 8.89cm,6.65cm color colortext
+set output 'basal_gamma_surface.png'
+set xlabel '$x$'
+set ylabel '$y$'
+set format '$%g$'
+set xtics ('$-2\pi$' -2*pi,'$-\pi$' -pi,0,'$\pi$' pi,'$2\pi$' 2*pi)
+
+
+set key at screen 1, 0.9 right top vertical Right noreverse enhanced autotitle nobox
+set key opaque
+unset key
+set style textbox opaque margins  0.5,  0.5 fc  bgnd noborder linewidth  1.0
+set view 60, 30, 1, 1.1
+set samples 20, 20
+set isosamples 21, 21
+set contour base
+set cntrlabel  format '%8.3g' font ',7' start 5 interval 20
+set cntrparam levels auto 10 unsorted
+set style data lines
+set title "some more interesting contours" 
+set xlabel "X axis" 
+set ylabel "Y axis" 
+set zlabel "Z " 
+set zlabel  offset character 1, 0, 0 font "" textcolor lt -1 norotate
+set zrange [ -1.00000 : 1.00000 ] noreverse nowriteback
+splot [x=-3:3] [y=-3:3] sin(x) * cos(y)

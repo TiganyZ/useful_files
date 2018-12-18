@@ -499,4 +499,4 @@
  
 t hcp=1 specpos=1 specplat=1 forces=1 plxa=-.5 plya=-.866025 plza=0 plxb=1 plyb=0 plzb=0 plxc=0 plyc=0 plzc=1.60446 ak=.002 mmom=0 sev=-.287974 erep=.194571 etot=-.093403 emad=0 3pv=.437638 TS=-.000025
  Exit 0 TBE 
- CPU time:  5.311s   Wall clock 5.334s  at  20:38:23 18.12.2018  on  gherkin
+ CPU time:  5.312s   Wall clock 5.336s  at  20:19:57 18.12.2018  on  gherkin

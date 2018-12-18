@@ -27,22 +27,6 @@ Know that
 
 C_ijkl = 0.5 * (  d^2E/de_ijde_kl   )
 
-Or we can use the formula from Sutton's book 
-
-
-
-C_ijkl = -( 0.5 / V_prim_unit_cell ) * ( sum_{p != n}  ( X_k_(p) - X_k_(n)} ) S_ij_(np)  \big( X_l^{(p) - X_l_(n)   )
-
-S_{ij}^{(np)} =  \frac{\partial E}{\partial u_i^{(n)} \partial u_j^{(p)} } 
-
-
- C_{ikjl} = -\frac{1}{8\Omega}  \Big\{ 
-    &\sum_{p\neq n}\big( X_k^{(p)} - X_k^{(n)} \big) S_{ij}^{(np)}  \big( X_l^{(p)} - X_l^{(n)}  \big) \\
-  + &\sum_{p\neq n}\big( X_i^{(p)} - X_i^{(n)} \big) S_{kj}^{(np)}  \big( X_l^{(p)} - X_l^{(n)}  \big) \\
-  + &\sum_{p\neq n}\big( X_k^{(p)} - X_k^{(n)} \big) S_{il}^{(np)}  \big( X_j^{(p)} - X_j^{(n)}  \big) \\
-  + &\sum_{p\neq n}\big( X_i^{(p)} - X_i^{(n)} \big) S_{kl}^{(np)}  \big( X_j^{(p)} - X_j^{(n)}  \big)  \Big\}
-
-
 """
 
 import numpy as np
@@ -101,31 +85,24 @@ def Cijkl(X_p, X_n, S_np, V_prim_uc):
 def print_full_cij(C, extra_args=''):
     bohr_to_ang = 0.529177
     convert = (13.606 / bohr_to_ang**3) * 160.21766208
-    # for i in range(3):
-    #     for j in range(3):
-    #         for k in range(3):
-    #             for l in range(3):
-    #                 print("C_{:d}{:d} {} = {: .10f} GPa".format(
-    #                             contract_index(i,k, within_six=True)+1,
-    #                             contract_index(j,l, within_six=True)+1, extra_args, C[i, k, j, l] * convert))
-
     for ii in range(6):
         for jj in range(6):
             i, j = contract_index(ii,0, expand=True)
             k, l = contract_index(jj,0, expand=True)
-            #print(i,j,k,l)
-            print(
-                "C_{:d}{:d} {} = {: .10f} GPa C_{:d}{:d} {} = {: .10f} GPa".format(
+            print("C_{:d}{:d} {} = {: .10f} GPa C_{:d}{:d} {} = {: .10f} GPa".format(
                     ii+1, jj+1,
                     extra_args, C[i, j, k, l] * convert,
                     jj+1, ii+1,
                     extra_args, C[k, l, i, j] * convert))
 
-def S_np(LMarg, h, alat, X_n, X_p, check_pos_def=True,
+            
+def apply_strain(LMarg, h, alat, X_n, X_p, check_pos_def=True,
          use_forces=False, second_order=False):
     # Force constant matrix defined to be Phi_ij(M,N) = change in Energy with respect to displacements U_i(M) and U_j(N).
     # h is degree of displacements.
 
+    # Homogeneous strain: u = e.dot( X )
+    
     # First atom displacements
     ai = ("ai", X_n[0])
     aj = ("aj", X_n[1])
@@ -141,28 +118,20 @@ def S_np(LMarg, h, alat, X_n, X_p, check_pos_def=True,
     Phi = np.zeros((3, 3))
     Phi_nn = np.zeros((3,3))
 
-    if use_forces:
-        for i in range(3):
-            a = arr[i]
-            print("Derivatives using ", a)
-            da1, da2 = cds_second_order(args, a, h, alat=alat)
-            Phi[:, i] = -da2
-
-    else:
-        for i in range(3):
-            a1 = arr[i]
-            for j in range(3):
-                a2 = arr2[j]
-                print(a1, a2)
-                Phi[i, j] = cds_fourth_order(
-                    args, a1, a2, h, second_order=second_order, alat=alat)
-                print(Phi[i, j])
-                Phi_nn[i, j] = cds_fourth_order(
-                    args, a1, a1, h, second_order=second_order, alat=alat)
-                print("\nChecking if equilibrium condition holds:")
-                print("S_nn_ij = - sum_{n != p}( S_np_ij  ) ")
-                print(Phi[i, j], -Phi_nn[i,j])
-                print(Phi[i, j] == -Phi_nn[i,j] , '\n')
+    for i in range(3):
+        a1 = arr[i]
+        for j in range(3):
+            a2 = arr2[j]
+            print(a1, a2)
+            Phi[i, j] = cds_fourth_order(
+                args, a1, a2, h, second_order=second_order, alat=alat)
+            print(Phi[i, j])
+            Phi_nn[i, j] = cds_fourth_order(
+                args, a1, a1, h, second_order=second_order, alat=alat)
+            print("\nChecking if equilibrium condition holds:")
+            print("S_nn_ij = - sum_{n != p}( S_np_ij  ) ")
+            print(Phi[i, j], -Phi_nn[i,j])
+            print(Phi[i, j] == -Phi_nn[i,j] , '\n')
 
     print(Phi)
     
