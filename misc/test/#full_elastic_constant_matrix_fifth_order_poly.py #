@@ -1,0 +1,32 @@
+# This calculates the elastic constants by fitting a fifth order polynomial to the change in energy with respect to strains.
+import numpy as np
+import scipy as sci
+from scipy.optimize import minimize
+import subprocess
+import matplotlib.pyplot as plt
+from matplotlib import rc
+import copy
+rc('font', **{'family': 'serif', 'serif': ['Palatino'],  'size': 18})
+rc('text', usetex=True)
+sci.set_printoptions(linewidth=200, precision=4)
+
+#==========================================================================
+############################    General    ################################
+#==========================================================================
+def cmd_result(cmd):
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    result, err = proc.communicate()
+    result = result.decode("utf-8")
+    return result
+
+
+def cmd_write_to_file(cmd, filename):
+    output_file = open(filename, mode='w')
+    retval = subprocess.call(cmd, shell=True, stdout=output_file)
+    output_file.close()
+
+
+#===========================================================================================
+############################    Elastic Constant Strains    ################################
+#===========================================================================================
+

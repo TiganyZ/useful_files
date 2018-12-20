@@ -37,7 +37,6 @@ def cmd_write_to_file(cmd, filename):
 ########################   Convert file to XYZ   ###############################
 
 def convert_file_to_xyz(plat, atom_pos, species, filename):
-
     if type(atom_pos) == tuple:
         atom_pos, inert_atom_pos = atom_pos
         n_inert = len(inert_atom_pos)
@@ -563,11 +562,11 @@ def gamma_surface(LMarg, ext, a, c, x_vec, y_vec,
 
             if i == 0 and j == 0:
                 e0 = etot[0, 0]
-                out_file = open(gplt_file + "_%s_unrelaxed_.dat" %
+                out_file = open(gplt_file + "_%s_unrelaxed.dat" %
                                 (sf_type), 'w')
                 out_file.write("#        x              y             etot\n ")
             else:
-                out_file = open(gplt_file + "_%s_unrelaxed_.dat" %
+                out_file = open(gplt_file + "_%s_unrelaxed.dat" %
                                 (sf_type), 'a')
 
             print("Energy = %s\n" % (etot[i, j]))
