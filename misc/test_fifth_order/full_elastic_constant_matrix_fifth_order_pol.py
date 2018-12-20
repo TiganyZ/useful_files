@@ -43,6 +43,7 @@ def find_energy(LMarg, args, filename, pipe=True):
             cmd += " | grep 'total energy' " + \
                 " | tail -1 | awk '{print $4}'"
     etot = cmd_result(cmd)
+    print(cmd)
     print("Energy", etot)
     try:
         etot = float(etot[0:-1])
@@ -82,9 +83,9 @@ def get_strain_tensor(strain):
 
 def get_plat_command(plat, rotation=None, plat_str=None):
     if plat_str is None:
-        plat_str = [ [ '-vplxa=', '-vplya=', '-vplza='  ],
-                     [ '-vplxb=', '-vplyb=', '-vplzb='  ],
-                     [ '-vplxc=', '-vplyc=', '-vplzc='  ] ]
+        plat_str = [ [ '-vplxa=', '-vplxb=', '-vplxc='  ],
+                     [ '-vplya=', '-vplyb=', '-vplyc='  ],
+                     [ '-vplza=', '-vplzb=', '-vplzc='  ] ]
     
     plat_comm = ' '
     new_plat = np.zeros(plat.shape)
@@ -114,13 +115,13 @@ def get_strained_configuration(h, e, alat, positions, position_names, plat, plat
 
     plat_strained = np.asarray( [ (  e.dot( pl * alat ) ) / alat  for pl in plat ] )
 
-    # np.printoptions(linewidth=200,precision=8)
-    # print("\nplat strained")
-    # for i, p in enumerate( plat_strained ):
-    #     print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
-    # print("\npositions strained")
-    # for i, p in enumerate( positions_strained ):
-    #     print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
+    np.printoptions(linewidth=200,precision=8)
+    print("\nplat strained")
+    for i, p in enumerate( plat_strained ):
+        print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
+    print("\npositions strained")
+    for i, p in enumerate( positions_strained ):
+        print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
     
     plat_args = get_plat_command(plat_strained, plat_names)
     command = plat_args + position_args
@@ -587,6 +588,8 @@ plat = np.array([ [     0,         -1,  0 ],
 
 plat_comm = get_plat_command(plat, rotation=rotation)
 
+print( plat_comm ) 
+
 V = (3**(0.5) / 2.) * ahcp**2 * chcp
 
 
@@ -598,43 +601,43 @@ for i, p in enumerate( positions ):
     print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
 
 
-# c11, c33, c44, c66, c12, c13, K, R, H, energy_array= get_tbe_elastic_constants(args, alphas, plat, ahcp, chcp, positions, position_names, V, girshick=True )
+c11, c33, c44, c66, c12, c13, K, R, H, energy_array= get_tbe_elastic_constants(args, alphas, plat, ahcp, chcp, positions, position_names, V, girshick=True )
 
-# fig, axes = plt.subplots(3, 5)
-# fig.suptitle('Girshick tbe Strains')
-# for i, en in enumerate( energy_array ):
-#     print("plotting")
-#     print(en)
-#     j = i//5
-#     k = i % 5
-#     print(j,k)
-#     ax = axes[j,k]
-#     print(ax)
-#     ax.set_title('{:d}'.format(i) )    
-#     ax.plot( alphas, en, 'bo' )
-#     poly_coeffs = np.polyfit( alphas, en, 5 )
-#     poly = np.poly1d(poly_coeffs)
-#     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
-#     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
+fig, axes = plt.subplots(3, 5)
+fig.suptitle('Girshick tbe Strains')
+for i, en in enumerate( energy_array ):
+    print("plotting")
+    print(en)
+    j = i//5
+    k = i % 5
+    print(j,k)
+    ax = axes[j,k]
+    print(ax)
+    ax.set_title('{:d}'.format(i) )    
+    ax.plot( alphas, en, 'bo' )
+    poly_coeffs = np.polyfit( alphas, en, 5 )
+    poly = np.poly1d(poly_coeffs)
+    pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
+    ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 
 
-# c11, c33, c44, c66, c12, c13, K, R, H, energy_array = get_tbe_elastic_constants(args, alphas, plat, ahcp, chcp, positions, position_names, V, girshick=False )
-# fig, axes = plt.subplots(2, 4)
-# fig.suptitle('Tony tbe Strains')
-# for i, en in enumerate( energy_array ):
-#     print("plotting")
-#     print(en)
-#     j = i//4
-#     k = i % 4
-#     print(j,k)
-#     ax = axes[j,k]
-#     print(ax)
-#     ax.set_title('{:d}'.format(i) )    
-#     ax.plot( alphas, en, 'bo' )
-#     poly_coeffs = np.polyfit( alphas, en, 5 )
-#     poly = np.poly1d(poly_coeffs)
-#     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
-#     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
+c11, c33, c44, c66, c12, c13, K, R, H, energy_array = get_tbe_elastic_constants(args, alphas, plat, ahcp, chcp, positions, position_names, V, girshick=False )
+fig, axes = plt.subplots(2, 4)
+fig.suptitle('Tony tbe Strains')
+for i, en in enumerate( energy_array ):
+    print("plotting")
+    print(en)
+    j = i//4
+    k = i % 4
+    print(j,k)
+    ax = axes[j,k]
+    print(ax)
+    ax.set_title('{:d}'.format(i) )    
+    ax.plot( alphas, en, 'bo' )
+    poly_coeffs = np.polyfit( alphas, en, 5 )
+    poly = np.poly1d(poly_coeffs)
+    pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
+    ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 
 c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = tony_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
 
@@ -656,25 +659,25 @@ for i, en in enumerate( energy_array ):
     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 
 
-# c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = Girshick_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
+c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = Girshick_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
 
 
-# fig, axes = plt.subplots(3, 5)
-# fig.suptitle('Girshick Strains')
-# for i, en in enumerate( energy_array ):
-#     print("plotting")
-#     print(en)
-#     j = i//5
-#     k = i % 5
-#     print(j,k)
-#     ax = axes[j,k]
-#     print(ax)
-#     ax.set_title('{:d}'.format(i) )
-#     ax.plot( alphas, en, 'bo' )
-#     poly_coeffs = np.polyfit( alphas, en, 5 )
-#     poly = np.poly1d(poly_coeffs)
-#     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
-#     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
+fig, axes = plt.subplots(3, 5)
+fig.suptitle('Girshick Strains')
+for i, en in enumerate( energy_array ):
+    print("plotting")
+    print(en)
+    j = i//5
+    k = i % 5
+    print(j,k)
+    ax = axes[j,k]
+    print(ax)
+    ax.set_title('{:d}'.format(i) )
+    ax.plot( alphas, en, 'bo' )
+    poly_coeffs = np.polyfit( alphas, en, 5 )
+    poly = np.poly1d(poly_coeffs)
+    pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
+    ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 plt.show()
 
 

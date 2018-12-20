@@ -80,9 +80,9 @@ def get_strained_configuration(h, e, alat, positions, position_names, plat, plat
 
 def get_plat_command(plat, rotation=None, plat_str=None):
     if plat_str is None:
-        plat_str = [ [ '-vplxa=', '-vplya=', '-vplza='  ],
-                     [ '-vplxb=', '-vplyb=', '-vplzb='  ],
-                     [ '-vplxc=', '-vplyc=', '-vplzc='  ] ]
+        plat_str = [ [ '-vplxa=', '-vplxb=', '-vplxc='  ],
+                     [ '-vplya=', '-vplyb=', '-vplyc='  ],
+                     [ '-vplza=', '-vplzb=', '-vplzc='  ] ]
     
     plat_comm = ' '
     new_plat = np.zeros(plat.shape)
