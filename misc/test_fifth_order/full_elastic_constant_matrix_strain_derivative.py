@@ -59,17 +59,20 @@ def cmd_write_to_file(cmd, filename):
 ############################    Argument manipulation    ################################
 #========================================================================================
 
+
 def get_strained_configuration(h, e, alat, positions, position_names, plat, plat_names=None):
     # Homogeneous strain: u = e.dot( X )
     positions_strained = np.zeros(positions.shape)
     position_args = ''
+    e *= h
+    e += np.eye(3)
     for i, X in enumerate( positions ):
-        X_strained = h * e.dot( X * alat ) + X * alat
+        X_strained = e.dot( X ) 
         for j, name in enumerate( position_names[i] ):
-            positions_strained[i,j] = X_strained[j] / alat
-            position_args += ' -v{}={:.10f}'.format(name, X_strained[j] / alat )
+            positions_strained[i,j] = X_strained[j] 
+            position_args += ' -v{}={:.10f}'.format(name, X_strained[j]  )
 
-    plat_strained = np.asarray( [ ( pl * alat + h * e.dot( pl * alat ) ) / alat  for pl in plat ] )
+    plat_strained = np.asarray( [ (  e.dot( pl ) )   for pl in plat ] )
     plat_args = get_plat_command(plat_strained, plat_names)
     command = plat_args + position_args
     return positions_strained, plat_strained, command
@@ -387,6 +390,12 @@ def is_positive_definite(c11, c33, c44, c12, c13, C=None):
 def is_stability_satisfied(C_11, C_33, C_44, C_12, C_13):
     print("\n   Criteria for stability:\n")
 
+    print( "C_11", C_11 )
+    print( "C_33", C_33 )
+    print( "C_44", C_44 ) 
+    print( "C_12", C_12 )
+    print( "C_13", C_13 )    
+
     c1 = C_11 - C_12 > 0
     print("C_11 - C_12 > 0 \n", c1)
 
@@ -443,7 +452,7 @@ X_p = rotation.dot( np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) )
 positions = np.asarray( [ X_n, X_p ] )
 position_names = [ [ 'ai',  'aj',  'ak'  ],
                    [ 'aii', 'ajj', 'akk' ] ]
-second_order = False
+second_order = True
 
 plat = np.array([ [     0,         -1,  0 ],
                    [np.sqrt(3)/2,  0.5,  0 ],
