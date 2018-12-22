@@ -248,36 +248,22 @@ def get_strains(strain):
         strain_command += name + s + ' '
     return strain_command
 
-def get_strain_tensor(strain):
-    strain_tensor = np.zeros((3,3))
-    for i in range(3):
-        strain_tensor[i,i] = strain[i]
-    strain_tensor[2,3] = strain[3]
-    strain_tensor[3,2] = strain[3]
-    strain_tensor[1,3] = strain[4]
-    strain_tensor[3,1] = strain[4]
-    strain_tensor[1,2] = strain[5]
-    strain_tensor[2,1] = strain[5]
-    return strain_tensor
-
 
 def strains():
 
-    s_11 =              np.array([1,  0, 0, 0, 0, 0])
-    s_112 =             np.array([0,  1, 0, 0, 0, 0])
-    s_33 =              np.array([0,  0, 1, 0, 0, 0])
-    s_2C11_2C12 =       np.array([1,  1, 0, 0, 0, 0])
-    s_2_C11_2_C22 =     np.array([1,  1, 0, 0, 0, 0])
-    s_5o4_C11_C12 =     np.array([0.5,1, 0, 0, 0, 0])
-    s_C11_C33_2_C13 =   np.array([1,  0, 1, 0, 0, 0])
+    s_11 = np.array([1,  0, 0, 0, 0, 0])
+    s_112 = np.array([0,  1, 0, 0, 0, 0])
+    s_33 = np.array([0,  0, 1, 0, 0, 0])
+    s_2C11_2C12 = np.array([1,  1, 0, 0, 0, 0])
+    s_2_C11_2_C22 = np.array([1,  1, 0, 0, 0, 0])
+    s_5o4_C11_C12 = np.array([0.5, 1, 0, 0, 0, 0])
+    s_C11_C33_2_C13 = np.array([1,  0, 1, 0, 0, 0])
     s_C11_C33_2_C13_2 = np.array([0,  1, 1, 0, 0, 0])
-    s_4_C44 =           np.array([0,  0, 0, 0, 1, 0])
-    s_4_C44_2 =         np.array([0,  0, 0, 1, 0, 0])
-    s_8_C44 =           np.array([0,  0, 0, 1, 1, 1])
-    s_4_C66 =           np.array([1, -1, 0, 0, 0, 0])
-    s_4C662 =           np.array([0,  0, 0, 0, 0, 1])
-
-    
+    s_4_C44 = np.array([0,  0, 0, 0, 1, 0])
+    s_4_C44_2 = np.array([0,  0, 0, 1, 0, 0])
+    s_8_C44 = np.array([0,  0, 0, 1, 1, 1])
+    s_4_C66 = np.array([1, -1, 0, 0, 0, 0])
+    s_4C662 = np.array([0,  0, 0, 0, 0, 1])
 
     c11 = 0.5 * (curvature[1-1] + curvature[2-1])  # / (10**(9)) #Correct
     c33 = 1.0 * curvature[3-1]  # / (10**(9)) #Correct

@@ -4,11 +4,14 @@
 # One needs to work out the eigenvalues. If the stability criteria are met then the the structure is stable
 # The stability criteria are met if the matrix is positive definite an 
 
+findEnergy(args){
+    echo $(( tbe ti $args | grep 'total energy' | tail -1 | awk '{print $4}'   ))
+}   
+
+
 module purge
 module load lmto
 
 ainame="ai"
 ajname="ajj"
 args=
-
-for i

@@ -7,13 +7,9 @@ HEADER  pure Ti
 % const norder=1 width=0.005
 % const sd=0 spd=sd ovlp=spd?1:0 ul=0 u1=0 tbu=0 io=0 nitq=100
 % const verb=31 so=0 nsp=1 tetra=0 metal=1 width=0.002 N=1
-% const au=0.529177 forces=0 ecstr=0
-% const alpha=0 exx=0 eyy=0 ezz=0 eyz=0 exz=0 exy=0
+% const au=0.529177 
 % const beta=0.5 nx=5 kmix=300 nav=0
-% const show=0 mpol=0 specpos=0 specplat=0
-% const plxa=0 plxb=0 plxc=0
-% const plya=0 plyb=0.5 plyc=0
-% const plza=0 plzb=0 plzc=0
+% const show=0 mpol=0 eccal=0
 % const dyn=0 relax=0 temp=300 taup=10 taub=100 time=100000 tstep=5
 % const fs=0.048377 K=1/0.6333328d-5 amass=1.09716d-3
 VERS    TB=10 LM=7 FP=7
@@ -24,8 +20,7 @@ CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
 # Tigany reoptimsation of A/C
 #        a0hcp=5.492857142857143 c0hcp=a0hcp*1.6173517700292839
 # Tony's re-opt
-#        a0hcp=5.5118 c0hcp=8.7970
-        a0hcp=5.6361 c0hcp=9.0429
+        a0hcp=5.5118 c0hcp=8.7970 
         ahcp=a0hcp chcp=c0hcp q=chcp/ahcp
         ai=0 aj=0 ak=0
         aii=1/(2*sqrt(3)) ajj=-1/2  akk=q/2
@@ -36,35 +31,36 @@ CONST   nit=100 conv=1d-5 qtol=1d-5 pair=F mxnbr=250*500
         vfrac=1 Vhcp=V0hcp*vfrac
         ahcpv=(2*Vhcp/(sqrt(3)*q))^(1/3)
         abcc=(vfrac*abcc0^3)^(1/3) afcc=afcc0 aomega=aomega0
-        nk=30 mull=-1 bzj=1 ewtol=1d-6 qtol=1d-6
+        nk=20 mull=-1 bzj=1 ewtol=1d-6 qtol=1d-6
 # Spanjard Dejun model
-#        q0sTi=0 q0pTi=0 q0dTi=2 esTi=0 epTi=0 edTi=0 UTi=0
-#        fdd=0.215 cr1=-6 cr2=4 cr3=-1 
-#        fdds=fdd*cr1 fddp=fdd*cr2 fddd=fdd*cr3 qdds=0.5 qddp=qdds qddd=qdds
-#        r1dd=1.1*a0hcp rcdd=1.5*a0hcp r1pp=1.1*a0hcp rcpp=1.5*a0hcp
-#        b0=112.8 m0=0 p0=1.5 b1=0 m1=0 p1=0 cutmod=2
+        q0sTi=0 q0pTi=0 q0dTi=2 esTi=0 epTi=0 edTi=0 UTi=0
+        fdd=0.215 cr1=-6 cr2=4 cr3=-1 
+        fdds=fdd*cr1 fddp=fdd*cr2 fddd=fdd*cr3 qdds=0.5 qddp=qdds qddd=qdds
+        r1dd=1.1*a0hcp rcdd=1.5*a0hcp r1pp=1.1*a0hcp rcpp=1.5*a0hcp
+        b0=112.8 m0=0 p0=1.5 b1=0 m1=0 p1=0 cutmod=2
 # Final GA fit by Tony; 2018-08-28
-#        fdd=0.2939228243 
-#        qdds=0.5832592246 
-#        b0=112.9050409 
-#        p0=1.507105391 
-#        ndti=2.051341768
-# Tony's model December 2018
-        fdd=0.1820811922
-        cr1=-1 cr2=4.0690851 cr3=-1.007401971
-        fdds=fdd*cr1 fddp=fdd*cr2 fddd=fdd*cr3
-        qdds=0.5890606343 qddp=0.6304987776 qddd=0.6548686083
-        b0=112.8405787 p0=1.594107506 m0=0 ndt=1.938012096
-        b1=0.0 p1=0.0 m1=0.0
-        r1dd=5.427051129 rcdd=7.539638811
-        r1pp=5.427051129 rcpp=7.539638811
-        q0sTi=0 q0pTi=0 esTi=0 epTi=0 edTi=0 UTi=0
-        q0dTi=ndt rmaxh=20 cutmod=2
-# Miscellaneous 
+        fdd=0.2939228243 
+        qdds=0.5832592246 
+        b0=112.9050409 
+        p0=1.507105391 
+        ndti=2.051341768
+        q0dTi=ndti
+
+% ifdef hcp
+        rmaxh=1.1*ahcp 
+% elseifd bcc
+        rmaxh=1.1*abcc
+% elseifd omega
+        rmaxh=1.05*aomega
+% endif
         getqp=0
         pv=1
         R=2.2 RC=0.8
         gmax=18 pwmode=1 pwemax=3 oveps=1d-7
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=B13,b={beta},bv={beta},wc=-1,wa=0,w=1,1
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=B13,b={beta},bv={beta},wc=-1,wa=1,w=1,1
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b=0.1,bv=0,r<0.001,n=1;A{nx},b=0,bv=0.2,r<0.01,n=2;A{nx},b=0.1,bv=0,n=10;A{nx},b=0.2,bv=0.2,r<1d-5,n=2
+###ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b=0.1,bv=0,r<0.0001,n=1;A{nx},b=0,bv=0.2,n=1
 ITER    CONV=conv CONVC=qtol NIT={nitq} MIX=A{nx},b={beta},bv={beta}
 DYN
 % if dyn==1|dyn==2|dyn==3
@@ -81,27 +77,52 @@ STRUC   NBAS={nbas} NSPEC={nspec} NL=3
 % elseifd fcc
         ALAT=afcc PLAT=0 1/2 1/2   1/2 0 1/2   1/2 1/2 0
 % elseifd hcp
-%  if specplat
-        ALAT=ahcp PLAT= {plxa} {plxb} {plxc}
-                        {plya} {plyb} {plyc}
-                        {plza} {plzb} {plzc}
-%  else
         ALAT=ahcpv PLAT= 0              -1         0
                         sqrt(3)/2       0.5        0
                         0               0          q
-%  endif
 % elseifd omega
         ALAT=aomega
         PLAT= 1      0          0
               1/2   sqrt(3)/2   0
               0      0     qomega
 % endif
-% ifdef ecstr
-       ALPHA={alpha} STRAIN={exx} {eyy} {ezz} {eyz} {exz} {exy}
+% ifdef bcc
+%  ifdef cp
+        ALPHA=alpha STRAIN=-1/2 -1/2 1 0 0 0
 %  endif
+%  ifdef c44
+        ALPHA=alpha STRAIN=0 0 0 1/2 1/2 1/2
+%  endif
+% endif
+% ifdef hcp
+%  ifdef c11
+        ALPHA=alpha STRAIN=1 0 0 0 0 0
+%  endif
+%  ifdef c33
+        ALPHA=alpha STRAIN=0 0 1 0 0 0
+%  endif
+%  ifdef cp
+        ALPHA=alpha STRAIN=1 -1 0 0 0 0
+%  endif
+%  ifdef cpp
+        ALPHA=alpha STRAIN=1 0 -1 0 0 0
+%  endif
+%  ifdef c44
+        ALPHA=alpha STRAIN=0 0 0 0 1/2 0
+%  endif
+%  ifdef R
+        ALPHA=alpha STRAIN=-1/2 -1/2 1 0 0 0
+%  endif
+%  ifdef H
+        ALPHA=alpha STRAIN=1 -1/2 -1/2 0 0 0
+%  endif
+%  ifdef S
+        ALPHA=alpha STRAIN= 0 0 0 1/2 1/2 1/2
+%  endif
+% endif
 SITE    
 % ifdef hcp
-%  ifdef specpos
+%  ifdef eccal
         ATOM=Ti POS= ai aj ak
         ATOM=Ti POS= aii ajj akk
 %  else
@@ -116,7 +137,7 @@ SITE
 % else
         ATOM=Ti POS= 0 0 0
 % endif
-SYMGRP  I*I
+SYMGRP  find
 BZ      GETQP=getqp NKABC=nk TETRA={tetra} METAL={metal}
         EFMAX=2 EF0=ef0 DELEF=0.01 N={norder} W={width}
         NPTS=5001 BZJOB=bzj SAVDOS=T NOINV=F
@@ -150,7 +171,7 @@ ME      2
         DECAY=0 0 0 0 0 0 0 qdds qddp qddd
         CUT=0 0 0 0 0 0 0 0 0 0 0 0 0 0 r1dd rcdd r1dd rcdd r1dd rcdd
             ! b0 m0 p0   b1 m1 p1   0 0 0
-TB      FORCES=forces EVDISC=T RMAXH=rmaxh TRH=F RHO=T 3PV=pv
+TB      FORCES=0 EVDISC=T RMAXH=rmaxh TRH=F RHO=T 3PV=pv
         MOL=mol GAMMA={gamma} PAIR=pair SCALE=0
         UL={ul} IODEL={io} OVLP={ovlp} TBU={tbu} NOUAVG={nav} U1={u1}
 EWALD   TOL=ewtol NKDMX=1999 NKRMX=1999

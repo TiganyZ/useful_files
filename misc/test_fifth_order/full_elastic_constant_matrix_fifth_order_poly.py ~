@@ -1,0 +1,344 @@
+# This calculates the elastic constants by fitting a fifth order polynomial to the change in energy with respect to strains.
+import numpy as np
+import scipy as sci
+from scipy.optimize import minimize
+import subprocess
+import matplotlib.pyplot as plt
+from matplotlib import rc
+import copy
+rc('font', **{'family': 'serif', 'serif': ['Palatino'],  'size': 18})
+rc('text', usetex=True)
+sci.set_printoptions(linewidth=200, precision=4)
+
+#==========================================================================
+############################    General    ################################
+#==========================================================================
+def cmd_result(cmd):
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    result, err = proc.communicate()
+    result = result.decode("utf-8")
+    return result
+
+
+def cmd_write_to_file(cmd, filename):
+    output_file = open(filename, mode='w')
+    retval = subprocess.call(cmd, shell=True, stdout=output_file)
+    output_file.close()
+
+
+#===========================================================================================
+############################    Elastic Constant Strains    ################################
+#===========================================================================================
+
+def get_strains(strain):
+    strain_names = [' -vexx=', ' -veyy=', ' -vezz=',
+                    ' -veyz=', ' -vexz=', ' -vexy=']
+    strain_command = ' '
+    for name, s in zip(strain_names, strain):
+        strain_command += name + s + ' '
+    return strain_command
+
+def get_strain_tensor(strain):
+    strain_tensor = np.zeros((3,3))
+    for i in range(3):
+        strain_tensor[i,i] = strain[i]
+    strain_tensor[2,3] = strain[3]
+    strain_tensor[3,2] = strain[3]
+    strain_tensor[1,3] = strain[4]
+    strain_tensor[3,1] = strain[4]
+    strain_tensor[1,2] = strain[5]
+    strain_tensor[2,1] = strain[5]
+    return strain_tensor
+
+
+def Girshick_strains():
+
+    strain = np.zeros( (15, 3, 3) )
+
+      strain[  1-1, 1-1, 1-1 ] = 1.
+      strain[  1-1, 1-1, 2-1 ] = 0.
+      strain[  1-1, 1-1, 3-1 ] = 0.
+		 
+      strain[  1-1, 2-1, 1-1 ] = 0.
+      strain[  1-1, 2-1, 2-1 ] = 0.
+      strain[  1-1, 2-1, 3-1 ] = 0.
+		 
+      strain[  1-1, 3-1, 1-1 ] = 0.
+      strain[  1-1, 3-1, 2-1 ] = 0.
+      strain[  1-1, 3-1, 3-1 ] = 0.
+		 
+      fileext[  -11 ]-1 = -1'C11'
+		 
+		 
+      strain[  2-1, 1-1, 1-1 ] = 0.
+      strain[  2-1, 1-1, 2-1 ] = 0.
+      strain[  2-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  2-1, 2-1, 1-1 ] = 0.
+      strain[  2-1, 2-1, 2-1 ] = 1.
+      strain[  2-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  2-1, 3-1, 1-1 ] = 0.
+      strain[  2-1, 3-1, 2-1 ] = 0.
+      strain[  2-1, 3-1, 3-1 ] = 0.
+		 
+      fileext[  -12 ]-1 = -1'C11'
+      		 
+      		 
+      strain[  3-1, 1-1, 1-1 ] = 0.
+      strain[  3-1, 1-1, 2-1 ] = 0.
+      strain[  3-1, 1-1, 3-1 ] = 0.
+     		 
+      strain[  3-1, 2-1, 1-1 ] = 0.
+      strain[  3-1, 2-1, 2-1 ] = 0.
+      strain[  3-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  3-1, 3-1, 1-1 ] = 0.
+      strain[  3-1, 3-1, 2-1 ] = 0.
+      strain[  3-1, 3-1, 3-1 ] = 1.
+		 
+      fileext[  -13 ]-1 = -1'C33'
+      		 
+      		 
+      strain[  4-1, 1-1, 1-1 ] = 1.
+      strain[  4-1, 1-1, 2-1 ] = 0.
+      strain[  4-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  4-1, 2-1, 1-1 ] = 0.
+      strain[  4-1, 2-1, 2-1 ] = 1.
+      strain[  4-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  4-1, 3-1, 1-1 ] = 0.
+      strain[  4-1, 3-1, 2-1 ] = 0.
+      strain[  4-1, 3-1, 3-1 ] = 0.
+		 
+      fileext[  -14 ]-1 = -1'2C11+2C12'
+      		 
+      		 
+      strain[  5-1, 1-1, 1-1 ] = 0.5
+      strain[  5-1, 1-1, 2-1 ] = 0.
+      strain[  5-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  5-1, 2-1, 1-1 ] = 0.
+      strain[  5-1, 2-1, 2-1 ] = 1.
+      strain[  5-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  5-1, 3-1, 1-1 ] = 0.
+      strain[  5-1, 3-1, 2-1 ] = 0.
+      strain[  5-1, 3-1, 3-1 ] = 0.
+		 
+      fileext[  -15 ]-1 = -1'1.25C11+C12'
+      		 
+      		 
+      strain[  6-1, 1-1, 1-1 ] = 1.
+      strain[  6-1, 1-1, 2-1 ] = 0.
+      strain[  6-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  6-1, 2-1, 1-1 ] = 0.
+      strain[  6-1, 2-1, 2-1 ] = 0.
+      strain[  6-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  6-1, 3-1, 1-1 ] = 0.
+      strain[  6-1, 3-1, 2-1 ] = 0.
+      strain[  6-1, 3-1, 3-1 ] = 1.
+		 
+      fileext[  -16 ]-1 = -1'C11+C33+2C13'
+      		 
+      		 
+      strain[  7-1, 1-1, 1-1 ] = 0.
+      strain[  7-1, 1-1, 2-1 ] = 0.
+      strain[  7-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  7-1, 2-1, 1-1 ] = 0.
+      strain[  7-1, 2-1, 2-1 ] = 1.
+      strain[  7-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  7-1, 3-1, 1-1 ] = 0.
+      strain[  7-1, 3-1, 2-1 ] = 0.
+      strain[  7-1, 3-1, 3-1 ] = 1.
+		 
+      fileext[  -17 ]-1 = -1'C11+C33+2C13'
+      		 
+      		 
+      strain[  8-1, 1-1, 1-1 ] = 1.
+      strain[  8-1, 1-1, 2-1 ] = 0.
+      strain[  8-1, 1-1, 3-1 ] = 0.
+      		 
+      strain[  8-1, 2-1, 1-1 ] = 0.
+      strain[  8-1, 2-1, 2-1 ] = 1.
+      strain[  8-1, 2-1, 3-1 ] = 0.
+ 		 
+      strain[  8-1, 3-1, 1-1 ] = 0.
+      strain[  8-1, 3-1, 2-1 ] = 0.
+      strain[  8-1, 3-1, 3-1 ] = 1.
+		 
+      fileext[  -18 ]-1 = -1'2C11+2C12+C33+4C13'
+      		 
+      		 
+      strain[  9-1, 1-1, 1-1 ] = 0.
+      strain[  9-1, 1-1, 2-1 ] = 0.
+      strain[  9-1, 1-1, 3-1 ] = 1.
+      		 
+      strain[  9-1, 2-1, 1-1 ] = 0.
+      strain[  9-1, 2-1, 2-1 ] = 0.
+      strain[  9-1, 2-1, 3-1 ] = 0.
+
+      strain[  9-1, 3-1, 1-1 ] = 1.
+      strain[  9-1, 3-1, 2-1 ] = 0.
+      strain[  9-1, 3-1, 3-1 ] = 0.
+
+      fileext[  -19 ]-1 = -1'4C44'
+
+
+      strain[ 10-1, 1-1, 1-1 ] = 0.
+      strain[ 10-1, 1-1, 2-1 ] = 0.
+      strain[ 10-1, 1-1, 3-1 ] = 0.
+
+      strain[ 10-1, 2-1, 1-1 ] = 0.
+      strain[ 10-1, 2-1, 2-1 ] = 0.
+      strain[ 10-1, 2-1, 3-1 ] = 1.
+
+      strain[ 10-1, 3-1, 1-1 ] = 0.
+      strain[ 10-1, 3-1, 2-1 ] = 1.
+      strain[ 10-1, 3-1, 3-1 ] = 0.
+
+      fileext[ 1-10 ]-1 = -1'4C44'
+
+
+      strain[ 11-1, 1-1, 1-1 ] = 0.
+      strain[ 11-1, 1-1, 2-1 ] = 0.
+      strain[ 11-1, 1-1, 3-1 ] = 1.
+
+      strain[ 11-1, 2-1, 1-1 ] = 0.
+      strain[ 11-1, 2-1, 2-1 ] = 0.
+      strain[ 11-1, 2-1, 3-1 ] = 1.
+
+      strain[ 11-1, 3-1, 1-1 ] = 1.
+      strain[ 11-1, 3-1, 2-1 ] = 1.
+      strain[ 11-1, 3-1, 3-1 ] = 0.
+
+      fileext[ 1-11 ]-1 = -1'8C44'
+
+
+      strain[ 12-1, 1-1, 1-1 ] = 1.
+      strain[ 12-1, 1-1, 2-1 ] = 0.
+      strain[ 12-1, 1-1, 3-1 ] = 0.
+
+      strain[ 12-1, 2-1, 1-1 ] = 0.
+      strain[ 12-1, 2-1, 2-1 ] = -1
+      strain[ 12-1, 2-1, 3-1 ] = 0
+
+      strain[ 12-1, 3-1, 1-1 ] = 0
+      strain[ 12-1, 3-1, 2-1 ] = 0
+      strain[ 12-1, 3-1, 3-1 ] = 0
+
+      fileext[  -112 -1] =-1 '4C66'
+
+
+      strain[ 13-1, 1-1, 1-1 ] = 0
+      strain[ 13-1, 1-1, 2-1 ] = 1
+      strain[ 13-1, 1-1, 3-1 ] = 0
+
+      strain[ 13-1, 2-1, 1-1 ] = 1
+      strain[ 13-1, 2-1, 2-1 ] = 0
+      strain[ 13-1, 2-1, 3-1 ] = 0
+
+      strain[ 13-1, 3-1, 1-1 ] = 0
+      strain[ 13-1, 3-1, 2-1 ] = 0
+      strain[ 13-1, 3-1, 3-1 ] = 0
+
+      fileext[ 1-13 ]-1 = -1'4C66'
+ 
+ 
+      strain[ 14-1, 1-1, 1-1 ] = -0.5
+      strain[ 14-1, 1-1, 2-1 ] = 0.
+      strain[ 14-1, 1-1, 3-1 ] = 0.
+ 
+      strain[ 14-1, 2-1, 1-1 ] = 0.
+      strain[ 14-1, 2-1, 2-1 ] = -0.5
+      strain[ 14-1, 2-1, 3-1 ] = 0.
+ 
+      strain[ 14-1, 3-1, 1-1 ] = 0.
+      strain[ 14-1, 3-1, 2-1 ] = 0.
+      strain[ 14-1, 3-1, 3-1 ] = 1.
+
+      fileext[ 1-14 ]-1 = -1'3R'
+
+      strain[ 15-1, 1-1, 1-1 ] = 1.
+      strain[ 15-1, 1-1, 2-1 ] = 0.
+      strain[ 15-1, 1-1, 3-1 ] = 0.
+
+      strain[ 15-1, 2-1, 1-1 ] = 0.
+      strain[ 15-1, 2-1, 2-1 ] = -0.5
+      strain[ 15-1, 2-1, 3-1 ] = 0.
+
+      strain[ 15-1, 3-1, 1-1 ] = 0.
+      strain[ 15-1, 3-1, 2-1 ] = 0.
+      strain[ 15-1, 3-1, 3-1 ] = -0.5
+
+      fileext[ 15 ] = '3H'
+      
+ 
+      number_of_strains = 15
+
+
+def strains():
+
+    s_11 =              np.array([1,  0, 0, 0, 0, 0]) # 1
+    s_112 =             np.array([0,  1, 0, 0, 0, 0]) # 2
+    s_33 =              np.array([0,  0, 1, 0, 0, 0]) # 3
+    s_2C11_2C12 =       np.array([1,  1, 0, 0, 0, 0]) # 4
+    s_2_C11_2_C22 =     np.array([1,  1, 0, 0, 0, 0]) # 5
+    s_5o4_C11_C12 =     np.array([0.5,1, 0, 0, 0, 0]) # 6
+    s_C11_C33_2_C13 =   np.array([1,  0, 1, 0, 0, 0]) # 7
+    s_C11_C33_2_C13_2 = np.array([0,  1, 1, 0, 0, 0]) # 8
+    s_4_C44 =           np.array([0,  0, 0, 0, 1, 0]) # 9
+    s_4_C44_2 =         np.array([0,  0, 0, 1, 0, 0]) # 10
+    s_8_C44 =           np.array([0,  0, 0, 1, 1, 1]) # 11
+    s_4_C66 =           np.array([1, -1, 0, 0, 0, 0]) # 12
+    s_4C662 =           np.array([0,  0, 0, 0, 0, 1]) # 13
+
+    c11 = 0.5 * (curvature[1-1] + curvature[2-1])  # / (10**(9)) #Correct
+    c33 = 1.0 * curvature[3-1]  # / (10**(9)) #Correct
+    c12 = 1./3. * (curvature[4-1] + curvature[5-1] -
+                   3.25*c11)  # / (10**(9)) #Correct
+    c13 = 0.25 * (curvature[6-1] + curvature[7-1] -
+                  2*c11 - 2*c33)  # / (10**(9)) #Correct
+    c66 = 0.125 * (curvature[12-1] + curvature[13-1])  # / (10**(9))
+    c442 = 0.0625 * (curvature[9-1] + curvature[10-1] +
+                     curvature[11-1] - 4*c66)  # / (10**(9))
+    c44 = 0.0625 * (curvature[9-1] + curvature[10-1] +
+                    curvature[11-1])  # / (10**(9))
+
+    kk = (1./9.) * (2 * c11 + c33 + 2 * c12 + 4 * c13)
+
+    rr = (1./3.) * (0.5 * c11 + c33 + 0.5 * c12 - 2 * c13)
+
+    hh = (1./3.) * (1.2 * c11 + 0.25 * c33 - c12 - 0.5 * c13)
+
+    #kk  = curvature[  8 -1 ] / 9. / (10**(9))
+    #rr  = curvature[ 14 -1 ] / 3. / (10**(9))
+    #hh  = curvature[ 15 -1 ] / 3.  / (10**(9))
+
+    print('\n Elastic Constants: Girshick Routine \n')
+    print('\n C11 = {:< .10f},   C11_FR = {:< .10f}' .format(
+        c11,  ec_exp_arr[0]))
+    print(' C33 = {:< .10f},   C33_FR = {:< .10f}' .format(
+        c33,  ec_exp_arr[1]))
+    print(' C44 = {:< .10f},   C44_FR = {:< .10f}' .format(
+        c44,  ec_exp_arr[2]))
+    print(' C44 = {:< .10f},   C44_FR = {:< .10f}' .format(
+        c442, ec_exp_arr[2]))
+    print(' C66 = {:< .10f},   C66_FR = {:< .10f}' .format(
+        c66,  ec_exp_arr[3]))
+    print(' C12 = {:< .10f},   C12_FR = {:< .10f}' .format(
+        c12,  ec_exp_arr[4]))
+    print(' C13 = {:< .10f},   C13_FR = {:< .10f}' .format(
+        c13,  ec_exp_arr[5]))
+
+    print(' K = {:< .10f},   K_FR = {:< .10f}' .format(kk, ec_exp_arr[6]))
+    print(' R = {:< .10f},   R_FR = {:< .10f}' .format(rr, ec_exp_arr[7]))
+    print(' H = {:< .10f},   H_FR = {:< .10f} \n ' .format(hh, ec_exp_arr[8]))
+    print('C66 - 0.5(C11 - C12) = {:< .10f},   C66_FR = {:< .10f}'.format(
+        c66 - 0.5 * (c11 - c12), ec_exp_arr[3]))
+
