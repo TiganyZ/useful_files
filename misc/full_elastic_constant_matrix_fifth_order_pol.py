@@ -43,7 +43,7 @@ def find_energy(LMarg, args, filename, pipe=True):
             cmd += " | grep 'total energy' " + \
                 " | tail -1 | awk '{print $4}'"
     etot = cmd_result(cmd)
-    print(cmd)
+    # print(cmd)
     print("Energy", etot)
     try:
         etot = float(etot[0:-1])
@@ -105,23 +105,31 @@ def get_strained_configuration(h, e, alat, positions, position_names, plat, plat
     # Homogeneous strain: u = e.dot( X )
     positions_strained = np.zeros(positions.shape)
     position_args = ''
-    e *= h
-    e += np.eye(3)
+    ei = e * h  + np.eye(3)
+    print("\nStrain Amplitude:", h)
+    print("\n               Strain               to                 Deformation Matrix")
+    for i, p in enumerate( zip(e, ei) ):
+        ps, p = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print('\n')
     for i, X in enumerate( positions ):
-        X_strained = e.dot( X ) 
+        X_strained = ei.dot( X ) 
         for j, name in enumerate( position_names[i] ):
             positions_strained[i,j] = X_strained[j] 
             position_args += ' -v{}={:.10f}'.format(name, X_strained[j]  )
 
-    plat_strained = np.asarray( [ (  e.dot( pl * alat ) ) / alat  for pl in plat ] )
+    plat_strained = np.asarray( [ (  ei.dot( pl ) )  for pl in plat ] )
 
-    np.printoptions(linewidth=200,precision=8)
-    print("\nplat strained")
-    for i, p in enumerate( plat_strained ):
-        print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
-    print("\npositions strained")
-    for i, p in enumerate( positions_strained ):
-        print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
+    # np.printoptions(linewidth=200,precision=8)
+    print("\n                   plat                  to               plat strained")
+    for i, p in enumerate( zip(plat, plat_strained) ):
+        p, ps = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print("\n                 positions               to             positions strained")
+    for i, p in enumerate( zip(positions , positions_strained)):
+        p, ps = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print('\n')
     
     plat_args = get_plat_command(plat_strained, plat_names)
     command = plat_args + position_args
@@ -139,12 +147,27 @@ def fit_poly(alphas, energies, poly_order):
     curvature = 2. * poly_coeffs[3]
     return value, slope, curvature, poly_coeffs
 
+def print_matrix(m, formatting='{: .10f}'):
+    shape = m.shape
+    if len(shape) == 1:
+        print(  (  ' '.join( [ formatting.format(x) for x in m ] ) ) )
+    else:
+        for mi in m:
+            print_matrix( mi, formatting=formatting )
+
 def get_elast(args, e, alphas, plat, alat, positions, position_names, poly_order=5 ):
 
     energies = np.zeros(len(alphas))
+    ecop = copy.copy(e)
     for i, h in enumerate( alphas ):
+        e = copy.copy(ecop)
+        print_matrix(e, formatting='{: .12f}')
         positions_strained, plat_strained, command = get_strained_configuration(h, e, alat, positions, position_names, plat )
+        #print(i, h)
+        #print(e)
+        print(args + command)
         energies[i] = find_energy(args + command, '',  'get_elast')
+        print(energies[i])
     print("Energies")
     print(energies)
     value, slope, curvature, poly_coeffs = fit_poly(alphas, energies, poly_order)
@@ -428,6 +451,8 @@ def Girshick_strains(args, alphas, plat, alat, positions, position_names, V  ):
         for j in range(3):
             for k in range(3):
                 tmatrix[ j, k ] = strain[ i, j, k ]
+        print("strain =", i)
+        print("strain matrix = \n", tmatrix)
         value, slope, curv, energies = get_elast( args, tmatrix, alphas, plat, alat, positions, position_names, poly_order=5 )
         curvature.append(  curv  )
         energy_array[i, : ] = energies
@@ -547,9 +572,9 @@ def print_elastic_constants(c11, c33, c44, c66, c12, c13, kk, rr, hh, routine='G
     print(' C13 = {:< .10f},   C13_exp = {:< .10f}' .format(
         c13, c13_exp))
 
-    print(' K = {:< .10f},   K_FR = {:< .10f}' .format(kk, kk_exp))
-    print(' R = {:< .10f},   R_FR = {:< .10f}' .format(rr, rr_exp))
-    print(' H = {:< .10f},   H_FR = {:< .10f} \n ' .format(hh, hh_exp))
+    print(' K = {:< .10f},   K_exp = {:< .10f}' .format(kk, kk_exp))
+    print(' R = {:< .10f},   R_exp = {:< .10f}' .format(rr, rr_exp))
+    print(' H = {:< .10f},   H_exp = {:< .10f} \n ' .format(hh, hh_exp))
 
 
 args = ' tbe ti -vhcp=1 '
@@ -601,6 +626,7 @@ for i, p in enumerate( positions ):
     print('{: .10f} {: .10f} {: .10f}'.format(p[0], p[1], p[2]) )
 
 
+    
 c11, c33, c44, c66, c12, c13, K, R, H, energy_array= get_tbe_elastic_constants(args, alphas, plat, ahcp, chcp, positions, position_names, V, girshick=True )
 
 fig, axes = plt.subplots(3, 5)
@@ -639,45 +665,47 @@ for i, en in enumerate( energy_array ):
     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 
-c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = tony_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
+# print("INITIAL energy = ", find_energy( args  , '', 'initial_energy' ))
 
-fig, axes = plt.subplots(2, 4)
-fig.suptitle('tony Strains')
-for i, en in enumerate( energy_array ):
-    print("plotting")
-    print(en)
-    j = i//4
-    k = i % 4
-    print(j,k)
-    ax = axes[j,k]
-    print(ax)
-    ax.set_title('{:d}'.format(i) )    
-    ax.plot( alphas, en, 'bo' )
-    poly_coeffs = np.polyfit( alphas, en, 5 )
-    poly = np.poly1d(poly_coeffs)
-    pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
-    ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
+# c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = tony_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
+
+# fig, axes = plt.subplots(2, 4)
+# fig.suptitle('tony Strains')
+# for i, en in enumerate( energy_array ):
+#     print("plotting")
+#     print(en)
+#     j = i//4
+#     k = i % 4
+#     print(j,k)
+#     ax = axes[j,k]
+#     print(ax)
+#     ax.set_title('{:d}'.format(i) )    
+#     ax.plot( alphas, en, 'bo' )
+#     poly_coeffs = np.polyfit( alphas, en, 5 )
+#     poly = np.poly1d(poly_coeffs)
+#     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
+#     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 
 
-c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = Girshick_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
+# c11, c33, c44, c66, c12, c13, kk, rr, hh, energy_array = Girshick_strains(args + specstrainargs, alphas, plat, ahcp, positions, position_names, V  )
 
 
-fig, axes = plt.subplots(3, 5)
-fig.suptitle('Girshick Strains')
-for i, en in enumerate( energy_array ):
-    print("plotting")
-    print(en)
-    j = i//5
-    k = i % 5
-    print(j,k)
-    ax = axes[j,k]
-    print(ax)
-    ax.set_title('{:d}'.format(i) )
-    ax.plot( alphas, en, 'bo' )
-    poly_coeffs = np.polyfit( alphas, en, 5 )
-    poly = np.poly1d(poly_coeffs)
-    pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
-    ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
+# fig, axes = plt.subplots(3, 5)
+# fig.suptitle('Girshick Strains')
+# for i, en in enumerate( energy_array ):
+#     print("plotting")
+#     print(en)
+#     j = i//5
+#     k = i % 5
+#     print(j,k)
+#     ax = axes[j,k]
+#     print(ax)
+#     ax.set_title('{:d}'.format(i) )
+#     ax.plot( alphas, en, 'bo' )
+#     poly_coeffs = np.polyfit( alphas, en, 5 )
+#     poly = np.poly1d(poly_coeffs)
+#     pl = [ poly(ai) for ai in np.linspace(alphas[0], alphas[-1], 100)   ]
+#     ax.plot( np.linspace(alphas[0], alphas[-1], 100), pl  )
 plt.show()
 
 
@@ -795,3 +823,33 @@ plt.show()
 # np.array( [-0.129,  -0.1291, -0.1291, -0.1292, -0.1292, -0.1293, -0.1293, -0.1293, -0.1293, -0.1293, -0.1293] )
 
 # np.array( [-0.1292, -0.1292, -0.1292, -0.1293, -0.1293, -0.1293, -0.1293, -0.1293, -0.1292, -0.1292, -0.1292] ) ] ) 
+
+
+# energy_array = np.array( [
+# np.array( [ -0.12754049, -0.12527027, -0.12637182,  -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411 ])
+# np.array( [ -0.12787715, -0.12526749, -0.12637184, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12910554, -0.12525440, -0.12637191, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12875957, -0.12525719, -0.12637190, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12924743, -0.12525441, -0.12637191, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.13078237, -0.12523854, -0.12637200, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12897867, -0.12525580, -0.12637191, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12917137, -0.12525441, -0.12637191, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# ])
+#  Elastic Constants: Girshick Routine Applied Strains 
+
+
+#  C11 =  3439.0436276515,   C11_exp =  176.1000000000
+#  C33 =  3704.2209613709,   C33_exp =  190.5000000000
+#  C44 =  4786.2106820819,   C44_exp =  50.8000000000
+#  C66 =  4676.2088087745,   C66_exp =  44.6000000000
+#  C12 = -5913.3739898976,   C12_exp =  86.9000000000
+#  C13 = -5235.9381795662,   C13_exp =  68.3000000000
+#  K = -22188.1924813862,   K_FR =  109.9666666667
+#  R =  12938.9321393802,   R_FR =  61.8000000000
+#  H =  13756.2028545877,   H_FR =  45.9650000000 
+
+
+# np.array( [ -0.12754049, -0.12527027, -0.12637182, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12753988, -0.12527028, -0.12637182, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12787715, -0.12526749, -0.12637184, -0.12739325, -0.12836281, -0.12927973, -0.13014341, -0.13095326, -0.13170870, -0.13240917, -0.13305411])
+# np.array( [ -0.12569477, -0.12528613, -0.12637173, -0.12739325,

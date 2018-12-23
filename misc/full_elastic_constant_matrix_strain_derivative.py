@@ -59,20 +59,36 @@ def cmd_write_to_file(cmd, filename):
 ############################    Argument manipulation    ################################
 #========================================================================================
 
-
 def get_strained_configuration(h, e, alat, positions, position_names, plat, plat_names=None):
     # Homogeneous strain: u = e.dot( X )
     positions_strained = np.zeros(positions.shape)
     position_args = ''
-    e *= h
-    e += np.eye(3)
+    ei = e * h  + np.eye(3)
+    print("\nStrain Amplitude:", h)
+    print("\n               Strain               to                 Deformation Matrix")
+    for i, p in enumerate( zip(e, ei) ):
+        ps, p = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print('\n')
     for i, X in enumerate( positions ):
-        X_strained = e.dot( X ) 
+        X_strained = ei.dot( X ) 
         for j, name in enumerate( position_names[i] ):
             positions_strained[i,j] = X_strained[j] 
             position_args += ' -v{}={:.10f}'.format(name, X_strained[j]  )
 
-    plat_strained = np.asarray( [ (  e.dot( pl ) )   for pl in plat ] )
+    plat_strained = np.asarray( [ (  ei.dot( pl ) )  for pl in plat ] )
+
+    # np.printoptions(linewidth=200,precision=8)
+    print("\n                   plat                  to               plat strained")
+    for i, p in enumerate( zip(plat, plat_strained) ):
+        ps, p = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print("\n                 positions               to             positions strained")
+    for i, p in enumerate( zip(positions , positions_strained)):
+        ps, p = p
+        print('{: .10f} {: .10f} {: .10f}     {: .10f} {: .10f} {: .10f}'.format(ps[0], ps[1], ps[2], p[0], p[1], p[2]) )
+    print('\n')
+    
     plat_args = get_plat_command(plat_strained, plat_names)
     command = plat_args + position_args
     return positions_strained, plat_strained, command
@@ -120,7 +136,7 @@ def Cijkl(args, h, alat, plat, positions, position_names, second_order=False):
                             print("Applying strains:")
                             print(e_ij)
                             print(e_kl)                                        
-                            C[i, j, k, l] = 0.5 * cds_fourth_order(args, h, e_ij, e_kl, positions, alat=alat,
+                            C[i, j, k, l] = cds_fourth_order(args, h, e_ij, e_kl, positions, alat=alat,
                                                                    position_names=position_names,
                                                                    second_order=second_order, plat=plat)
                             C[k,l,i,j] = C[i,j,k,l]
@@ -140,6 +156,16 @@ def print_full_cij(C, extra_args=''):
                     jj+1, ii+1,
                     extra_args, C[k, l, i, j] * convert))
 
+
+def print_matrix(m, formatting='{: .10f}'):
+    shape = m.shape
+    if len(shape) == 1:
+        print(  (  ' '.join( [ formatting.format(x) for x in m ] ) ) )
+    else:
+        for mi in m:
+            print_matrix( mi, formatting=formatting )
+
+            
 
 #==========================================================================================
 #################################     Derivatives     #####################################
@@ -389,7 +415,6 @@ def is_positive_definite(c11, c33, c44, c12, c13, C=None):
 
 def is_stability_satisfied(C_11, C_33, C_44, C_12, C_13):
     print("\n   Criteria for stability:\n")
-
     print( "C_11", C_11 )
     print( "C_33", C_33 )
     print( "C_44", C_44 ) 
@@ -445,14 +470,14 @@ rotation = np.array([[np.sqrt(3)/2., 0.5,  0.],
 
 rotation = np.eye(3)
 
-h = 0.0001
+h = 0.001
 X_n = rotation.dot( np.array([0.,0.,0.]) ) 
 X_p = rotation.dot( np.array( [ 1./(2*np.sqrt(3)) , -1/2., q/2 ] ) ) 
 
 positions = np.asarray( [ X_n, X_p ] )
 position_names = [ [ 'ai',  'aj',  'ak'  ],
                    [ 'aii', 'ajj', 'akk' ] ]
-second_order = False
+second_order = True
 
 plat = np.array([ [     0,         -1,  0 ],
                    [np.sqrt(3)/2,  0.5,  0 ],
@@ -462,6 +487,7 @@ plat_comm = get_plat_command(plat, rotation=rotation)
 
 
 C = get_elastic_constants_strain_derivative(args, h, ahcp, chcp, plat, positions, position_names, second_order)
+C = get_elastic_constants_strain_derivative(args, h, ahcp, chcp, plat, positions, position_names, False)
 
 #==========================================================================================
 ############################     Find min lps and see difference     ######################
